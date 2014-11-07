@@ -64,6 +64,11 @@ def load_config():
 		print ""
 		for p in config_paths:
 			print "  - %s" % p
+		print ""
+		print "A sample config can be found at:"
+		print ""
+		print "  - %s" % os.path.join(BASE, 'halonctl.sample.json')
+		print ""
 		sys.exit(1)
 		
 	with open(config_path) as f:

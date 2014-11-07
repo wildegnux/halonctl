@@ -3,6 +3,7 @@
 import os, sys
 import pkgutil
 import argparse
+import json
 
 # Figure out the absolute path to the directory this script is in
 BASE = os.path.abspath(os.path.dirname(__file__))
@@ -10,6 +11,9 @@ BASE = os.path.abspath(os.path.dirname(__file__))
 # Create an argument parser
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers()
+
+# A dictionary of loaded configuration
+config = {}
 
 # A dictionary to hold all available modules
 modules = {}
@@ -36,10 +40,40 @@ def register_module(mod):
 	mod.register_arguments(p)
 	modules[mod.command] = mod
 
+def load_config():
+	'''Loads user configuration'''
+	
+	config_paths = [
+		os.path.join(BASE, 'halonctl.json'),
+		os.path.expanduser('~/.config/halonctl.json'),
+		os.path.expanduser('~/halonctl.json'),
+		os.path.expanduser('~/.halonctl.json'),
+		'/etc/halonctl.json',
+	]
+	
+	config_path = None
+	for p in config_paths:
+		if os.path.exists(p):
+			config_path = p
+			break
+	
+	if not config_path:
+		print "No configuration file found!"
+		print ""
+		print "Please create one in one of the following locations:"
+		print ""
+		for p in config_paths:
+			print "  - %s" % p
+		sys.exit(1)
+		
+	with open(config_path) as f:
+		config = json.load(f, encoding='utf-8')
+
 
 
 if __name__ == '__main__':
 	load_modules()
+	load_config()
 	
 	args = parser.parse_args()
 	args._mod.run([], args)

@@ -1,0 +1,9 @@
+{
+	"nodes": {
+		"n1": "admin@10.2.0.30",
+		"n2": "admin@10.2.0.31"
+	},
+	"clusters": {
+		"mycluster": [ "n1", "n2" ]
+	}
+}

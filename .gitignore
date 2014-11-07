@@ -8,6 +8,10 @@
 .Python
 .DS_Store
 ._*
-*.sublime-workspace
 *.swp
 *.pyc
+
+# User configuration
+*.sublime-workspace
+/halonctl.json
+

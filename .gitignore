@@ -1,0 +1,12 @@
+# Virtualenv stuff
+/bin
+/lib
+/include
+/local
+
+# Junk
+.Python
+.DS_Store
+._*
+*.sublime-workspace
+*.swp

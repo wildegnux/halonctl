@@ -7,6 +7,7 @@ class Node(object):
 	'''A single Halon node.'''
 	
 	name = None
+	scheme = 'http'
 	host = None
 	username = None
 	password = None
@@ -22,12 +23,28 @@ class Node(object):
 		url = urlparse.urlparse(data, 'http')
 		self.username = url.username
 		self.password = url.password
-		self.host = url.scheme + "://" + url.hostname
+		self.scheme = url.scheme
+		
+		# Nodes are specified as "[http[s]://][username[:password]@]0.0.0.0",
+		# but if the protocol is absent, urlparse will treat the whole thing as
+		# a path... so we instead have to parse the path component instead
+		if url.hostname:
+			self.host = url.hostname
+		else:
+			parts = url.path.split('@', 1)
+			if len(parts) == 2:
+				if ':' in parts[0]:
+					self.username, self.password = parts[0].split(':', 1)
+				else:
+					self.username = parts[0]
+				self.host = parts[1]
+			else:
+				self.host = parts[0]
 	
 	def connect(self):
-		url = self.host + '/remote/?wsdl'
+		url = self.scheme + '://' + self.host + '/remote/'
 		transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
-		client = Client(url, location=self.host + '/remote/', transport=transport, timeout=5, faults=False)
+		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False)
 		self.client = client
 	
 	def __unicode__(self):

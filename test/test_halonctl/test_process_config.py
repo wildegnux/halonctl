@@ -27,7 +27,7 @@ class TestProcessConfig(unittest.TestCase):
 		self.assertEqual(len(nodes), 1)
 		self.assertEqual(len(clusters), 0)
 		
-		self.assertEqual(nodes['n1'].host, 'http://10.2.0.30')
+		self.assertEqual(nodes['n1'].host, '10.2.0.30')
 		self.assertEqual(nodes['n1'].username, 'admin')
 		self.assertEqual(nodes['n1'].password, 'password')
 	

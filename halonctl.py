@@ -90,8 +90,7 @@ def process_config(config):
 	
 	for name, data in config.get('clusters', {}).iteritems():
 		nids = data['nodes'] if isinstance(data, dict) else data
-		nodes = [nodes[nid] for nid in nids]
-		cluster = NodeList(nodes)
+		cluster = NodeList([nodes[nid] for nid in nids])
 		cluster.name = name
 		cluster.load_data(data)
 		cluster.sync_credentials()

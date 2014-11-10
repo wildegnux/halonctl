@@ -37,13 +37,13 @@ class Node(object):
 			remainder = parts[0]
 			self.host = parts[1]
 			
-			if remainder:
-				parts = remainder.split(':', 1)
-				if len(parts) == 2:
-					self.username = parts[0]
-					self.password = parts[1]
-				else:
-					self.username = parts[0]
+			# Credentials may or may not include the password
+			parts = remainder.split(':', 1)
+			if len(parts) == 2:
+				self.username = parts[0]
+				self.password = parts[1]
+			else:
+				self.username = parts[0]
 		else:
 			self.host = parts[0]
 	

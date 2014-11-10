@@ -101,6 +101,9 @@ def process_config(config):
 	return (nodes, clusters)
 
 def apply_slice(list_, slice_):
+	if not slice_:
+		return list_
+	
 	parts = [int(p) if p else None for p in slice_.split(':')]
 	return list_[slice(*parts)]
 
@@ -108,7 +111,7 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 	targets = []
 	
 	if len(nodes) == 0 and len(clusters) == 0:
-		targets = apply_slice(available_nodes)
+		targets = apply_slice(available_nodes.values(), slice_)
 	elif len(clusters) > 0:
 		for cid in clusters:
 			targets += apply_slice(available_clusters[cid], slice_)
@@ -134,7 +137,7 @@ if __name__ == '__main__':
 		choices=[str(s) for s in nodes.iterkeys()], default=[], help="target nodes")
 	parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
 		choices=[str(s) for s in clusters.iterkeys()], default=[], help="target clusters")
-	parser.add_argument('-s', '--slice', dest='slice',
+	parser.add_argument('-s', '--slice', dest='slice', default='',
 		help="slicing, as a Python slice expression")
 	
 	# Parse and filter

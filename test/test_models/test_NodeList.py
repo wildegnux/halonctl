@@ -18,13 +18,16 @@ class TestNodeList(unittest.TestCase):
 		self.assertIsNone(self.cluster.username)
 	
 	def test_sync_credentials(self):
-		self.cluster.load_data({'username': 'admin'})
+		self.cluster.load_data({'username': 'admin', 'password': 'password'})
 		self.cluster.sync_credentials()
 		for node in self.cluster:
 			self.assertEqual(node.username, 'admin')
+			self.assertEqual(node.password, 'password')
 	
 	def test_sync_credentials_node_username(self):
 		self.cluster[1].username = 'admin'
+		self.cluster[1].password = 'password'
 		self.cluster.sync_credentials()
 		for node in self.cluster:
 			self.assertEqual(node.username, 'admin')
+			self.assertEqual(node.password, 'password')

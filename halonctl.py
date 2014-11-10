@@ -140,9 +140,6 @@ if __name__ == '__main__':
 	# Parse and filter
 	args = parser.parse_args()
 	target_nodes = apply_filter(nodes, clusters, args.nodes, args.clusters, args.slice)
-	print target_nodes
-	sys.exit(0)
-	# target_nodes = NodeList(nodes.itervalues())
 	
 	# Run the selected module, and try to print something nice
 	retval = args._mod.run(target_nodes, args)

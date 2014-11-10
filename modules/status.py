@@ -5,14 +5,16 @@ class StatusModule(Module):
 	description = "Checks node statuses"
 	
 	def register_arguments(self, parser):
-		parser.add_argument('-v', '--verbosity', help="increase output verbosity",
+		parser.add_argument('-v', '--verbose', help="verbose output",
 			action='store_true')
 	
 	def run(self, nodes, args):
 		yield ('Cluster', 'Name', 'Address', 'Status')
 		
 		for node, result in nodes.service.login():
-			if result[0] == 200:
+			if args.verbose:
+				status = str(result[0])
+			elif result[0] == 200:
 				status = "OK"
 			elif result[0] == 0:
 				status = "Offline"

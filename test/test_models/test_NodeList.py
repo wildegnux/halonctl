@@ -3,7 +3,7 @@ from halon.models import Node, NodeList
 
 class TestNodeList(unittest.TestCase):
 	def setUp(self):
-		self.cluster = NodeList([Node("10.2.0.30", 'n1'), Node("10.2.0.31", 'n2')])
+		self.cluster = NodeList([Node("http://10.2.0.30", 'n1'), Node("http://10.2.0.31", 'n2')])
 	
 	def test_load_data_with_username(self):
 		self.cluster.load_data({'username': 'admin'})

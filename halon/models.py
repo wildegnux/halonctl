@@ -1,3 +1,5 @@
+import urlparse
+
 class Node(object):
 	'''A single Halon node.'''
 	
@@ -12,15 +14,10 @@ class Node(object):
 			self.load_data(data)
 	
 	def load_data(self, data):
-		# Nodes are specified by strings, either as just an ip ('0.0.0.0'), or
-		# with a username prepended ('admin@0.0.0.0'). Note that a cluster's
-		# credentials will overwrite those of all nodes in it.
-		parts = data.split('@', 1)
-		if len(parts) == 2:
-			self.username = parts[0]
-			self.host = parts[1]
-		else:
-			self.host = parts[0]
+		url = urlparse.urlparse(data, 'http')
+		self.username = url.username
+		self.password = url.password
+		self.host = url.scheme + "://" + url.hostname
 	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)

@@ -10,12 +10,14 @@ class TestNode(unittest.TestCase):
 		self.assertEqual(self.node.scheme, 'http')
 		self.assertEqual(self.node.host, '10.2.0.30')
 		self.assertIsNone(self.node.username)
+		self.assertIsNone(self.node.password)
 	
 	def test_load_data_username(self):
 		self.node.load_data("admin@10.2.0.30")
 		self.assertEqual(self.node.scheme, 'http')
 		self.assertEqual(self.node.host, '10.2.0.30')
 		self.assertEqual(self.node.username, 'admin')
+		self.assertIsNone(self.node.password)
 	
 	def test_load_data_username_password(self):
 		self.node.load_data("admin:password@10.2.0.30")
@@ -36,3 +38,4 @@ class TestNode(unittest.TestCase):
 		self.assertEqual(self.node.scheme, 'https')
 		self.assertEqual(self.node.host, '10.2.0.30')
 		self.assertEqual(self.node.username, 'admin')
+		self.assertIsNone(self.node.password)

@@ -41,6 +41,8 @@ class NodeList(list):
 	def load_data(self, data):
 		if 'username' in data:
 			self.username = data['username']
+		if 'password' in data:
+			self.password = data['password']
 	
 	def sync_credentials(self):
 		# If we don't have an username given for the cluster, see if one of the

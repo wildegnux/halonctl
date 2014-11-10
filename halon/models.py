@@ -22,9 +22,12 @@ class Node(object):
 		self.username = url.username
 		self.password = url.password
 		self.host = url.scheme + "://" + url.hostname
-		
-		if self.host:
-			self.client = Client(self.host + '/remote/?wsdl', username=self.username, password=self.password, transport=HttpAuthenticated())
+	
+	def connect(self):
+		url = self.host + '/remote/?wsdl'
+		transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
+		client = Client(url, location=self.host + '/remote/', transport=transport, timeout=5)
+		self.client = client
 	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)

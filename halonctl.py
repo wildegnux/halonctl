@@ -12,7 +12,7 @@ from halon.util import *
 BASE = os.path.abspath(os.path.dirname(__file__))
 
 # Create an argument parser
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description="Easily manage Halon nodes and clusters.")
 subparsers = parser.add_subparsers()
 
 # A dictionary to hold all available modules
@@ -100,20 +100,50 @@ def process_config(config):
 	
 	return (nodes, clusters)
 
+def apply_slice(list_, slice):
+	return list_
+
+def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''):
+	targets = []
+	
+	if len(nodes) == 0 and len(clusters) == 0:
+		targets = apply_slice(available_nodes)
+	elif len(clusters) > 0:
+		for cid in clusters:
+			targets += apply_slice(available_clusters[cid], slice_)
+	
+	if len(nodes) > 0:
+		targets += [available_nodes[nid] for nid in nodes]
+	
+	return NodeList(targets)
+
 
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.ERROR)
 	logging.getLogger('suds.client').setLevel(logging.CRITICAL)
 	
+	# Load all the things!
 	load_modules()
 	config = load_config()
 	nodes, clusters = process_config(config)
 	
+	# Add parser arguments; done here so that we can validate nodes/clusters
+	parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
+		choices=[str(s) for s in nodes.iterkeys()], default=[], help="target nodes")
+	parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
+		choices=[str(s) for s in clusters.iterkeys()], default=[], help="target clusters")
+	parser.add_argument('-s', '--slice', dest='slice',
+		help="slicing, as a Python slice expression")
+	
+	# Parse and filter
 	args = parser.parse_args()
+	target_nodes = apply_filter(nodes, clusters, args.nodes, args.clusters, args.slice)
+	print target_nodes
+	sys.exit(0)
+	# target_nodes = NodeList(nodes.itervalues())
 	
-	target_nodes = NodeList(nodes.values())
-	
+	# Run the selected module, and try to print something nice
 	retval = args._mod.run(target_nodes, args)
 	if retval:
 		if hasattr(retval, 'draw'):

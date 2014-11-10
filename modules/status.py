@@ -9,7 +9,18 @@ class StatusModule(Module):
 			action='store_true')
 	
 	def run(self, nodes, args):
+		rows = [('Name', 'Address', 'Status')]
 		for node in nodes:
-			node.client.service.login()
+			status = "Online"
+			try:
+				node.client.service.login()
+			except Exception, e:
+				if e.message[0] == 401:
+					status = "Unauthorized"
+				else:
+					status = "Error"
+			
+			rows.append((node.name, node.host, status))
+		return rows
 
 module = StatusModule()

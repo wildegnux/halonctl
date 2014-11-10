@@ -4,7 +4,9 @@ import os, sys
 import pkgutil
 import argparse
 import json
+import logging
 from halon.models import *
+from halon.util import *
 
 # Figure out the absolute path to the directory this script is in
 BASE = os.path.abspath(os.path.dirname(__file__))
@@ -101,9 +103,22 @@ def process_config(config):
 
 
 if __name__ == '__main__':
+	logging.basicConfig(level=logging.ERROR)
+	logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+	
 	load_modules()
 	config = load_config()
 	nodes, clusters = process_config(config)
 	
 	args = parser.parse_args()
-	args._mod.run(nodes.values(), args)
+	
+	target_nodes = nodes.values()
+	for node in target_nodes:
+		node.connect()
+	
+	retval = args._mod.run(target_nodes, args)
+	if retval:
+		if hasattr(retval, 'draw'):
+			print retval.draw()
+		else:
+			print_table(retval)

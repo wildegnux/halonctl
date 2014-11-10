@@ -26,7 +26,7 @@ class Node(object):
 	def connect(self):
 		url = self.host + '/remote/?wsdl'
 		transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
-		client = Client(url, location=self.host + '/remote/', transport=transport, timeout=5)
+		client = Client(url, location=self.host + '/remote/', transport=transport, timeout=5, faults=False)
 		self.client = client
 	
 	def __unicode__(self):

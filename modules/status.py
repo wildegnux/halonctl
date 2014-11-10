@@ -1,8 +1,7 @@
 from halon.modules import Module
 
 class StatusModule(Module):
-	command = "status"
-	description = "Checks node statuses"
+	'''Checks node statuses'''
 	
 	def register_arguments(self, parser):
 		parser.add_argument('-v', '--verbose', help="verbose output",

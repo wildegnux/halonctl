@@ -36,17 +36,17 @@ def load_modules():
 	for loader, name, ispkg in pkgutil.iter_modules(path=[modules_path]):
 		mod = loader.find_module(name).load_module(name)
 		if hasattr(mod, 'module'):
-			register_module(mod.module)
+			register_module(name, mod.module)
 		else:
 			print "Ignoring invalid module (missing 'module' variable): %s" % name
 
-def register_module(mod):
+def register_module(name, mod):
 	'''Registers a loaded module instance'''
 	
-	p = subparsers.add_parser(mod.command, help=mod.description)
+	p = subparsers.add_parser(name, help=mod.__doc__)
 	p.set_defaults(_mod=mod)
 	mod.register_arguments(p)
-	modules[mod.command] = mod
+	modules[name] = mod
 
 def load_config():
 	'''Loads user configuration'''

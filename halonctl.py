@@ -112,7 +112,7 @@ if __name__ == '__main__':
 	
 	args = parser.parse_args()
 	
-	target_nodes = nodes.values()
+	target_nodes = NodeList(nodes.values())
 	for node in target_nodes:
 		node.connect()
 	

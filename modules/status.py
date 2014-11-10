@@ -12,11 +12,13 @@ class StatusModule(Module):
 		rows = [('Name', 'Address', 'Status')]
 		for node, result in nodes.login():
 			if result[0] == 200:
-				status = "Online"
+				status = "OK"
+			elif result[0] == 0:
+				status = "Offline"
 			elif result[0] == 401:
 				status = "Unauthorized"
 			else:
-				status = "Error " + result[0]
+				status = "Error " + str(result[0])
 			
 			rows.append((node.name, node.host, status))
 		

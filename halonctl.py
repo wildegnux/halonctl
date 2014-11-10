@@ -113,8 +113,6 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	
 	target_nodes = NodeList(nodes.values())
-	for node in target_nodes:
-		node.connect()
 	
 	retval = args._mod.run(target_nodes, args)
 	if retval:

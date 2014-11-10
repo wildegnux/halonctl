@@ -1,4 +1,5 @@
 import urlparse
+import urllib2
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 
@@ -74,6 +75,12 @@ class NodeList(list):
 		# awful fit for this task, but they're better than lists in this case
 		def proxy(*args, **kwargs):
 			for node in self:
+				if not node.client:
+					try:
+						node.connect()
+					except urllib2.URLError, e:
+						yield (node, (0, e.reason))
+						continue
 				yield (node, getattr(node.client.service, name)(*args, **kwargs))
 		
 		return proxy

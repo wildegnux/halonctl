@@ -4,6 +4,7 @@ import os, sys
 import pkgutil
 import argparse
 import json
+from halon.models import *
 
 # Figure out the absolute path to the directory this script is in
 BASE = os.path.abspath(os.path.dirname(__file__))
@@ -12,11 +13,13 @@ BASE = os.path.abspath(os.path.dirname(__file__))
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers()
 
-# A dictionary of loaded configuration
-config = {}
-
 # A dictionary to hold all available modules
 modules = {}
+
+# Loaded configuration, configured nodes and clusters
+config = {}
+nodes = {}
+clusters = {}
 
 
 
@@ -72,13 +75,35 @@ def load_config():
 		sys.exit(1)
 		
 	with open(config_path) as f:
-		config = json.load(f, encoding='utf-8')
+		return json.load(f, encoding='utf-8')
+
+def process_config(config):
+	'''Processes a configuration dictionary into usable components.'''
+	
+	nodes = {}
+	clusters = {}
+	
+	for name, data in config['nodes'].iteritems():
+		node = Node(data)
+		node.name = name
+		nodes[name] = node
+	
+	for name, data in config['clusters'].iteritems():
+		nodes = data['nodes'] if isinstance(data, dict) else data
+		cluster = NodeList(nodes)
+		cluster.name = name
+		cluster.load_data(data)
+		cluster.sync_credentials()
+		clusters[name] = cluster
+	
+	return (nodes, clusters)
 
 
 
 if __name__ == '__main__':
 	load_modules()
-	load_config()
+	config = load_config()
+	nodes, clusters = process_config(config)
 	
 	args = parser.parse_args()
 	args._mod.run([], args)

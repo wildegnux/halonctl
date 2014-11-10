@@ -3,6 +3,8 @@ import urllib2
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 
+
+
 class Node(object):
 	'''A single Halon node.'''
 	
@@ -55,6 +57,8 @@ class Node(object):
 	def __str__(self):
 		return unicode(self).encode('utf-8')
 
+
+
 class NodeList(list):
 	'''A list of Halon nodes.
 	
@@ -67,6 +71,11 @@ class NodeList(list):
 	name = None
 	username = None
 	password = None
+	service = None
+	
+	def __init__(self, *args, **kwargs):
+		self.service = NodeListSoapProxy(self)
+		super(NodeList, self).__init__(*args, **kwargs)
 	
 	def load_data(self, data):
 		if 'username' in data:
@@ -90,11 +99,27 @@ class NodeList(list):
 			node.password = self.password
 			node.cluster = self
 	
+	def __unicode__(self):
+		return u"%s @ [%s]" % (self.name, [node.name for node in self].join(', '))
+	
+	def __str__(self):
+		return unicode(self).encode('utf-8')
+
+
+
+class NodeListSoapProxy(object):
+	'''Proxy for a NodeList that allows grouped SOAP calls.'''
+	
+	nodelist = None
+	
+	def __init__(self, nodelist):
+		self.nodelist = nodelist
+	
 	def __getattr__(self, name):
 		# TODO: Figure out how to make this asynchronous; generators are an
 		# awful fit for this task, but they're better than lists in this case
 		def proxy(*args, **kwargs):
-			for node in self:
+			for node in self.nodelist:
 				if not node.client:
 					try:
 						node.connect()
@@ -104,9 +129,3 @@ class NodeList(list):
 				yield (node, getattr(node.client.service, name)(*args, **kwargs))
 		
 		return proxy
-	
-	def __unicode__(self):
-		return u"%s @ [%s]" % (self.name, [node.name for node in self].join(', '))
-	
-	def __str__(self):
-		return unicode(self).encode('utf-8')

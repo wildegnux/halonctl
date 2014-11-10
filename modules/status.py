@@ -11,7 +11,7 @@ class StatusModule(Module):
 	def run(self, nodes, args):
 		yield ('Cluster', 'Name', 'Address', 'Status')
 		
-		for node, result in nodes.login():
+		for node, result in nodes.service.login():
 			if result[0] == 200:
 				status = "OK"
 			elif result[0] == 0:

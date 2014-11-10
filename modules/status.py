@@ -10,17 +10,16 @@ class StatusModule(Module):
 	
 	def run(self, nodes, args):
 		rows = [('Name', 'Address', 'Status')]
-		for node in nodes:
-			status = "Online"
-			try:
-				node.client.service.login()
-			except Exception, e:
-				if e.message[0] == 401:
-					status = "Unauthorized"
-				else:
-					status = "Error"
+		for node, result in nodes.login():
+			if result[0] == 200:
+				status = "Online"
+			elif result[0] == 401:
+				status = "Unauthorized"
+			else:
+				status = "Error " + result[0]
 			
 			rows.append((node.name, node.host, status))
+		
 		return rows
 
 module = StatusModule()

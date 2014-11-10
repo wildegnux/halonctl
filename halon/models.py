@@ -1,4 +1,3 @@
-import urlparse
 import urllib2
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
@@ -23,27 +22,30 @@ class Node(object):
 		if data:
 			self.load_data(data)
 	
-	def load_data(self, data):
-		url = urlparse.urlparse(data, 'http')
-		self.username = url.username
-		self.password = url.password
-		self.scheme = url.scheme
+	def load_data(self, s):
+		remainder = s
 		
-		# Nodes are specified as "[http[s]://][username[:password]@]0.0.0.0",
-		# but if the protocol is absent, urlparse will treat the whole thing as
-		# a path... so we instead have to parse the path component instead
-		if url.hostname:
-			self.host = url.hostname
-		else:
-			parts = url.path.split('@', 1)
-			if len(parts) == 2:
-				if ':' in parts[0]:
-					self.username, self.password = parts[0].split(':', 1)
+		# Split out any scheme
+		parts = remainder.split('://', 1)
+		if len(parts) == 2:
+			self.scheme = parts[0]
+			remainder = parts[1]
+		
+		# Split the host from the credentials
+		parts = remainder.split('@', 1)
+		if len(parts) == 2:
+			remainder = parts[0]
+			self.host = parts[1]
+			
+			if remainder:
+				parts = remainder.split(':', 1)
+				if len(parts) == 2:
+					self.username = parts[0]
+					self.password = parts[1]
 				else:
 					self.username = parts[0]
-				self.host = parts[1]
-			else:
-				self.host = parts[0]
+		else:
+			self.host = parts[0]
 	
 	def connect(self):
 		url = self.scheme + '://' + self.host + '/remote/'

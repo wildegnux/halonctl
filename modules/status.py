@@ -9,7 +9,8 @@ class StatusModule(Module):
 			action='store_true')
 	
 	def run(self, nodes, args):
-		rows = [('Name', 'Address', 'Status')]
+		yield ('Name', 'Address', 'Status')
+		
 		for node, result in nodes.login():
 			if result[0] == 200:
 				status = "OK"
@@ -20,8 +21,6 @@ class StatusModule(Module):
 			else:
 				status = "Error " + str(result[0])
 			
-			rows.append((node.name, node.host, status))
-		
-		return rows
+			yield (node.name, node.host, status)
 
 module = StatusModule()

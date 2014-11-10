@@ -69,6 +69,15 @@ class NodeList(list):
 			node.username = self.username
 			node.password = self.password
 	
+	def __getattr__(self, name):
+		# TODO: Figure out how to make this asynchronous; generators are an
+		# awful fit for this task, but they're better than lists in this case
+		def proxy(*args, **kwargs):
+			for node in self:
+				yield (node, getattr(node.client.service, name)(*args, **kwargs))
+		
+		return proxy
+	
 	def __unicode__(self):
 		return u"%s @ [%s]" % (self.name, [node.name for node in self].join(', '))
 	

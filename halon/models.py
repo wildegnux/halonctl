@@ -7,6 +7,7 @@ class Node(object):
 	'''A single Halon node.'''
 	
 	name = None
+	cluster = None
 	scheme = 'http'
 	host = None
 	username = None
@@ -16,6 +17,7 @@ class Node(object):
 	
 	def __init__(self, data=None, name=None):
 		self.name = name
+		self.cluster = NodeList([self])
 		if data:
 			self.load_data(data)
 	
@@ -86,6 +88,7 @@ class NodeList(list):
 		for node in self:
 			node.username = self.username
 			node.password = self.password
+			node.cluster = self
 	
 	def __getattr__(self, name):
 		# TODO: Figure out how to make this asynchronous; generators are an

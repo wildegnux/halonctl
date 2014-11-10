@@ -9,7 +9,7 @@ class StatusModule(Module):
 			action='store_true')
 	
 	def run(self, nodes, args):
-		yield ('Name', 'Address', 'Status')
+		yield ('Cluster', 'Name', 'Address', 'Status')
 		
 		for node, result in nodes.login():
 			if result[0] == 200:
@@ -21,6 +21,6 @@ class StatusModule(Module):
 			else:
 				status = "Error " + str(result[0])
 			
-			yield (node.name, node.host, status)
+			yield (node.cluster.name, node.name, node.host, status)
 
 module = StatusModule()

@@ -13,7 +13,7 @@ BASE = os.path.abspath(os.path.dirname(__file__))
 
 # Create an argument parser
 parser = argparse.ArgumentParser(description="Easily manage Halon nodes and clusters.")
-subparsers = parser.add_subparsers()
+subparsers = parser.add_subparsers(title='subcommands', metavar='cmd')
 
 # A dictionary to hold all available modules
 modules = {}
@@ -134,9 +134,11 @@ if __name__ == '__main__':
 	
 	# Add parser arguments; done here so that we can validate nodes/clusters
 	parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
-		choices=[str(s) for s in nodes.iterkeys()], default=[], help="target nodes")
+		choices=[str(s) for s in nodes.iterkeys()], default=[],
+		help="target nodes")
 	parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
-		choices=[str(s) for s in clusters.iterkeys()], default=[], help="target clusters")
+		choices=[str(s) for s in clusters.iterkeys()], default=[],
+		help="target clusters")
 	parser.add_argument('-s', '--slice', dest='slice', default='',
 		help="slicing, as a Python slice expression")
 	

@@ -1,5 +1,5 @@
 class Node(object):
-	'''A single VSP node.'''
+	'''A single Halon node.'''
 	
 	name = None
 	host = None
@@ -29,7 +29,7 @@ class Node(object):
 		return unicode(self).encode('utf-8')
 
 class NodeList(list):
-	'''A list of VSP nodes.
+	'''A list of Halon nodes.
 	
 	It's a regular list for all intents and purposes, but with the added
 	benefit of keeping track of credentials, and the ability to execute SOAP

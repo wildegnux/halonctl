@@ -15,6 +15,7 @@ class Node(object):
 	password = None
 	
 	client = None
+	client_nosend = True
 	
 	def __init__(self, data=None, name=None):
 		self.name = name
@@ -47,11 +48,14 @@ class Node(object):
 		else:
 			self.host = parts[0]
 	
-	def connect(self):
+	def connect(self, nosend=True):
 		url = self.scheme + '://' + self.host + '/remote/'
 		transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
-		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False)
-		self.client = client
+		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False, nosend=nosend)
+		if not nosend:
+			self.client = client
+		else:
+			self.client_nosend = client
 	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)
@@ -124,7 +128,7 @@ class NodeListSoapProxy(object):
 			for node in self.nodelist:
 				if not node.client:
 					try:
-						node.connect()
+						node.connect(True)
 					except urllib2.URLError, e:
 						yield (node, (0, e.reason))
 						continue

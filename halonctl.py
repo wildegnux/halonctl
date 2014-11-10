@@ -35,7 +35,10 @@ def load_modules():
 	modules_path = os.path.join(BASE, 'modules')
 	for loader, name, ispkg in pkgutil.iter_modules(path=[modules_path]):
 		mod = loader.find_module(name).load_module(name)
-		register_module(mod.module)
+		if hasattr(mod, 'module'):
+			register_module(mod.module)
+		else:
+			print "Ignoring invalid module (missing 'module' variable): %s" % name
 
 def register_module(mod):
 	'''Registers a loaded module instance'''

@@ -100,8 +100,9 @@ def process_config(config):
 	
 	return (nodes, clusters)
 
-def apply_slice(list_, slice):
-	return list_
+def apply_slice(list_, slice_):
+	parts = [int(p) if p else None for p in slice_.split(':')]
+	return list_[slice(*parts)]
 
 def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''):
 	targets = []

@@ -100,7 +100,7 @@ class NodeList(list):
 			node.cluster = self
 	
 	def __unicode__(self):
-		return u"%s @ [%s]" % (self.name, ', '.join([node.name for node in self]))
+		return u"%s -> [%s]" % (self.name, ', '.join([node.name for node in self]))
 	
 	def __str__(self):
 		return unicode(self).encode('utf-8')

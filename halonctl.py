@@ -106,4 +106,4 @@ if __name__ == '__main__':
 	nodes, clusters = process_config(config)
 	
 	args = parser.parse_args()
-	args._mod.run([], args)
+	args._mod.run(nodes.values(), args)

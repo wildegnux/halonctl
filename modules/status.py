@@ -9,6 +9,7 @@ class StatusModule(Module):
 			action='store_true')
 	
 	def run(self, nodes, args):
-		print "Do little status things"
+		for node in nodes:
+			node.client.service.login()
 
 module = StatusModule()

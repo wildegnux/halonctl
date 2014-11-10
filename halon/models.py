@@ -1,4 +1,6 @@
 import urlparse
+from suds.client import Client
+from suds.transport.http import HttpAuthenticated
 
 class Node(object):
 	'''A single Halon node.'''
@@ -7,6 +9,8 @@ class Node(object):
 	host = None
 	username = None
 	password = None
+	
+	client = None
 	
 	def __init__(self, data=None, name=None):
 		self.name = name
@@ -18,6 +22,9 @@ class Node(object):
 		self.username = url.username
 		self.password = url.password
 		self.host = url.scheme + "://" + url.hostname
+		
+		if self.host:
+			self.client = Client(self.host + '/remote/?wsdl', username=self.username, password=self.password, transport=HttpAuthenticated())
 	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)

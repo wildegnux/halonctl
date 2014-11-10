@@ -52,13 +52,6 @@ class NodeList(list):
 					self.password = node.password
 					break
 		
-		# Same deal with the password, if we didn't find one with the username
-		if not self.password:
-			for node in self:
-				if node.password:
-					self.password = node.password
-					break
-		
 		# Propagate the credentials to all included nodes
 		for node in self:
 			node.username = self.username

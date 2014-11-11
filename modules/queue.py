@@ -3,11 +3,11 @@ import base64
 
 class QueueModule(Module):
 	'''Checks queue count'''
-	
+
 	def register_arguments(self, parser):
 		parser.add_argument('-v', '--verbose', help="verbose output",
 			action='store_true')
-	
+
 	def run(self, nodes, args):
 		yield ('Node', 'Messages')
 		totalCount = 0
@@ -18,7 +18,7 @@ class QueueModule(Module):
 				base64.b64encode('mail-queue-count'),
 				]}]):
 			output = ''
-			while True:	
+			while True:
 				ret, data = node.client.service.commandPoll(commandid=result[1])
 				if ret != 200:
 					break

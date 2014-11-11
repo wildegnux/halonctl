@@ -23,7 +23,7 @@ class QueueModule(Module):
 				if ret != 200:
 					break
 				if hasattr(data, 'item'):
-					output = "".join([base64.b64decode(i) for i in data.item])
+					output += "".join([base64.b64decode(i) for i in data.item])
 			count = long(output.strip().split('=')[1])
 			totalCount += count
 			yield (node.name, count)

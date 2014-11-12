@@ -149,8 +149,10 @@ class NodeList(list):
 		
 		# Propagate the credentials to all included nodes
 		for node in self:
-			node.username = self.username
-			node.password = self.password
+			if not node.username:
+				node.username = self.username
+				if not node.password:
+					node.password = self.password
 			node.cluster = self
 	
 	def __unicode__(self):

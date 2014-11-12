@@ -182,9 +182,7 @@ class NodeListSoapProxy(object):
 						results.append((node, context.process_reply(e.response.body if getattr(e, 'response', None) else None, e.code, e.message)))
 					except socket.error as e:
 						results.append((node, (0, e.message)))
-				
-				print results
-				
+								
 				raise gen.Return(results)
 			return IOLoop.instance().run_sync(_inner)
 		return _soap_proxy_executor

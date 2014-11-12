@@ -138,6 +138,7 @@ class NodeList(list):
 		for all contained nodes. Otherwise, it will attempt to find a username
 		and optionally password on one of the nodes, and propagate that through
 		the list.'''
+		
 		# If we don't have an username given for the cluster, see if one of the
 		# nodes has one
 		if not self.username:

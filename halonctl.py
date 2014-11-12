@@ -145,14 +145,26 @@ if __name__ == '__main__':
 	parser.add_argument('-s', '--slice', dest='slice', default='',
 		help="slicing, as a Python slice expression")
 	
+	parser.add_argument('-i', '--ignore-partial', action='store_true',
+		help="don't exit with code 99 if some nodes' results are unavailable")
+	
 	# Parse and filter
 	args = parser.parse_args()
 	target_nodes = apply_filter(nodes, clusters, args.nodes, args.clusters, args.slice)
 	
 	# Run the selected module, and try to print something nice
-	retval = args._mod.run(target_nodes, args)
+	mod = args._mod
+	retval = mod.run(target_nodes, args)
 	if retval:
 		if hasattr(retval, 'draw'):
 			print retval.draw()
 		else:
 			print_table(retval)
+	
+	# Let the module decide the exit code - either by explicitly setting it, or
+	# by marking the result as partial, in which case a standard exit code is
+	# returned unless the user has requested partial results to be ignored
+	if mod.exitcode != 0:
+		sys.exit(mod.exitcode)
+	elif mod.partial and not args.ignore_partial:
+		sys.exit(99)

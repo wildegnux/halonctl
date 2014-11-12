@@ -58,6 +58,12 @@ class StatusModule(Module):
 		yield ('Cluster', 'Name', 'Address', 'Status')
 		
 		for node, result in nodes.service.login().iteritems():
+			# If some nodes cannot be reached, mark the results as partial
+			# This will cause halonctl to exit with status 99 at the end, unless
+			# the --ignore-partial flag is set.
+			if result[0] != 0:
+				self.partial = True
+			
 			if args.verbose:
 				status = str(result[0])
 			elif result[0] == 200:

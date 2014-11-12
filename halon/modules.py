@@ -1,6 +1,6 @@
 class Module(object):
-	command = "unknown"
-	description = "No description given"
+	exitcode = 0
+	partial = False
 	
 	def register_arguments(self, parser):
 		pass

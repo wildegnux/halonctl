@@ -4,8 +4,11 @@ from tornado import gen
 from tornado.httpclient import *
 from tornado.concurrent import *
 from tornado.ioloop import IOLoop
+from concurrent.futures import ThreadPoolExecutor
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
+
+thread_pool_executor = ThreadPoolExecutor(64)
 
 
 
@@ -165,24 +168,10 @@ class NodeListSoapProxy(object):
 		def _soap_proxy_executor(*args, **kwargs):
 			@gen.coroutine
 			def _inner():
-				http_client = AsyncHTTPClient()
-				contexts = { node: node.make_request(name, *args, **kwargs) for node in self.nodelist }
-				
-				results = []
-				for node, context in contexts.iteritems():
-					if not context:
-						results.append((node, (0, "Couldn't connect")))
-						continue
-					
-					request = node.make_tornado_request(context)
-					try:
-						result = yield http_client.fetch(request)
-						results.append((node, context.process_reply(result.body, result.code, result.reason)))
-					except HTTPError as e:
-						results.append((node, context.process_reply(e.response.body if getattr(e, 'response', None) else None, e.code, e.message)))
-					except socket.error as e:
-						results.append((node, (0, e.message)))
-								
+				results = yield {
+					node: thread_pool_executor.submit(getattr(node.soap(), name), *args, **kwargs)
+					for node in self.nodelist
+				}
 				raise gen.Return(results)
 			return IOLoop.instance().run_sync(_inner)
 		return _soap_proxy_executor

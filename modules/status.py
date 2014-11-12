@@ -57,9 +57,7 @@ class StatusModule(Module):
 		
 		yield ('Cluster', 'Name', 'Address', 'Status')
 		
-		# for node, result in nodes.service.login():
-		for node in nodes:
-			result = node.soap().getUptime()
+		for node, result in nodes.service.login():
 			if args.verbose:
 				status = str(result[0])
 			elif result[0] == 200:

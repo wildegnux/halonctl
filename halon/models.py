@@ -1,15 +1,17 @@
 import socket
 import urllib2
+from tornado import gen
 from tornado.httpclient import *
+from tornado.concurrent import *
+from tornado.ioloop import IOLoop
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 
 
 
 class NodeSoapProxy(object):
-	def __init__(self, node, async=False):
+	def __init__(self, node):
 		self.node = node
-		self.async = async
 	
 	def __getattr__(self, name):
 		def _soap_proxy_executor(*args, **kwargs):
@@ -18,8 +20,9 @@ class NodeSoapProxy(object):
 				return (0, "Couldn't connect")
 			
 			http_client = HTTPClient()
+			request = self.node.make_tornado_request(context)
 			try:
-				result = http_client.fetch(self.node.make_tornado_request(context))
+				result = http_client.fetch(request)
 				return context.process_reply(result.body, result.code, result.reason)
 			except HTTPError as e:
 				return context.process_reply(e.response.body if getattr(e, 'response', None) else None, e.code, e.message)
@@ -93,8 +96,8 @@ class Node(object):
 			body=context.envelope, headers=context.client.headers(),
 			auth_username=self.username, auth_password=self.password)
 	
-	def soap(self, async=False):
-		return NodeSoapProxy(self, async)
+	def soap(self):
+		return NodeSoapProxy(self)
 	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)
@@ -155,12 +158,37 @@ class NodeList(list):
 class NodeListSoapProxy(object):
 	'''Proxy for a NodeList that allows grouped SOAP calls.'''
 	
-	nodelist = None
-	
 	def __init__(self, nodelist):
 		self.nodelist = nodelist
 	
 	def __getattr__(self, name):
+		def _soap_proxy_executor(*args, **kwargs):
+			@gen.coroutine
+			def _inner():
+				http_client = AsyncHTTPClient()
+				contexts = { node: node.make_request(name, *args, **kwargs) for node in self.nodelist }
+				
+				results = []
+				for node, context in contexts.iteritems():
+					if not context:
+						results.append((node, (0, "Couldn't connect")))
+						continue
+					
+					request = node.make_tornado_request(context)
+					try:
+						result = yield http_client.fetch(request)
+						results.append((node, context.process_reply(result.body, result.code, result.reason)))
+					except HTTPError as e:
+						results.append((node, context.process_reply(e.response.body if getattr(e, 'response', None) else None, e.code, e.message)))
+					except socket.error as e:
+						results.append((node, (0, e.message)))
+				
+				print results
+				
+				raise gen.Return(results)
+			return IOLoop.instance().run_sync(_inner)
+		return _soap_proxy_executor
+		
 		# TODO: Figure out how to make this asynchronous; generators are an
 		# awful fit for this task, but they're better than lists in this case
 		def proxy(*args, **kwargs):

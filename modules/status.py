@@ -1,4 +1,5 @@
 from halon.modules import Module
+import arrow
 
 # This is intended as kind of a template module, and thus will be more
 # extensively documented than anything else. Reading this should give you a
@@ -55,14 +56,22 @@ class StatusModule(Module):
 		# args.verbose below.
 		# 
 		
-		yield ('Cluster', 'Name', 'Address', 'Status')
+		yield ('Cluster', 'Name', 'Address', 'Uptime', 'Status')
 		
-		for node, result in nodes.service.login().iteritems():
+		for node, result in nodes.service.getUptime().iteritems():
 			# If some nodes cannot be reached, mark the results as partial
 			# This will cause halonctl to exit with status 99 at the end, unless
 			# the --ignore-partial flag is set.
 			if result[0] != 0:
 				self.partial = True
+			
+			# Use the excellent Arrow library to format the uptime
+			uptime = '-'
+			if result[0] == 200:
+				if not args.verbose:
+					uptime = arrow.utcnow().replace(seconds=-result[1]).humanize().replace(' ago', '')
+				else:
+					uptime = results[1]
 			
 			if args.verbose:
 				status = str(result[0])
@@ -75,6 +84,6 @@ class StatusModule(Module):
 			else:
 				status = "Error " + str(result[0])
 			
-			yield (node.cluster.name, node.name, node.host, status)
+			yield (node.cluster.name, node.name, node.host, uptime, status)
 
 module = StatusModule()

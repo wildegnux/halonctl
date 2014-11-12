@@ -165,11 +165,15 @@ class NodeList(list):
 		and optionally password on one of the nodes, and propagate that through
 		the list.'''
 		
-		# Propagate the credentials to all included nodes
+		# If we don't have any credentials, and a node has, copy those
 		for node in self:
 			if not self.username and node.username:
 				self.username = node.username
 				self.password = node.password
+				break
+		
+		# Properly assign every included node to this cluster
+		for node in self:
 			node.cluster = self
 	
 	def __unicode__(self):

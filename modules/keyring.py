@@ -1,6 +1,7 @@
 import getpass
 import keyring
 from halon.modules import Module
+from halon.util import ask_confirm
 
 class KeyringStatusModule(Module):
     '''Checks the authorization status of all nodes'''
@@ -66,8 +67,17 @@ class KeyringLoginModule(Module):
 class KeyringLogoutModule(Module):
     '''Deletes stored credentials for the node(s)'''
     
+    def register_arguments(self, parser):
+        parser.add_argument('-y', '--yes', help="don't ask for each node",
+            action='store_true')
+    
     def run(self, nodes, args):
-        pass
+        for node in nodes:
+            if not keyring.get_password(node.host, node.username):
+                continue
+            
+            if args.yes or ask_confirm("Log out from %s / %s (%s)?" % (node.cluster.name, node.name, node.host)):
+                keyring.delete_password(node.host, node.username)
 
 class KeyringModule(Module):
     '''Manages the keyring (credential store)'''

@@ -27,13 +27,11 @@ class NodeSoapProxy(object):
 					auth_username=self.node.username, auth_password=self.node.password)
 				return context.process_reply(result.body, result.code, result.reason)
 			except HTTPError as e:
-				print (0, e.message)
-			except socket.error as e:
+				return context.process_reply(e.response.body if getattr(e, 'response', None) else None, e.code, e.message)
+			except Exception as e:
 				return (0, e.message)
-				# return context.process_reply(e.response.body if e.response else None, result.code, result.reason)
 			http_client.close()
 		
-		_soap_proxy_executor.__name__ = name
 		return _soap_proxy_executor
 
 class Node(object):

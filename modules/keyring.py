@@ -7,7 +7,7 @@ class KeyringStatusModule(Module):
         yield ('Cluster', 'Name', 'Address', 'Authorized?')
         
         for node, result in nodes.service.login().iteritems():
-            if result[0] != 0:
+            if result[0] != 200:
                 self.partial = True
             
             if result[0] == 200:

@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from base64 import b64encode, b64decode
 from natsort import natsorted
 from tornado.ioloop import IOLoop
 from tornado.concurrent import *
@@ -62,3 +63,42 @@ class NodeListSoapProxy(object):
                 raise gen.Return(OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name])))
             return IOLoop.instance().run_sync(_inner)
         return _soap_proxy_executor
+
+class CommandProxy(object):
+    '''Proxy for a command executing on a remote server.
+    
+    This abstracts away all the messy commandRun()/commandPoll() logic, letting
+    you treat a remote process as an interactive iterator.'''
+    
+    def __init__(self, node, cid):
+        self.node = node
+        self.cid = cid
+    
+    def __iter__(self):
+        return self
+    
+    # Python 3 compatibility
+    def __next__(self):
+        return self.next()
+    
+    def next(self):
+        while True:
+            code, data = self.node.service.commandPoll(commandid=self.cid)
+            
+            if code == 200:
+                # If the process is still running, but hasn't given any output
+                # since we asked last time, try again until something happens
+                if not hasattr(data, 'item'):
+                    continue
+                
+                return ''.join([b64decode(item) for item in data.item])
+            else:
+                raise StopIteration()
+    
+    def all(self):
+        '''Waits for the command to exit, and returns all of its output.'''
+        
+        return ''.join(self)
+    
+    def __str__(self):
+        return self.all()

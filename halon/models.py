@@ -1,6 +1,7 @@
 import socket
 import urllib2
 import keyring
+from base64 import b64encode, b64decode
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 from .proxies import *
@@ -122,6 +123,22 @@ class Node(object):
 			body=context.envelope, headers=context.client.headers(),
 			auth_username=self.username, auth_password=self.password)
 	
+	def command(self, command, *args):
+		'''Convenience function that executes a command on the node, and returns
+		a CommandProxy that can be used to iterate the command's output, or interact
+		with the running process.'''
+		
+		# Allow calls as command("cmd", "arg1", "arg2") or command("cmd arg1 arg2")
+		parts = [command] + list(args)
+		if not args:
+			parts = command.split(' ')
+		
+		code, cid = self.service.commandRun(argv={'item': [b64encode(part) for part in parts]})
+		if code == 200:
+			return (200, CommandProxy(self, cid))
+		else:
+			return (code, None)
+	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)
 	
@@ -178,6 +195,20 @@ class NodeList(list):
 		# Properly assign every included node to this cluster
 		for node in self:
 			node.cluster = self
+	
+	def command(self, command, *args):
+		'''Executes a command across all contained nodes.'''
+		
+		# Basically copypaste from NodeListSoapProxy; thread_pool_executor is
+		# a ThreadPoolExecutor imported from and thus shared with proxies.py
+		@gen.coroutine
+		def _inner():
+			results = yield {
+				node: thread_pool_executor.submit(node.command, command, *args)
+				for node in self
+			}
+			raise gen.Return(OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name])))
+		return IOLoop.instance().run_sync(_inner)
 	
 	def __unicode__(self):
 		return u"%s -> [%s]" % (self.name, ', '.join([node.name for node in self]))

@@ -1,3 +1,5 @@
+import getpass
+import keyring
 from halon.modules import Module
 
 class KeyringStatusModule(Module):
@@ -23,7 +25,39 @@ class KeyringLoginModule(Module):
     '''Attempts to log in to the node(s)'''
     
     def run(self, nodes, args):
-        pass
+        for node in nodes:
+            prefix = "%s / %s (%s)" % (node.cluster.name, node.name, node.host)
+            if not node.username:
+                print prefix + " - No username configured for node or cluster"
+                continue
+            
+            result = node.service.login()[0]
+            if result == 0:
+                print prefix + " - Node is unreachable :("
+            elif result == 200:
+                print prefix + " - Already authenticated"
+            elif result == 401:
+                print prefix + " - Enter password (blank to skip):"
+                while True:
+                    password = getpass.getpass("%s@%s> " % (node.username, node.host))
+                    if password == "":
+                        break
+                    
+                    node.password = password
+                    result = node.service.login()[0]
+                    if result == 200:
+                        keyring.set_password(node.host, node.username, password)
+                        break
+                    elif result == 401:
+                        print "Invalid login, try again"
+                    elif result == 0:
+                        print "The node has gone away"
+                        break
+                    else:
+                        print "An error occurred, code %s" % result
+                        break
+            else:
+                print "An error occurred, code %s" % result
 
 class KeyringLogoutModule(Module):
     '''Deletes stored credentials for the node(s)'''
@@ -36,7 +70,8 @@ class KeyringModule(Module):
     
     submodules = {
         'status': KeyringStatusModule(),
-        'login': KeyringLoginModule()
+        'login': KeyringLoginModule(),
+        'logout': KeyringLogoutModule()
     }
 
 module = KeyringModule()

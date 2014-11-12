@@ -1,5 +1,6 @@
 import socket
 import urllib2
+import keyring
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 from .proxies import *
@@ -54,6 +55,10 @@ class Node(object):
 				self.username = parts[0]
 		else:
 			self.host = parts[0]
+		
+		# Attempt to load the keychain's password, if we don't have one
+		if self.username and not self.password:
+			self.password = keyring.get_password(self.host, self.username)
 	
 	def client(self):
 		'''Returns a SOAP client for the node.

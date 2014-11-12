@@ -13,24 +13,20 @@ class NodeSoapProxy(object):
 	
 	def __getattr__(self, name):
 		def _soap_proxy_executor(*args, **kwargs):
-			if not self.node._client:
-				try:
-					self.node._connect()
-				except urllib2.URLError as e:
-					return (0, e.reason)
+			context = self.node.make_request(name, *args, **kwargs)
+			if not context:
+				return (0, "Couldn't connect")
 			
-			context = getattr(self.node.client.service, name)(*args, **kwargs)
 			http_client = HTTPClient()
 			try:
-				result = http_client.fetch(context.client.location(), method="POST",
-					body=context.envelope, headers=context.client.headers(),
-					auth_username=self.node.username, auth_password=self.node.password)
+				result = http_client.fetch(self.node.make_tornado_request(context))
 				return context.process_reply(result.body, result.code, result.reason)
 			except HTTPError as e:
 				return context.process_reply(e.response.body if getattr(e, 'response', None) else None, e.code, e.message)
-			except Exception as e:
+			except socket.error as e:
 				return (0, e.message)
-			http_client.close()
+			finally:
+				http_client.close()
 		
 		return _soap_proxy_executor
 
@@ -43,8 +39,6 @@ class Node(object):
 	host = None
 	username = None
 	password = None
-	
-	_client = None
 	
 	def __init__(self, data=None, name=None):
 		self.name = name
@@ -77,11 +71,27 @@ class Node(object):
 		else:
 			self.host = parts[0]
 	
-	def _connect(self):
-		url = self.scheme + '://' + self.host + '/remote/'
-		transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
-		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False, nosend=True)
-		self.client = client
+	def client(self):
+		if not hasattr(self, '_client'):
+			url = self.scheme + '://' + self.host + '/remote/'
+			transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
+			
+			try:
+				self._client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False, nosend=True)
+			except urllib2.URLError as e:
+				self._client = None
+		
+		return self._client
+	
+	def make_request(self, name, *args, **kwargs):
+		client = self.client()
+		if client:
+			return getattr(client.service, name)(*args, **kwargs)
+	
+	def make_tornado_request(self, context):
+		return HTTPRequest(context.client.location(), method="POST",
+			body=context.envelope, headers=context.client.headers(),
+			auth_username=self.username, auth_password=self.password)
 	
 	def soap(self, async=False):
 		return NodeSoapProxy(self, async)

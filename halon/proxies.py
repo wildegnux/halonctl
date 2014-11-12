@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from tornado.ioloop import IOLoop
 from tornado.concurrent import *
 from concurrent.futures import ThreadPoolExecutor
@@ -57,6 +58,6 @@ class NodeListSoapProxy(object):
                     node: thread_pool_executor.submit(getattr(node.service, name), *args, **kwargs)
                     for node in self.nodelist
                 }
-                raise gen.Return(results)
+                raise gen.Return(OrderedDict(sorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name])))
             return IOLoop.instance().run_sync(_inner)
         return _soap_proxy_executor

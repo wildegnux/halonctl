@@ -17,6 +17,7 @@ class Node(object):
 	
 	_username = None
 	_password = None
+	_keyring_password = None
 	
 	service = None
 	
@@ -32,7 +33,7 @@ class Node(object):
 	
 	@property
 	def password(self):
-		if not hasattr(self, '_keyring_password'):
+		if not self._keyring_password:
 			self._keyring_password = keyring.get_password(self.host, self.username) \
 				if self.host and self.username else None
 		return self._password or self._keyring_password or self.cluster.password

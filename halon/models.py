@@ -14,10 +14,34 @@ class Node(object):
 	cluster = None
 	scheme = 'http'
 	host = None
-	username = None
-	password = None
+	
+	_username = None
+	_password = None
 	
 	service = None
+	
+	
+	
+	@property
+	def username(self):
+		return self._username or self.cluster.username
+	
+	@username.setter
+	def username(self, val):
+		self._username = val
+	
+	@property
+	def password(self):
+		if not hasattr(self, '_keyring_password'):
+			self._keyring_password = keyring.get_password(self.host, self.username) \
+				if self.host and self.username else None
+		return self._password or self._keyring_password or self.cluster.password
+	
+	@password.setter
+	def password(self, val):
+		self._password = val
+	
+	
 	
 	def __init__(self, data=None, name=None):
 		'''Initializes a Node with the given configuration data and name.'''
@@ -55,10 +79,6 @@ class Node(object):
 				self.username = parts[0]
 		else:
 			self.host = parts[0]
-		
-		# Attempt to load the keychain's password, if we don't have one
-		if self.username and not self.password:
-			self.password = keyring.get_password(self.host, self.username)
 	
 	def client(self):
 		'''Returns a SOAP client for the node.
@@ -144,21 +164,11 @@ class NodeList(list):
 		and optionally password on one of the nodes, and propagate that through
 		the list.'''
 		
-		# If we don't have an username given for the cluster, see if one of the
-		# nodes has one
-		if not self.username:
-			for node in self:
-				if node.username:
-					self.username = node.username
-					self.password = node.password
-					break
-		
 		# Propagate the credentials to all included nodes
 		for node in self:
-			if not node.username:
-				node.username = self.username
-				if not node.password:
-					node.password = self.password
+			if not self.username and node.username:
+				self.username = node.username
+				self.password = node.password
 			node.cluster = self
 	
 	def __unicode__(self):

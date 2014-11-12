@@ -14,6 +14,10 @@ class QueueModule(Module):
 		for node, result in nodes.service.commandRun(argv={
 				'item': [b64encode(i) for i in ['statd', '-g', 'mail-queue-count']]
 				}).iteritems():
+			if result[0] != 200:
+				yield (node.name, '-')
+				continue
+			
 			output = ''
 			while True:
 				ret, data = node.service.commandPoll(commandid=result[1])

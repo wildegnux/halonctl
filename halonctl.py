@@ -6,6 +6,7 @@ import pkgutil
 import argparse
 import json
 import logging
+from natsort import natsorted
 from halon.models import *
 from halon.util import *
 
@@ -123,7 +124,7 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 	if len(nodes) > 0:
 		targets += [available_nodes[nid] for nid in nodes]
 	
-	return NodeList(targets)
+	return NodeList(natsorted(targets, key=lambda t: [t.cluster.name, t.name]))
 
 
 

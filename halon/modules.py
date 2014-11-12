@@ -11,6 +11,7 @@ class Module(object):
 			for name, mod in self.submodules.iteritems():
 				p = subparsers.add_parser(name, help=mod.__doc__)
 				p.set_defaults(**{type(self).__name__ + '_mod': mod})
+				mod.register_arguments(p)
 	
 	def run(self, nodes, args):
 		# The default implementation simply delegates to a subcommand

@@ -4,10 +4,10 @@ from halon.models import Node, NodeList
 class TestNodeList(unittest.TestCase):
 	def setUp(self):
 		self.cluster = NodeList([
-			Node("http://10.2.0.30", 'n1'),
-			Node("http://10.2.0.31", 'n2'),
-			Node("http://10.2.0.32", 'n3'),
-			Node("http://10.2.0.33", 'n4')
+			Node("http://0.0.0.1", 'n1'),
+			Node("http://0.0.0.2", 'n2'),
+			Node("http://0.0.0.3", 'n3'),
+			Node("http://0.0.0.4", 'n4')
 		])
 	
 	def test_load_data_with_username(self):

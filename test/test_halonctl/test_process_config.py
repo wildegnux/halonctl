@@ -20,22 +20,22 @@ class TestProcessConfig(unittest.TestCase):
 	def test_single_node(self):
 		nodes, clusters = process_config({
 			'nodes': {
-				'n1': 'http://admin:password@10.2.0.30'
+				'n1': 'http://admin:password@0.0.0.1'
 			}
 		})
 		
 		self.assertEqual(len(nodes), 1)
 		self.assertEqual(len(clusters), 0)
 		
-		self.assertEqual(nodes['n1'].host, '10.2.0.30')
+		self.assertEqual(nodes['n1'].host, '0.0.0.1')
 		self.assertEqual(nodes['n1'].username, 'admin')
 		self.assertEqual(nodes['n1'].password, 'password')
 	
 	def test_cluster(self):
 		nodes, clusters = process_config({
 			'nodes': {
-				'n1': "http://admin@10.2.0.30",
-				'n2': "http://10.2.0.31"
+				'n1': "http://admin@0.0.0.1",
+				'n2': "http://0.0.0.2"
 			},
 			'clusters': {
 				'mycluster': [ 'n1', 'n2' ]
@@ -53,8 +53,8 @@ class TestProcessConfig(unittest.TestCase):
 	def test_cluster_username(self):
 		nodes, clusters = process_config({
 			'nodes': {
-				'n1': "http://10.2.0.30",
-				'n2': "http://10.2.0.31"
+				'n1': "http://0.0.0.1",
+				'n2': "http://0.0.0.2"
 			},
 			'clusters': {
 				'mycluster': {
@@ -72,8 +72,8 @@ class TestProcessConfig(unittest.TestCase):
 	def test_cluster_password(self):
 		nodes, clusters = process_config({
 			'nodes': {
-				'n1': "http://10.2.0.30",
-				'n2': "http://10.2.0.31"
+				'n1': "http://0.0.0.1",
+				'n2': "http://0.0.0.2"
 			},
 			'clusters': {
 				'mycluster': {

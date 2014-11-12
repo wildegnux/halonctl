@@ -1,8 +1,21 @@
 import urllib2
+from tornado.httpclient import HTTPClient, AsyncHTTPClient
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 
 
+
+class NodeSoapProxy(object):
+	def __init__(self, node, async=False):
+		self.node = node
+		self.async = async
+	
+	def __getattr__(self, name):
+		def _soap_proxy_executor(*args, **kwargs):
+			return getattr(self.node.client.service, name)(*args, **kwargs)
+		
+		_soap_proxy_executor.__name__ = name
+		return _soap_proxy_executor
 
 class Node(object):
 	'''A single Halon node.'''
@@ -14,8 +27,7 @@ class Node(object):
 	username = None
 	password = None
 	
-	client = None
-	client_nosend = True
+	_client = None
 	
 	def __init__(self, data=None, name=None):
 		self.name = name
@@ -48,14 +60,17 @@ class Node(object):
 		else:
 			self.host = parts[0]
 	
-	def connect(self, nosend=True):
+	def _connect(self):
 		url = self.scheme + '://' + self.host + '/remote/'
 		transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
-		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False, nosend=nosend)
-		if not nosend:
-			self.client = client
-		else:
-			self.client_nosend = client
+		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False)
+		self.client = client
+	
+	def soap(self, async=False):
+		if not self._client:
+			self._connect()
+		
+		return NodeSoapProxy(self, async)
 	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)

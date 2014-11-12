@@ -186,17 +186,3 @@ class NodeListSoapProxy(object):
 				raise gen.Return(results)
 			return IOLoop.instance().run_sync(_inner)
 		return _soap_proxy_executor
-		
-		# TODO: Figure out how to make this asynchronous; generators are an
-		# awful fit for this task, but they're better than lists in this case
-		def proxy(*args, **kwargs):
-			for node in self.nodelist:
-				if not node.client:
-					try:
-						node.connect(True)
-					except urllib2.URLError, e:
-						yield (node, (0, e.reason))
-						continue
-				yield (node, getattr(node.client.service, name)(*args, **kwargs))
-		
-		return proxy

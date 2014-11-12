@@ -1,5 +1,6 @@
+import socket
 import urllib2
-from tornado.httpclient import HTTPClient, AsyncHTTPClient
+from tornado.httpclient import *
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 
@@ -12,7 +13,25 @@ class NodeSoapProxy(object):
 	
 	def __getattr__(self, name):
 		def _soap_proxy_executor(*args, **kwargs):
-			return getattr(self.node.client.service, name)(*args, **kwargs)
+			if not self.node._client:
+				try:
+					self.node._connect()
+				except urllib2.URLError as e:
+					return (0, e.reason)
+			
+			context = getattr(self.node.client.service, name)(*args, **kwargs)
+			http_client = HTTPClient()
+			try:
+				result = http_client.fetch(context.client.location(), method="POST",
+					body=context.envelope, headers=context.client.headers(),
+					auth_username=self.node.username, auth_password=self.node.password)
+				return context.process_reply(result.body, result.code, result.reason)
+			except HTTPError as e:
+				print (0, e.message)
+			except socket.error as e:
+				return (0, e.message)
+				# return context.process_reply(e.response.body if e.response else None, result.code, result.reason)
+			http_client.close()
 		
 		_soap_proxy_executor.__name__ = name
 		return _soap_proxy_executor
@@ -63,13 +82,10 @@ class Node(object):
 	def _connect(self):
 		url = self.scheme + '://' + self.host + '/remote/'
 		transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
-		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False)
+		client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False, nosend=True)
 		self.client = client
 	
 	def soap(self, async=False):
-		if not self._client:
-			self._connect()
-		
 		return NodeSoapProxy(self, async)
 	
 	def __unicode__(self):

@@ -9,6 +9,11 @@ thread_pool_executor = ThreadPoolExecutor(64)
 
 
 class NodeSoapProxy(object):
+    '''SOAP call proxy.
+    
+    This allows you to make SOAP calls as easily as calling a normal Python
+    function.'''
+    
     def __init__(self, node):
         self.node = node
     
@@ -33,7 +38,13 @@ class NodeSoapProxy(object):
         return _soap_proxy_executor
 
 class NodeListSoapProxy(object):
-    '''Proxy for a NodeList that allows grouped SOAP calls.'''
+    '''Multi-node SOAP call proxy.
+    
+    Similar to NodeSoapProxy, this allows you to easily make SOAP calls, but
+    additionally, these calls are made asynchronously to any number of nodes.
+    
+    Compared to looping through a list of nodes, this effectively reduces call
+    time from O(n) to O(1).'''
 
     def __init__(self, nodelist):
         self.nodelist = nodelist

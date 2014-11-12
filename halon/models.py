@@ -19,6 +19,8 @@ class Node(object):
 	service = None
 	
 	def __init__(self, data=None, name=None):
+		'''Initializes a Node with the given configuration data and name.'''
+		
 		self.name = name
 		self.cluster = NodeList([self])
 		self.service = NodeSoapProxy(self)
@@ -26,6 +28,9 @@ class Node(object):
 			self.load_data(data)
 	
 	def load_data(self, s):
+		'''Updates the node's data from the given configuration string,
+		overwriting any existing data.'''
+		
 		remainder = s
 		
 		# Split out any scheme
@@ -51,6 +56,13 @@ class Node(object):
 			self.host = parts[0]
 	
 	def client(self):
+		'''Returns a SOAP client for the node.
+		
+		The first time this is called, it's a blocking operation, as the node's
+		WSDL will be downloaded on the current thread.
+		
+		If the node is unreachable, None is returned.'''
+		
 		if not hasattr(self, '_client'):
 			url = self.scheme + '://' + self.host + '/remote/'
 			transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
@@ -63,11 +75,22 @@ class Node(object):
 		return self._client
 	
 	def make_request(self, name, *args, **kwargs):
+		'''Convenience function that creates a SOAP request context from a
+		function name and a set of parameters.
+		
+		This will call client() internally, and thus it is blocking if client()
+		has not yet been called for the node.
+		
+		If the node is unreachable, None is returned.'''
+		
 		client = self.client()
 		if client:
 			return getattr(client.service, name)(*args, **kwargs)
 	
 	def make_tornado_request(self, context):
+		'''Convenience function that creates a Tornado HTTPRequest from a SOAP
+		request context.'''
+		
 		return HTTPRequest(context.client.location(), method="POST",
 			body=context.envelope, headers=context.client.headers(),
 			auth_username=self.username, auth_password=self.password)
@@ -96,15 +119,25 @@ class NodeList(list):
 	
 	def __init__(self, *args, **kwargs):
 		self.service = NodeListSoapProxy(self)
+		
 		super(NodeList, self).__init__(*args, **kwargs)
 	
 	def load_data(self, data):
+		'''Updates the nodelist's data from the given configuration dictionary,
+		overwriting any existing data.'''
+		
 		if 'username' in data:
 			self.username = data['username']
 		if 'password' in data:
 			self.password = data['password']
 	
 	def sync_credentials(self):
+		'''Synchronizes credentials through all contained nodes.
+		
+		If the list has its own set of username and password, it will be used
+		for all contained nodes. Otherwise, it will attempt to find a username
+		and optionally password on one of the nodes, and propagate that through
+		the list.'''
 		# If we don't have an username given for the cluster, see if one of the
 		# nodes has one
 		if not self.username:

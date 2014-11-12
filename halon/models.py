@@ -16,9 +16,12 @@ class Node(object):
 	username = None
 	password = None
 	
+	service = None
+	
 	def __init__(self, data=None, name=None):
 		self.name = name
 		self.cluster = NodeList([self])
+		self.service = NodeSoapProxy(self)
 		if data:
 			self.load_data(data)
 	
@@ -68,9 +71,6 @@ class Node(object):
 		return HTTPRequest(context.client.location(), method="POST",
 			body=context.envelope, headers=context.client.headers(),
 			auth_username=self.username, auth_password=self.password)
-	
-	def soap(self):
-		return NodeSoapProxy(self)
 	
 	def __unicode__(self):
 		return u"%s@%s" % (self.username, self.host)

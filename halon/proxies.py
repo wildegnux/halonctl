@@ -43,7 +43,7 @@ class NodeListSoapProxy(object):
             @gen.coroutine
             def _inner():
                 results = yield {
-                    node: thread_pool_executor.submit(getattr(node.soap(), name), *args, **kwargs)
+                    node: thread_pool_executor.submit(getattr(node.service, name), *args, **kwargs)
                     for node in self.nodelist
                 }
                 raise gen.Return(results)

@@ -19,9 +19,11 @@ class Node(object):
 	_password = None
 	_keyring_password = None
 	
-	service = None
 	
 	
+	@property
+	def service(self):
+		return NodeSoapProxy(self)
 	
 	@property
 	def username(self):
@@ -49,7 +51,6 @@ class Node(object):
 		
 		self.name = name
 		self.cluster = NodeList([self])
-		self.service = NodeSoapProxy(self)
 		if data:
 			self.load_data(data)
 	
@@ -141,12 +142,14 @@ class NodeList(list):
 	name = None
 	username = None
 	password = None
-	service = None
 	
-	def __init__(self, *args, **kwargs):
-		self.service = NodeListSoapProxy(self)
-		
-		super(NodeList, self).__init__(*args, **kwargs)
+	
+	
+	@property
+	def service(self):
+		return NodeListSoapProxy(self)
+	
+	
 	
 	def load_data(self, data):
 		'''Updates the nodelist's data from the given configuration dictionary,

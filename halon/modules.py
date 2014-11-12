@@ -10,9 +10,9 @@ class Module(object):
 			subparsers = parser.add_subparsers(metavar='subcommand')
 			for name, mod in self.submodules.iteritems():
 				p = subparsers.add_parser(name, help=mod.__doc__)
-				p.set_defaults(_mod=mod)
+				p.set_defaults(**{type(self).__name__ + '_mod': mod})
 	
 	def run(self, nodes, args):
 		# The default implementation simply delegates to a subcommand
 		if self.submodules:
-			return args._mod.run(nodes, args)
+			return getattr(args, type(self).__name__ + '_mod').run(nodes, args)

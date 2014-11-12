@@ -44,7 +44,10 @@ class KeyringLoginModule(Module):
                     if password == "":
                         break
                     
+                    # Try to use the same login for the entire cluster, but make
+                    # sure to at least use it for this node
                     node.password = password
+                    node.cluster.password = password
                     result = node.service.login()[0]
                     if result == 200:
                         keyring.set_password(node.host, node.username, password)

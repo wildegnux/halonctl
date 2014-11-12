@@ -13,10 +13,10 @@ class QueueModule(Module):
 		totalCount = 0
 		for node, result in nodes.service.commandRun(argv={
 				'item': [b64encode(i) for i in ['statd', '-g', 'mail-queue-count']]
-				}):
+				}).iteritems():
 			output = ''
 			while True:
-				ret, data = node.client.service.commandPoll(commandid=result[1])
+				ret, data = node.service.commandPoll(commandid=result[1])
 				if ret != 200:
 					break
 				if hasattr(data, 'item'):

@@ -62,7 +62,7 @@ class StatusModule(Module):
 			# If some nodes cannot be reached, mark the results as partial
 			# This will cause halonctl to exit with status 99 at the end, unless
 			# the --ignore-partial flag is set.
-			if result[0] != 0:
+			if result[0] != 200:
 				self.partial = True
 			
 			# Use the excellent Arrow library to format the uptime
@@ -71,7 +71,7 @@ class StatusModule(Module):
 				if not args.verbose:
 					uptime = arrow.utcnow().replace(seconds=-result[1]).humanize().replace(' ago', '')
 				else:
-					uptime = results[1]
+					uptime = result[1]
 			
 			if args.verbose:
 				status = str(result[0])

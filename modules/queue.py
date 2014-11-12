@@ -5,17 +5,20 @@ class QueueModule(Module):
 	'''Checks queue count'''
 
 	def register_arguments(self, parser):
-		parser.add_argument('-v', '--verbose', help="verbose output",
+		parser.add_argument('-q', '--quiet', help="no per node information",
 			action='store_true')
 
 	def run(self, nodes, args):
-		yield ('Node', 'Messages')
+		if not args.quiet:
+			yield ('Node', 'Messages')
 		totalCount = 0
 		for node, result in nodes.service.commandRun(argv={
 				'item': [b64encode(i) for i in ['statd', '-g', 'mail-queue-count']]
 				}).iteritems():
 			if result[0] != 200:
-				yield (node.name, '-')
+				if not args.quiet:
+					yield (node.name, '-')
+				self.partial = True
 				continue
 			
 			output = ''
@@ -27,7 +30,11 @@ class QueueModule(Module):
 					output += "".join([b64decode(i) for i in data.item])
 			count = long(output.strip().split('=')[1])
 			totalCount += count
-			yield (node.name, count)
-		yield ('Total', totalCount)
+			if not args.quiet:
+				yield (node.name, count)
+		if not args.quiet:
+			yield ('Total', totalCount)
+		else:
+			print totalCount
 
 module = QueueModule()

@@ -35,7 +35,8 @@ class KeyringLoginModule(Module):
             if result == 0:
                 print prefix + " - Node is unreachable :("
             elif result == 200:
-                print prefix + " - Already authenticated"
+                # Follow the good ol' rule of silence
+                pass
             elif result == 401:
                 print prefix + " - Enter password (blank to skip):"
                 while True:

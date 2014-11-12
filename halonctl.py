@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os, sys
+import inspect
 import pkgutil
 import argparse
 import json
@@ -152,9 +153,15 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	target_nodes = apply_filter(nodes, clusters, args.nodes, args.clusters, args.slice)
 	
-	# Run the selected module, and try to print something nice
+	# Run the selected module
 	mod = args._mod
 	retval = mod.run(target_nodes, args)
+	
+	# Normalize generator mods into lists
+	if inspect.isgenerator(retval):
+		retval = list(retval)
+	
+	# Print something, if there's anything to print
 	if retval:
 		if hasattr(retval, 'draw'):
 			print retval.draw()

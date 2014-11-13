@@ -121,7 +121,8 @@ class Node(object):
 		
 		return HTTPRequest(context.client.location(), method="POST",
 			body=context.envelope, headers=context.client.headers(),
-			auth_username=self.username, auth_password=self.password)
+			auth_username=self.username, auth_password=self.password,
+			connect_timeout=5, request_timeout=10)
 	
 	def command(self, command, *args):
 		'''Convenience function that executes a command on the node, and returns

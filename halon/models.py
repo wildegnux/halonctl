@@ -140,7 +140,10 @@ class Node(object):
 			return (code, None)
 	
 	def __unicode__(self):
-		return u"%s@%s" % (self.username, self.host)
+		s = u"%s (%s)" % (self.name, self.host)
+		if self.cluster.name:
+			s = u"%s/%s" % (self.cluster.name, s)
+		return s
 	
 	def __str__(self):
 		return unicode(self).encode('utf-8')

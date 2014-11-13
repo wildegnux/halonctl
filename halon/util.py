@@ -21,7 +21,7 @@ def ask_confirm(prompt, default=True):
 	suffixes = { True: '[Yn]', False: '[yN]' }
 	
 	while True:
-		answer = raw_input("%s %s:" % (prompt, suffixes[default])).lower()
+		answer = raw_input("%s %s: " % (prompt, suffixes[default])).lower()
 		if answer in answers:
 			return answers[answer]
 		else:

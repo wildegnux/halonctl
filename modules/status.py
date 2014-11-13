@@ -31,8 +31,8 @@ class StatusModule(Module):
 		# https://docs.python.org/2/library/argparse.html#the-add-argument-method
 		# 
 		
-		parser.add_argument('-v', '--verbose', help="verbose output",
-			action='store_true')
+		parser.add_argument('-v', '--verbose', action='store_true',
+			help="verbose output")
 	
 	def run(self, nodes, args):
 		# 

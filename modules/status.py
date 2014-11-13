@@ -81,6 +81,8 @@ class StatusModule(Module):
 				status = "Offline"
 			elif result[0] == 401:
 				status = "Unauthorized"
+			elif result[0] == 599:
+				status = "Timeout"
 			else:
 				status = "Error " + str(result[0])
 			

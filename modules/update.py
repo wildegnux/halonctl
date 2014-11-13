@@ -1,0 +1,74 @@
+from halon.modules import Module
+from halon.util import ask_confirm
+
+class UpdateStatusModule(Module):
+	'''Checks update status'''
+	
+	def run(self, nodes, args):
+		yield ('Cluster', 'Name', 'Address', 'Version', 'Update Status')
+		
+		versions = nodes.service.getVersion()
+		
+		for node, result in nodes.service.updateDownloadStatus().iteritems():
+			if result[0] != 200:
+				self.partial = True
+			
+			status = "Unknown"
+			if result[0] == 500:
+				status = "No pending update"
+			elif result[0] == 200:
+				status_code = int(result[1])
+				if status_code <= 100:
+					status = "Downloading: %d%%" % status_code
+				elif status_code == 101:
+					status = "Checksumming..."
+				elif status_code == 102:
+					status = "Ready to install!"
+				elif status_code == 103:
+					status = "Installing"
+			
+			yield (node.cluster.name, node.name, node.host, versions[node][1], status)
+
+class UpdateDownloadModule(Module):
+	'''Downloads an available update'''
+	
+	def run(self, nodes, args):
+		for node, result in nodes.service.updateDownloadStart().iteritems():
+			if result[0] != 200:
+				self.partial = True
+				print "Failure on %s!" % (node)
+
+class UpdateInstallModule(Module):
+	'''Installs a downloaded update'''
+	
+	def register_arguments(self, parser):
+		parser.add_argument('-y', '--yes', help="don't ask for each node",
+			action='store_true')
+	
+	def run(self, nodes, args):
+		for node in nodes:
+			if args.yes or ask_confirm("Install pending update and reboot %s?" % node):
+				code, _ = node.service.updateInstall()
+				if code != 200:
+					print "Failure on %s!" % node
+
+class UpdateCancelModule(Module):
+	'''Cancels a pending update'''
+	
+	def run(self, nodes, args):
+		for node, result in nodes.service.updateDownloadCancel().iteritems():
+			if result[0] != 200:
+				self.partial = True
+				print "Failure on %s!" % (node)
+
+class UpdateModule(Module):
+	'''Manages node updates'''
+	
+	submodules = {
+		'status': UpdateStatusModule(),
+		'download': UpdateDownloadModule(),
+		'install': UpdateInstallModule(),
+		'cancel': UpdateCancelModule()
+	}
+
+module = UpdateModule()

@@ -27,6 +27,19 @@ clusters = {}
 
 
 
+# Add parser arguments
+parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
+	default=[], help="target nodes")
+parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
+	default=[], help="target clusters")
+parser.add_argument('-s', '--slice', dest='slice',
+	default='', help="slicing, as a Python slice expression")
+
+parser.add_argument('-i', '--ignore-partial', action='store_true',
+	help="exit normally even for partial results")
+
+
+
 def load_modules():
 	'''Load all modules from the 'modules' directory.'''
 	
@@ -129,29 +142,32 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 
 
 if __name__ == '__main__':
+	# Configure logging
 	logging.basicConfig(level=logging.ERROR)
 	logging.getLogger('suds.client').setLevel(logging.CRITICAL)
 	
-	# Load all the things!
+	# Load modules and parse
 	load_modules()
+	args = parser.parse_args()
+	
+	# Load configuration
 	config = load_config()
 	nodes, clusters = process_config(config)
 	
-	# Add parser arguments; done here so that we can validate nodes/clusters
-	parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
-		choices=[str(s) for s in nodes.iterkeys()], default=[],
-		help="target nodes")
-	parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
-		choices=[str(s) for s in clusters.iterkeys()], default=[],
-		help="target clusters")
-	parser.add_argument('-s', '--slice', dest='slice', default='',
-		help="slicing, as a Python slice expression")
+	# Validate cluster and node choices
+	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
+	if invalid_clusters:
+		print "Unknown clusters: %s" % ', '.join(invalid_clusters)
+		print "Available: %s" % ', '.join(clusters.iterkeys())
+		sys.exit(1)
 	
-	parser.add_argument('-i', '--ignore-partial', action='store_true',
-		help="don't exit with code 99 if some nodes' results are unavailable")
+	invalid_nodes = [nid for nid in args.nodes if not nid in nodes]
+	if invalid_nodes:
+		print "Unknown nodes: %s" % ', '.join(invalid_nodes)
+		print "Available: %s" % ', '.join(nodes.iterkeys())
+		sys.exit(1)
 	
-	# Parse and filter
-	args = parser.parse_args()
+	# Filter nodes to choices
 	target_nodes = apply_filter(nodes, clusters, args.nodes, args.clusters, args.slice)
 	
 	# Run the selected module

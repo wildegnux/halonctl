@@ -1,5 +1,6 @@
 import signal
 import inspect
+import socket
 from collections import OrderedDict
 from base64 import b64encode, b64decode
 from natsort import natsorted

@@ -30,7 +30,10 @@ class NodeSoapProxy(object):
                 return (0, "Couldn't connect")
             
             http_client = HTTPClient()
-            request = self.node.make_tornado_request(context)
+            request = HTTPRequest(context.client.location(), method="POST",
+                body=context.envelope, headers=context.client.headers(),
+                auth_username=self.node.username, auth_password=self.node.password,
+                connect_timeout=5, request_timeout=10)
             try:
                 result = http_client.fetch(request)
                 return context.process_reply(result.body, result.code, result.reason)

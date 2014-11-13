@@ -115,15 +115,6 @@ class Node(object):
 		if client:
 			return getattr(client.service, name)(*args, **kwargs)
 	
-	def make_tornado_request(self, context):
-		'''Convenience function that creates a Tornado HTTPRequest from a SOAP
-		request context.'''
-		
-		return HTTPRequest(context.client.location(), method="POST",
-			body=context.envelope, headers=context.client.headers(),
-			auth_username=self.username, auth_password=self.password,
-			connect_timeout=5, request_timeout=10)
-	
 	def command(self, command, *args):
 		'''Convenience function that executes a command on the node, and returns
 		a CommandProxy that can be used to iterate the command's output, or interact

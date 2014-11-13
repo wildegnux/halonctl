@@ -28,6 +28,9 @@ clusters = {}
 
 
 # Add parser arguments
+parser.add_argument('-C', '--config', type=argparse.FileType('rU'),
+	help="use specified configuration file")
+
 parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
 	default=[], help="target nodes")
 parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
@@ -63,8 +66,8 @@ def register_module(name, mod):
 	mod.register_arguments(p)
 	modules[name] = mod
 
-def load_config():
-	'''Loads user configuration'''
+def open_config():
+	'''Opens a configuration file from the first found default location.'''
 	
 	config_paths = [
 		os.path.join(BASE, 'halonctl.json'),
@@ -88,14 +91,21 @@ def load_config():
 		for p in config_paths:
 			print "  - %s" % p
 		print ""
+		print "Or use the -C/--config flag to specify a path."
 		print "A sample config can be found at:"
 		print ""
 		print "  - %s" % os.path.join(BASE, 'halonctl.sample.json')
 		print ""
 		sys.exit(1)
-		
-	with open(config_path) as f:
-		return json.load(f, encoding='utf-8')
+	
+	return open(config_path, 'rU')
+
+def load_config(f):
+	'''Loads configuration data from a given file.'''
+	
+	conf = json.load(f, encoding='utf-8')
+	f.close()
+	return conf
 
 def process_config(config):
 	'''Processes a configuration dictionary into usable components.'''
@@ -151,7 +161,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	
 	# Load configuration
-	config = load_config()
+	config = load_config(args.config or open_config())
 	nodes, clusters = process_config(config)
 	
 	# Validate cluster and node choices

@@ -1,3 +1,5 @@
+import signal
+import inspect
 from collections import OrderedDict
 from base64 import b64encode, b64decode
 from natsort import natsorted
@@ -96,9 +98,31 @@ class CommandProxy(object):
                 raise StopIteration()
     
     def all(self):
-        '''Waits for the command to exit, and returns all of its output.'''
+        '''Waits for the process to exit, and returns all of its output.'''
         
         return ''.join(self)
+    
+    def write(self, data):
+        '''Writes some data to the remote process' stdin.'''
+        
+        return self.node.service.commandPush(commandid=self.cid, data=b64encode(data))
+    
+    def signal(self, sigid):
+        '''Sends a signal to the remote process.'''
+        
+        try:
+            # This will throw a ValueError if the string is not numeric
+            sig = int(sigid)
+        except ValueError:
+            # If it's not, try to get the signal by name from the signal module
+            sig = int(getattr(signal, sigid.upper()))
+        
+        return self.node.service.commandSignal(commandid=self.cid, signal=sig)
+    
+    def stop(self):
+        '''Terminates the remote process.'''
+        
+        return self.node.service.commandStop(commandid=self.cid)
     
     def __str__(self):
         return self.all()

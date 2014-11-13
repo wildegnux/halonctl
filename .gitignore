@@ -5,6 +5,9 @@
 /local
 /man
 
+# Built Sphinx documentation
+/build
+
 # Junk
 .Python
 .DS_Store

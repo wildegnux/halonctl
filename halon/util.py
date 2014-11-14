@@ -1,4 +1,9 @@
+import re
+import arrow
+from dateutil import tz
 from texttable import Texttable
+
+filter_timestamp_re = re.compile(r'\{(.*)\}')
 
 def make_table(rows):
 	table = Texttable()
@@ -27,3 +32,14 @@ def ask_confirm(prompt, default=True):
 		else:
 			print "Enter either y/yes or n/no, or nothing for default (%s)" % \
 				('yes' if default else 'no')
+
+def hql_from_filters(filters, timezone):
+	def get_date(s):
+		return arrow.get(arrow.get(s).naive, tz.tzoffset(None, timezone*60*60))
+	
+	conditions = []
+	for s in filters:
+		s = filter_timestamp_re.sub(lambda m: str(get_date(m.groups(0)[0]).timestamp), s)
+		conditions.append(s)
+	
+	return ' '.join(conditions)

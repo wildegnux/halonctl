@@ -17,29 +17,14 @@ BASE = os.path.abspath(os.path.dirname(__file__))
 parser = argparse.ArgumentParser(description="Easily manage Halon nodes and clusters.")
 subparsers = parser.add_subparsers(title='subcommands', metavar='cmd')
 
-# A dictionary to hold all available modules
+# All available modules and output formatters
 modules = {}
+formatters = {}
 
 # Loaded configuration, configured nodes and clusters
 config = {}
 nodes = {}
 clusters = {}
-
-
-
-# Add parser arguments
-parser.add_argument('-C', '--config', type=argparse.FileType('rU'),
-	help="use specified configuration file")
-
-parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
-	default=[], help="target nodes")
-parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
-	default=[], help="target clusters")
-parser.add_argument('-s', '--slice', dest='slice',
-	default='', help="slicing, as a Python slice expression")
-
-parser.add_argument('-i', '--ignore-partial', action='store_true',
-	help="exit normally even for partial results")
 
 
 
@@ -57,6 +42,17 @@ def load_modules():
 			register_module(name, mod.module)
 		else:
 			print "Ignoring invalid module (missing 'module' variable): %s" % name
+
+def load_formatters():
+	'''Load all formatters from the 'formatters' directory.'''
+	
+	formatters_path = os.path.join(BASE, 'formatters')
+	for loader, name, ispkg in pkgutil.iter_modules(path=[formatters_path]):
+		fmt = loader.find_module(name).load_module(name)
+		if hasattr(fmt, 'format'):
+			formatters[name] = fmt.format
+		else:
+			print "Ignoring invalid formatter (missing 'format' member): %s" % name
 
 def register_module(name, mod):
 	'''Registers a loaded module instance'''
@@ -156,8 +152,27 @@ if __name__ == '__main__':
 	logging.basicConfig(level=logging.ERROR)
 	logging.getLogger('suds.client').setLevel(logging.CRITICAL)
 	
-	# Load modules and parse
+	# Load modules and formatters
 	load_modules()
+	load_formatters()
+	
+	# Add parser arguments
+	parser.add_argument('-C', '--config', type=argparse.FileType('rU'),
+		help="use specified configuration file")
+
+	parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
+		default=[], help="target nodes")
+	parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
+		default=[], help="target clusters")
+	parser.add_argument('-s', '--slice', dest='slice',
+		default='', help="slicing, as a Python slice expression")
+
+	parser.add_argument('-i', '--ignore-partial', action='store_true',
+		help="exit normally even for partial results")
+	parser.add_argument('-f', '--format', choices=formatters.keys(), default='table',
+		help="use the specified output format (default: table)")
+	
+	# Parse!
 	args = parser.parse_args()
 	
 	# Load configuration
@@ -193,7 +208,7 @@ if __name__ == '__main__':
 		if hasattr(retval, 'draw'):
 			print retval.draw()
 		else:
-			print_table(retval)
+			print formatters[args.format](retval)
 	
 	# Let the module decide the exit code - either by explicitly setting it, or
 	# by marking the result as partial, in which case a standard exit code is

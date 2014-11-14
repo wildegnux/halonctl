@@ -13,7 +13,7 @@ class UpdateStatusModule(Module):
 			if result[0] != 200:
 				self.partial = True
 			
-			status = "Unknown"
+			status = None
 			if result[0] == 500:
 				status = "No pending update"
 			elif result[0] == 200:

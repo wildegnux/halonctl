@@ -33,3 +33,18 @@ def hql_from_filters(filters, timezone):
 		conditions.append(s)
 	
 	return ' '.join(conditions)
+
+def textualize_item(item):
+	if item is None:
+		return '-'
+	elif item is True:
+		return 'Yes'
+	elif item is False:
+		return 'No'
+	return item
+
+def textualize_row(row):
+	return [textualize_item(item) for item in row]
+
+def textualize_rows(rows):
+	return [textualize_row(row) for row in rows]

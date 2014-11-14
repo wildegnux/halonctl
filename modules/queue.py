@@ -16,7 +16,7 @@ class QueueModule(Module):
 		for node, result in nodes.command('statd -g mail-queue-count').iteritems():
 			if result[0] != 200:
 				if not args.quiet:
-					yield (node.name, '-')
+					yield (node.name, None)
 				self.partial = True
 				continue
 			

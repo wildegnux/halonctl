@@ -13,12 +13,11 @@ class KeyringStatusModule(Module):
 			if result[0] != 200:
 				self.partial = True
 			
+			status = None
 			if result[0] == 200:
-				status = "Yes"
+				status = True
 			elif result[0] == 401:
-				status = "No"
-			else:
-				status = "-"
+				status = True
 			
 			yield (node.cluster.name, node.name, node.host, status)
 

@@ -1,6 +1,6 @@
 from texttable import Texttable
 
-def format(data):
+def format(rows):
 	table = Texttable()
 	table.set_deco(Texttable.HEADER)
 	table.add_rows(data)

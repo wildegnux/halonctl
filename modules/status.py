@@ -66,7 +66,7 @@ class StatusModule(Module):
 				self.partial = True
 			
 			# Use the excellent Arrow library to format the uptime
-			uptime = '-'
+			uptime = None
 			if result[0] == 200:
 				if not args.verbose:
 					uptime = arrow.utcnow().replace(seconds=-result[1]).humanize().replace(' ago', '')
@@ -74,7 +74,7 @@ class StatusModule(Module):
 					uptime = result[1]
 			
 			if args.verbose:
-				status = str(result[0])
+				status = result[0]
 			elif result[0] == 200:
 				status = "OK"
 			elif result[0] == 0:

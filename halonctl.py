@@ -39,7 +39,7 @@ def load_modules():
 	for loader, name, ispkg in pkgutil.iter_modules(path=[modules_path]):
 		mod = loader.find_module(name).load_module(name)
 		if hasattr(mod, 'module'):
-			register_module(name, mod.module)
+			register_module(name.rstrip('_'), mod.module)
 		else:
 			print "Ignoring invalid module (missing 'module' variable): %s" % name
 
@@ -50,7 +50,7 @@ def load_formatters():
 	for loader, name, ispkg in pkgutil.iter_modules(path=[formatters_path]):
 		fmt = loader.find_module(name).load_module(name)
 		if hasattr(fmt, 'format'):
-			formatters[name] = fmt.format
+			formatters[name.rstrip('_')] = fmt.format
 		else:
 			print "Ignoring invalid formatter (missing 'format' member): %s" % name
 

@@ -9,9 +9,19 @@ from .proxies import *
 
 
 class Node(object):
-	'''A single Halon node.'''
+	'''A single Halon node.
 	
-	name = None
+	:ivar str name: The configured name of the node.
+	:ivar halon.models.NodeList cluster: The cluster the node belongs to.
+	:ivar str scheme: The scheme the node should be accessed over, either http or https
+	:ivar str host: The hostname of the node
+	
+	:ivar str username: The effective username; the node's, if any, otherwise the cluster's
+	:ivar str password: The effective password; the node's or keychain's, if any, otherwise the cluster's
+	
+	'''
+	
+	name = "noname"
 	cluster = None
 	scheme = 'http'
 	host = None
@@ -24,6 +34,10 @@ class Node(object):
 	
 	@property
 	def service(self):
+		'''A proxy that can be used to make SOAP calls to the node.
+		
+		:rtype: halon.proxies.NodeSoapProxy
+		'''
 		return NodeSoapProxy(self)
 	
 	@property
@@ -89,7 +103,10 @@ class Node(object):
 		The first time this is called, it's a blocking operation, as the node's
 		WSDL will be downloaded on the current thread.
 		
-		If the node is unreachable, None is returned.'''
+		If the node is unreachable, None is returned.
+		
+		:returns: A suds.client.Client, or None if the server could not be found
+		'''
 		
 		if not hasattr(self, '_client'):
 			url = self.scheme + '://' + self.host + '/remote/'

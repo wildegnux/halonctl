@@ -1,7 +1,26 @@
 API documentation
 =================
 
-.. toctree::
-   :maxdepth: 4
+halon.models module
+-------------------
 
-   halon
+.. automodule:: halon.models
+    :members:
+
+halon.modules module
+--------------------
+
+.. automodule:: halon.modules
+    :members:
+
+halon.proxies module
+--------------------
+
+.. automodule:: halon.proxies
+    :members:
+
+halon.util module
+-----------------
+
+.. automodule:: halon.util
+    :members:

@@ -12,37 +12,27 @@ Simply install the ``halonctl`` package from pip::
 
    sudo pip install halonctl
 
+If it complains about your ``setuptools`` being too old, simply run the command to upgrade it, then try again::
+
+   sudo easy_install -U setuptools
+
 Installation from Git (development)
 -----------------------------------
 
-If you want to develop your own modules, or work on the ``halonctl`` core, this is the option you want. If you simply want to use ``halonctl`` with the built-in modules, you probably want to install from ``pip``, as described above.
+If you want to develop your own modules, or work on the ``halonctl`` core, do this:
 
-#. Install ``virtualenv`` (may need to be prefixed with ``sudo``)::
+#. Clone this repo somewhere, and enter it::
    
-      pip install virtualenv
+      git clone https://github.com/HalonSecurity/halonctl
+      cd halonctl
 
-#. Set up a virtualenv in the source directory::
+#. Install ``halonctl`` in development mode::
    
-      virtualenv .
+      pip install -e .
+   
+   You are strongly recommended to use a `virtualenv <http://virtualenv.readthedocs.org/en/latest/>`_.
 
-#. Activate the virtualenv; you need to do this once per terminal/tab, and will
-   put you in ``halonctl``'s isolated little world, with its own packages, etc::
-   
-      . bin/activate
-   
-   To deactivate it again, just run::
-   
-      deactivate
-   
-#. Install requirements; you need to do this again if you see the file
-   ``requirements.txt`` change, or if you see errors about missing modules::
-   
-      pip install -r requirements.txt
-   
-   Make sure to do this with an activated ``virtualenv``, or all dependencies
-   will incorrectly be installed globally, where they may cause conflicts!
+---
 
-#. Run `halonctl` - again, make sure to have an activated ``virtualenv``, or it
-   won't find its dependencies::
-   
-      ./halonctl.py --help`
+* `Documentation <http://halonctl.readthedocs.org/en/latest/>`
+* `Issues <https://github.com/HalonSecurity/halonctl/issues>`

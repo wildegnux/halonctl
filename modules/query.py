@@ -1,7 +1,7 @@
 import argparse
 from base64 import b64decode
-from halon.modules import Module
-from halon.util import hql_from_filters, filter_timestamp_re, ask_confirm
+from halonctl.modules import Module
+from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm
 
 class QueryModule(Module):
 	'''Queries emails and performs actions'''

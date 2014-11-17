@@ -1,5 +1,5 @@
 import unittest
-from halon.models import Node
+from halonctl.models import Node
 
 class TestNode(unittest.TestCase):
 	def setUp(self):

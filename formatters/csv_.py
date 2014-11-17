@@ -1,6 +1,6 @@
 import csv
 from StringIO import StringIO
-from halon.util import textualize_rows
+from halonctl.util import textualize_rows
 
 def format(rows):
 	rows = textualize_rows(rows)

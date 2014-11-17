@@ -1,5 +1,5 @@
 import unittest
-from halonctl import process_config
+from halonctl.__main__ import process_config
 
 class TestProcessConfig(unittest.TestCase):
 	def test_empty(self):

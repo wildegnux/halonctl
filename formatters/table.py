@@ -1,5 +1,5 @@
 from texttable import Texttable
-from halon.util import textualize_rows
+from halonctl.util import textualize_rows
 
 def format(rows):
 	rows = textualize_rows(rows)

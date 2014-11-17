@@ -7,8 +7,8 @@ import argparse
 import json
 import logging
 from natsort import natsorted
-from halon.models import *
-from halon.util import *
+from halonctl.models import *
+from halonctl.util import *
 
 # Figure out the absolute path to the directory this script is in
 BASE = os.path.abspath(os.path.dirname(__file__))
@@ -147,7 +147,7 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 
 
 
-if __name__ == '__main__':
+def main():
 	# Configure logging
 	logging.basicConfig(level=logging.ERROR)
 	logging.getLogger('suds.client').setLevel(logging.CRITICAL)
@@ -217,3 +217,6 @@ if __name__ == '__main__':
 		sys.exit(mod.exitcode)
 	elif mod.partial and not args.ignore_partial:
 		sys.exit(99)
+
+if __name__ == '__main__':
+	main()

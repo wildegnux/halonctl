@@ -1,7 +1,7 @@
 import getpass
 import keyring
-from halon.modules import Module
-from halon.util import ask_confirm
+from halonctl.modules import Module
+from halonctl.util import ask_confirm
 
 class KeyringStatusModule(Module):
 	'''Checks the authorization status of all nodes'''

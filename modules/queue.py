@@ -1,4 +1,4 @@
-from halon.modules import Module
+from halonctl.modules import Module
 from base64 import b64encode, b64decode
 
 class QueueModule(Module):

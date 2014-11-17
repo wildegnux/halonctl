@@ -1,26 +1,26 @@
 API documentation
 =================
 
-halon.models module
+halonctl.models module
 -------------------
 
-.. automodule:: halon.models
+.. automodule:: halonctl.models
     :members:
 
-halon.modules module
+halonctl.modules module
 --------------------
 
-.. automodule:: halon.modules
+.. automodule:: halonctl.modules
     :members:
 
-halon.proxies module
+halonctl.proxies module
 --------------------
 
-.. automodule:: halon.proxies
+.. automodule:: halonctl.proxies
     :members:
 
-halon.util module
+halonctl.util module
 -----------------
 
-.. automodule:: halon.util
+.. automodule:: halonctl.util
     :members:

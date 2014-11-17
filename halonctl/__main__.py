@@ -3,15 +3,17 @@
 import os, sys
 import inspect
 import pkgutil
+import importlib
 import argparse
 import json
 import logging
 from natsort import natsorted
-from halonctl.models import *
-from halonctl.util import *
+from .models import *
+from .util import *
 
-# Figure out the absolute path to the directory this script is in
+# Figure out where this script is, and change the PATH appropriately
 BASE = os.path.abspath(os.path.dirname(__file__))
+sys.path.insert(0, BASE)
 
 # Create an argument parser
 parser = argparse.ArgumentParser(description="Easily manage Halon nodes and clusters.")
@@ -66,7 +68,7 @@ def open_config():
 	'''Opens a configuration file from the first found default location.'''
 	
 	config_paths = [
-		os.path.join(BASE, 'halonctl.json'),
+		os.path.abspath(os.path.join(BASE, '..', 'halonctl.json')),
 		os.path.expanduser('~/.config/halonctl.json'),
 		os.path.expanduser('~/halonctl.json'),
 		os.path.expanduser('~/.halonctl.json'),
@@ -90,7 +92,7 @@ def open_config():
 		print "Or use the -C/--config flag to specify a path."
 		print "A sample config can be found at:"
 		print ""
-		print "  - %s" % os.path.join(BASE, 'halonctl.sample.json')
+		print "  - %s" % os.path.abspath(os.path.join(BASE, '..', 'halonctl.sample.json'))
 		print ""
 		sys.exit(1)
 	

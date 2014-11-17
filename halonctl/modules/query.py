@@ -1,6 +1,6 @@
 import argparse
 from base64 import b64decode
-from halonctl.modules import Module
+from halonctl.modapi import Module
 from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm
 
 class QueryModule(Module):

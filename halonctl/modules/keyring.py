@@ -1,6 +1,6 @@
 import getpass
 import keyring
-from halonctl.modules import Module
+from halonctl.modapi import Module
 from halonctl.util import ask_confirm
 
 class KeyringStatusModule(Module):

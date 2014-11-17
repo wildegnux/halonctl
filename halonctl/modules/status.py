@@ -1,4 +1,4 @@
-from halonctl.modules import Module
+from halonctl.modapi import Module
 import arrow
 
 # This is intended as kind of a template module, and thus will be more

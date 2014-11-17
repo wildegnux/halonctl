@@ -36,7 +36,7 @@ class Node(object):
 	def service(self):
 		'''A proxy that can be used to make SOAP calls to the node.
 		
-		:rtype: halon.proxies.NodeSoapProxy
+		:rtype: :class:`halon.proxies.NodeSoapProxy`
 		'''
 		return NodeSoapProxy(self)
 	
@@ -176,6 +176,14 @@ class NodeList(list):
 	
 	@property
 	def service(self):
+		'''An asynchronous SOAP proxy.
+		
+		This is the recommended way to target multiple nodes with a call, as it
+		will only take as long as the slowest node takes to respond, rather
+		than taking longer and longer the mode nodes you're targeting.
+		
+		:rtype: :class:`halon.proxies.NodeListSoapProxy`
+		'''
 		return NodeListSoapProxy(self)
 	
 	

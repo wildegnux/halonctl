@@ -18,7 +18,19 @@ class NodeSoapProxy(object):
     '''SOAP call proxy.
     
     This allows you to make SOAP calls as easily as calling a normal Python
-    function.'''
+    function.
+    
+    Returns a tuple of ``( status, response )``.
+    
+    Example::
+    
+        status, response = node.myCall(param='abc')
+        if status != 200:
+            # ... the call failed, handle the error ...
+            print "Error: " + status
+        
+        print response
+    '''
     
     def __init__(self, node):
         self.node = node
@@ -50,10 +62,24 @@ class NodeListSoapProxy(object):
     '''Multi-node SOAP call proxy.
     
     Similar to NodeSoapProxy, this allows you to easily make SOAP calls, but
-    additionally, these calls are made asynchronously to any number of nodes.
+    additionally, these calls are made asynchronously to any number of nodes,
+    taking only as long to return as the slowest node takes to answer.
     
-    Compared to looping through a list of nodes, this effectively reduces call
-    time from O(n) to O(1).'''
+    Returns a dictionary of ``{ node: (status, response) }``.
+    
+    Example::
+    
+        for node, result in nodes.myCall(param='abc').iteritems():
+            # result[0] is the response status; 200 = Success
+            if result[0] != 200:
+                # ... the call failed, handle the error ...
+                print "Error: " + status
+                continue
+            
+            # result[1] is the response data
+            print "%s: %s" % (node, result[1])
+    
+    '''
 
     def __init__(self, nodelist):
         self.nodelist = nodelist
@@ -73,8 +99,16 @@ class NodeListSoapProxy(object):
 class CommandProxy(object):
     '''Proxy for a command executing on a remote server.
     
-    This abstracts away all the messy commandRun()/commandPoll() logic, letting
-    you treat a remote process as an interactive iterator.'''
+    This abstracts away all the messy ``commandRun()``/``commandPoll()`` logic,
+    letting you treat a remote process as an interactive iterator.
+    
+    For example, this will print command output as it arrives::
+    
+        cmd = node.command('mycommand')
+        for chunk in cmd:
+            print chunk
+    
+    '''
     
     def __init__(self, node, cid):
         self.node = node
@@ -88,6 +122,8 @@ class CommandProxy(object):
         return self.next()
     
     def next(self):
+        '''Returns a chunk of the remote process' stdout. Lets you treat this
+        object as an iterator.'''
         while True:
             code, data = self.node.service.commandPoll(commandid=self.cid)
             
@@ -112,7 +148,10 @@ class CommandProxy(object):
         return self.node.service.commandPush(commandid=self.cid, data=b64encode(data))
     
     def signal(self, sigid):
-        '''Sends a signal to the remote process.'''
+        '''Sends a signal to the remote process.
+        
+        The signal can be specified either as a signal number (eg. 15) or a
+        signal name (eg. SIGTERM).'''
         
         try:
             # This will throw a ValueError if the string is not numeric

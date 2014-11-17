@@ -5,6 +5,17 @@ from dateutil import tz
 filter_timestamp_re = re.compile(r'\{(.*)\}')
 
 def ask_confirm(prompt, default=True):
+	'''Ask the user for confirmation.
+	
+	This prompts the user to answer either y/yes or n/no, with a default for if
+	they just hit Enter.
+	
+	The question is presented as "Prompt [Yn]" or
+	"Prompt [yN]", depending on the default answer, similar to for instance
+	Debian's ``apt-get`` command. It will repeat until a valid answer is given.
+	
+	:rtype: bool
+	'''
 	if type(default) != bool:
 		raise TypeError("The default value for ask_confirm must be a bool!")
 	
@@ -24,6 +35,15 @@ def ask_confirm(prompt, default=True):
 				('yes' if default else 'no')
 
 def hql_from_filters(filters, timezone):
+	'''Gets a HQL statement from a list of filter components.
+	
+	Filter components may include ``{YYYY-MM-DD HH:MM:SS}`` placeholders, which
+	are interpreted according to the given timezone and replaced with UTC
+	timestamps.
+	
+	:param list filters: A list of filters to glue together
+	:param int timezone: The UTC offset of the assumed timezone
+	'''
 	def get_date(s):
 		return arrow.get(arrow.get(s).naive, tz.tzoffset(None, timezone*60*60))
 	
@@ -35,6 +55,8 @@ def hql_from_filters(filters, timezone):
 	return ' '.join(conditions)
 
 def textualize_item(item):
+	'''Formats an item in an output table for presentation.'''
+	
 	if item is None:
 		return '-'
 	elif item is True:
@@ -44,7 +66,9 @@ def textualize_item(item):
 	return item
 
 def textualize_row(row):
+	'''Formats a row in an output table for presentation.'''
 	return [textualize_item(item) for item in row]
 
 def textualize_rows(rows):
+	'''Formats a set of rows in an output table for presentation.'''
 	return [textualize_row(row) for row in rows]

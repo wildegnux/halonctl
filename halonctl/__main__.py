@@ -12,7 +12,7 @@ from .models import *
 from .util import *
 
 # Figure out where this script is, and change the PATH appropriately
-BASE = os.path.abspath(os.path.dirname(__file__))
+BASE = os.path.abspath(os.path.dirname(sys.modules[__name__].__file__))
 sys.path.insert(0, BASE)
 
 # Create an argument parser
@@ -92,7 +92,7 @@ def open_config():
 		print "Or use the -C/--config flag to specify a path."
 		print "A sample config can be found at:"
 		print ""
-		print "  - %s" % os.path.abspath(os.path.join(BASE, '..', 'halonctl.sample.json'))
+		print "  - %s" % os.path.abspath(os.path.join(BASE, 'halonctl.sample.json'))
 		print ""
 		sys.exit(1)
 	

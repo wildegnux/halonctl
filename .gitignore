@@ -5,8 +5,11 @@
 /local
 /man
 
-# Built Sphinx documentation
+# Built products
 /docs/_build
+/build
+/dist
+*.egg-info
 
 # Junk
 .Python
@@ -18,4 +21,3 @@
 # User configuration
 *.sublime-workspace
 /halonctl.json
-

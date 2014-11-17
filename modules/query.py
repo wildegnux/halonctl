@@ -1,7 +1,7 @@
 import argparse
 from base64 import b64decode
 from halon.modules import Module
-from halon.util import hql_from_filters, filter_timestamp_re
+from halon.util import hql_from_filters, filter_timestamp_re, ask_confirm
 
 class QueryModule(Module):
 	'''Queries emails and performs actions'''
@@ -61,15 +61,27 @@ class QueryModule(Module):
 	def do_show(self, nodes, args, hql):
 		yield ('Cluster', 'Node', 'From', 'To', 'Subject')
 		for node, result in nodes.service.mailQueue(filter=hql, offset=args.offset, limit=args.limit).iteritems():
-			if result[0] == 200 and 'item' in result[1]['result']:
+			if result[0] != 200:
+				self.partial = True
+			elif 'item' in result[1]['result']:
 				for msg in result[1]['result']['item']:
 					msg['msgsubject'] = b64decode(msg['msgsubject'])
 					yield (node.cluster.name, node.name, msg['msgfrom'], msg['msgto'], msg['msgsubject'])
 	
 	def do_deliver(self, nodes, args, hql, duplicate):
-		print "Deliver"
+		if not hql and not ask_confirm("You have no filter, do you really want to try to deliver everything?", False):
+			return
+		
+		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate):
+			if result[0] != 200:
+				print "Failure on %s" % (node)
 	
 	def do_delete(self, nodes, args, hql):
-		print "Delete"
+		if not hql and not ask_confirm("You have no filter, do you really want to delete everything!?", False):
+			return
+		
+		for node, result in nodes.service.mailQueueDeleteBulk(filter=hql):
+			if result[0] != 200:
+				print "Failure on %s" (node)
 
 module = QueryModule()

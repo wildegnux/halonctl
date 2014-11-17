@@ -28,9 +28,9 @@ Nodes
 
 The most essential part of the configuration file is the ``nodes`` entry. This lists all available nodes, and everything you need to connect to it. Each entry has the following format, where all parts in brackets are optional::
 
-    "name": "[scheme://][user[:pass]@]hostname"
+    "nodename": "[scheme://][user[:pass]@]hostname"
 
-.. option:: name
+.. option:: nodename
    
    An arbitrary name for the node. This can be anything, as it's only used by ``halonctl`` itself to identify nodes. The only restriction is that two nodes obviously must not share the same name, or it'd be impossible to tell which one you meant.
    

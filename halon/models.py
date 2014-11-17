@@ -97,7 +97,7 @@ class Node(object):
 		else:
 			self.host = parts[0]
 	
-	def client(self):
+	def _connect(self):
 		'''Returns a SOAP client for the node.
 		
 		The first time this is called, it's a blocking operation, as the node's
@@ -123,12 +123,12 @@ class Node(object):
 		'''Convenience function that creates a SOAP request context from a
 		function name and a set of parameters.
 		
-		This will call client() internally, and thus it is blocking if client()
-		has not yet been called for the node.
+		The first call to this function is blocking, as the node's WSDL file
+		will be dowbloaded synchronously.
 		
 		If the node is unreachable, None is returned.'''
 		
-		client = self.client()
+		client = self._connect()
 		if client:
 			return getattr(client.service, name)(*args, **kwargs)
 	

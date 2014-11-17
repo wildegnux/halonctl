@@ -3,28 +3,29 @@ halonctl
 
 A commandline utility for managing Halon SP nodes and clusters.
 
-Requirements
-------------
+*Currently, only Python 2.7 is supported, 3.x support is coming.*
 
-* Python 2.7 <small>3.x support coming</small>
-* pip
+Installation from PyPI (recommended)
+------------------------------------
 
-Mac, Linux and Windows are officially supported, though one of the former two are recommended.
+Simply install the ``halonctl`` package from pip::
 
-Installation (development)
---------------------------
+   sudo pip install halonctl
 
-*(For end-users, more convenient packages will soon be available.)*
+Installation from Git (development)
+-----------------------------------
 
-1. Install ``virtualenv`` (may need to be prefixed with ``sudo``)::
+If you want to develop your own modules, or work on the ``halonctl`` core, this is the option you want. If you simply want to use ``halonctl`` with the built-in modules, you probably want to install from ``pip``, as described above.
+
+#. Install ``virtualenv`` (may need to be prefixed with ``sudo``)::
    
       pip install virtualenv
 
-2. Set up a virtualenv in the source directory::
+#. Set up a virtualenv in the source directory::
    
       virtualenv .
 
-3. Activate the virtualenv; you need to do this once per terminal/tab, and will
+#. Activate the virtualenv; you need to do this once per terminal/tab, and will
    put you in ``halonctl``'s isolated little world, with its own packages, etc::
    
       . bin/activate
@@ -33,7 +34,7 @@ Installation (development)
    
       deactivate
    
-4. Install requirements; you need to do this again if you see the file
+#. Install requirements; you need to do this again if you see the file
    ``requirements.txt`` change, or if you see errors about missing modules::
    
       pip install -r requirements.txt
@@ -41,7 +42,7 @@ Installation (development)
    Make sure to do this with an activated ``virtualenv``, or all dependencies
    will incorrectly be installed globally, where they may cause conflicts!
 
-5. Run `halonctl` - again, make sure to have an activated ``virtualenv``, or it
+#. Run `halonctl` - again, make sure to have an activated ``virtualenv``, or it
    won't find its dependencies::
    
       ./halonctl.py --help`

@@ -16,30 +16,32 @@ Installation (development)
 
 *(For end-users, more convenient packages will soon be available.)*
 
-1. Install `virtualenv`
+1. Install ``virtualenv`` (may need to be prefixed with ``sudo``)::
    
-   `pip install virtualenv` (may need to be prefixed with `sudo`)
+      pip install virtualenv
 
-2. Set up a virtualenv in the source directory
+2. Set up a virtualenv in the source directory::
    
-   `virtualenv .`
+      virtualenv .
 
 3. Activate the virtualenv; you need to do this once per terminal/tab, and will
-   put you in `halonctl`'s isolated little world, with its own packages, etc.
+   put you in ``halonctl``'s isolated little world, with its own packages, etc::
    
-   `. bin/activate` (short for `source bin/activate`)
+      . bin/activate
    
-   To deactivate it again, just run: `deactivate`
+   To deactivate it again, just run::
+   
+      deactivate
    
 4. Install requirements; you need to do this again if you see the file
-   `requirements.txt` change, or if you see errors about missing modules.
+   ``requirements.txt`` change, or if you see errors about missing modules::
    
-   Make sure to do this with an activated `virtualenv`, or all dependencies
+      pip install -r requirements.txt
+   
+   Make sure to do this with an activated ``virtualenv``, or all dependencies
    will incorrectly be installed globally, where they may cause conflicts!
-   
-   `pip install -r requirements.txt`
 
-5. Run `halonctl` - again, make sure to have an activated `virtualenv`, or it
-   won't find its dependencies:
+5. Run `halonctl` - again, make sure to have an activated ``virtualenv``, or it
+   won't find its dependencies::
    
-   `./halonctl.py --help` or `python halonctl.py --help`
+      ./halonctl.py --help`

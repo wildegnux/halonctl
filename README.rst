@@ -3,7 +3,7 @@ halonctl
 
 A commandline utility for managing Halon SP nodes and clusters.
 
-*Currently, only Python 2.7 is supported, 3.x support is coming.*
+Currently, only Python 2.7 is supported, 3.x support is coming.
 
 Installation
 ------------
@@ -15,9 +15,7 @@ Simply install the ``halonctl`` package from pip::
 Development
 -----------
 
-Want to write your own modules, or work on the ``halonctl`` core?
-
-Simply clone this repo, and install ``halonctl`` in development mode::
+To write your own modules or work on the ``halonctl`` core, clone this repo, and install it in development mode::
 
    pip install -e .
    

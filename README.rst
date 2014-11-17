@@ -5,28 +5,23 @@ A commandline utility for managing Halon SP nodes and clusters.
 
 *Currently, only Python 2.7 is supported, 3.x support is coming.*
 
-Installation from PyPI (recommended)
-------------------------------------
+Installation
+------------
 
 Simply install the ``halonctl`` package from pip::
 
    sudo pip install halonctl
 
-Installation from Git (development)
------------------------------------
+Development
+-----------
 
-If you want to develop your own modules, or work on the ``halonctl`` core, do this:
+Want to write your own modules, or work on the ``halonctl`` core?
 
-#. Clone this repo somewhere, and enter it::
-   
-      git clone https://github.com/HalonSecurity/halonctl
-      cd halonctl
+Simply clone this repo, and install ``halonctl`` in development mode::
 
-#. Install ``halonctl`` in development mode::
+   pip install -e .
    
-      pip install -e .
-   
-   You are strongly recommended to use a `virtualenv <http://virtualenv.readthedocs.org/en/latest/>`_.
+You are strongly recommended to use a `virtualenv <http://virtualenv.readthedocs.org/en/latest/>`_ to create an isolated environment for development.
 
 Links
 -----

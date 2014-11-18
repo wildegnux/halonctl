@@ -1,14 +1,10 @@
 import signal
 import inspect
 import socket
-from collections import OrderedDict
 from base64 import b64encode, b64decode
 from natsort import natsorted
-from tornado.ioloop import IOLoop
-from tornado.concurrent import *
-from tornado import gen
 from tornado.httpclient import *
-from halonctl.util import thread_pool_executor
+from halonctl.util import async_dispatch
 
 
 
@@ -84,14 +80,7 @@ class NodeListSoapProxy(object):
 
     def __getattr__(self, name):
         def _soap_proxy_executor(*args, **kwargs):
-            @gen.coroutine
-            def _inner():
-                results = yield {
-                    node: thread_pool_executor.submit(getattr(node.service, name), *args, **kwargs)
-                    for node in self.nodelist
-                }
-                raise gen.Return(OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name])))
-            return IOLoop.instance().run_sync(_inner)
+            return async_dispatch({node: lambda: getattr(node.service, name)(*args, **kwargs) for node in self.nodelist}, True)
         return _soap_proxy_executor
 
 class CommandProxy(object):

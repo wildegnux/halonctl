@@ -1,21 +1,18 @@
 import re
 import arrow
+from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor, wait
 from dateutil import tz
-from concurrent.futures import ThreadPoolExecutor
-from tornado import gen
-from tornado.ioloop import IOLoop
 from natsort import natsorted
 
-thread_pool_executor = ThreadPoolExecutor(64)
+executor = ThreadPoolExecutor(64)
 
 def async_dispatch(tasks, node_sort_results=False):
-	@gen.coroutine
-	def _inner():
-		results = yield { k: thread_pool_executor.submit(v) for k, v in tasks.iteritems() }
-		if node_sort_results:
-			results = OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name]))
-		raise gen.Return(results)
-	return IOLoop.instance().run_sync(_inner)
+	futures = { executor.submit(v): k for k, v in tasks.iteritems() }
+	done, not_done = wait(futures)
+	results = { futures[future]: future.result() for future in futures }
+	
+	return results if not node_sort_results else OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name]))
 
 def ask_confirm(prompt, default=True):
 	'''Ask the user for confirmation.

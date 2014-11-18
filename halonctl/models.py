@@ -5,6 +5,7 @@ from base64 import b64encode, b64decode
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 from .proxies import *
+from .util import async_dispatch
 from . import cache
 
 
@@ -203,16 +204,7 @@ class NodeList(list):
 	def command(self, command, *args):
 		'''Executes a command across all contained nodes.'''
 		
-		# Basically copypaste from NodeListSoapProxy; thread_pool_executor is
-		# a ThreadPoolExecutor imported from and thus shared with proxies.py
-		@gen.coroutine
-		def _inner():
-			results = yield {
-				node: thread_pool_executor.submit(node.command, command, *args)
-				for node in self
-			}
-			raise gen.Return(OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name])))
-		return IOLoop.instance().run_sync(_inner)
+		return async_dispatch({ node: lambda: node.command(command, *args) for node in self }, True)
 	
 	
 	

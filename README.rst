@@ -26,9 +26,9 @@ Changelog
 
 * 1.0.1
   
-  * **IMPROVED:** WSDL files are now cached, which shaves off a good couple of seconds *per node* from program startup.
-  * **FIXED:** Cluster logins now work as intended, even when username and password are gotten from different nodes.
-  * **FIXED:** The Keychain module no longer incorrectly reports incorrect authentication status in some cases.
+  * IMPROVED: WSDL files are now cached, which shaves off a good couple of seconds *per node* from program startup.
+  * FIXED: Cluster logins now work as intended, even when username and password are gotten from different nodes.
+  * FIXED: The Keychain module no longer incorrectly reports incorrect authentication status in some cases.
 
 * 1.0.0
   

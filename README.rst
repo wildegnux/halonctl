@@ -30,6 +30,18 @@ Links
 Changelog
 ---------
 
+1.0.3
+#####
+
+**Added:**
+
+* ``cmd`` module allowing direct execution of remote shell commmands
+
+**Improved:**
+
+* Performance and reliability in asynchronous dispatches
+* WSDL download errors are now reported at startup
+
 1.0.2
 #####
 

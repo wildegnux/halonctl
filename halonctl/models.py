@@ -205,17 +205,6 @@ class NodeList(list):
 		'''
 		return NodeListSoapProxy(self)
 	
-	
-	
-	def load_data(self, data):
-		'''Updates the nodelist's data from the given configuration dictionary,
-		overwriting any existing data.'''
-		
-		if 'username' in data:
-			self.username = data['username']
-		if 'password' in data:
-			self.password = data['password']
-	
 	def command(self, command, *args):
 		'''Executes a command across all contained nodes.'''
 		
@@ -229,6 +218,17 @@ class NodeList(list):
 			}
 			raise gen.Return(OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name])))
 		return IOLoop.instance().run_sync(_inner)
+	
+	
+	
+	def load_data(self, data):
+		'''Updates the nodelist's data from the given configuration dictionary,
+		overwriting any existing data.'''
+		
+		if 'username' in data:
+			self.username = data['username']
+		if 'password' in data:
+			self.password = data['password']
 	
 	def __unicode__(self):
 		return u"%s -> [%s]" % (self.name, ', '.join([node.name for node in self]))

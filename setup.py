@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(name='halonctl',
-	version='1.0.0',
+	version='1.0.1',
 	description='Manage Halon nodes from the commandline',
 	author='Halon Security',
 	author_email='support@halon.se',

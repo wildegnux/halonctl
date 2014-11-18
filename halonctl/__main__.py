@@ -121,11 +121,17 @@ def process_config(config):
 	
 	for name, data in config.get('clusters', {}).iteritems():
 		nids = data['nodes'] if isinstance(data, dict) else data
-		cluster = NodeList([nodes[nid] for nid in nids])
+		
+		cluster = NodeList()
 		cluster.name = name
 		cluster.load_data(data)
-		cluster.sync_credentials()
-		clusters[name] = cluster
+		
+		for nid in nids:
+			node = nodes[nid]
+			node.cluster = cluster
+			cluster.append(node)
+		
+		clusters[cluster.name] = cluster
 	
 	return (nodes, clusters)
 

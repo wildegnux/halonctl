@@ -27,9 +27,8 @@ class Node(object):
 	scheme = 'http'
 	host = None
 	
-	_username = None
-	_password = None
-	_keyring_password = None
+	local_username = None
+	local_password = None
 	
 	
 	
@@ -43,22 +42,25 @@ class Node(object):
 	
 	@property
 	def username(self):
-		return self._username or self.cluster.username
+		return self.local_username or self.cluster.username
 	
 	@username.setter
 	def username(self, val):
-		self._username = val
+		self.local_username = val
 	
 	@property
 	def password(self):
-		if not self._keyring_password:
-			self._keyring_password = keyring.get_password(self.host, self.username) \
-				if self.host and self.username else None
-		return self._password or self._keyring_password or self.cluster.password
+		return self.local_password or self.keyring_password or self.cluster.password
 	
 	@password.setter
 	def password(self, val):
-		self._password = val
+		self.local_password = val
+	
+	@property
+	def keyring_password(self):
+		if not hasattr(self, '_keyring_password') and self.host and self.username:
+			self._keyring_password = keyring.get_password(self.host, self.username)
+		return getattr(self, '_keyring_password', None)
 	
 	
 	
@@ -170,8 +172,24 @@ class NodeList(list):
 	'''
 	
 	name = None
-	username = None
-	password = None
+	local_username = None
+	local_password = None
+	
+	
+	
+	@property
+	def username(self):
+		if not self.local_username:
+			for node in [node for node in self if node.local_username]:
+				return node.local_username
+		return self.local_username
+	
+	@property
+	def password(self):
+		if not self.local_password:
+			for node in [node for node in self if node.local_password or node.keyring_password]:
+				return node.password or node.keyring_password
+		return self.local_password
 	
 	
 	
@@ -197,25 +215,6 @@ class NodeList(list):
 			self.username = data['username']
 		if 'password' in data:
 			self.password = data['password']
-	
-	def sync_credentials(self):
-		'''Synchronizes credentials through all contained nodes.
-		
-		If the list has its own set of username and password, it will be used
-		for all contained nodes. Otherwise, it will attempt to find a username
-		and optionally password on one of the nodes, and propagate that through
-		the list.'''
-		
-		# If we don't have any credentials, and a node has, copy those
-		for node in self:
-			if not self.username and node.username:
-				self.username = node.username
-				self.password = node.password
-				break
-		
-		# Properly assign every included node to this cluster
-		for node in self:
-			node.cluster = self
 	
 	def command(self, command, *args):
 		'''Executes a command across all contained nodes.'''

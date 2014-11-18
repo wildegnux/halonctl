@@ -64,11 +64,11 @@ class Node(object):
 	
 	
 	
-	def __init__(self, data=None, name=None):
+	def __init__(self, data=None, name=None, cluster=None):
 		'''Initializes a Node with the given configuration data and name.'''
 		
 		self.name = name
-		self.cluster = NodeList([self])
+		self.cluster = cluster if not cluster is None else NodeList([self])
 		if data:
 			self.load_data(data)
 	

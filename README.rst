@@ -21,6 +21,12 @@ To write your own modules or work on the ``halonctl`` core, clone this repo, and
    
 You are strongly recommended to use a `virtualenv <http://virtualenv.readthedocs.org/en/latest/>`_ to create an isolated environment for development.
 
+Links
+-----
+
+* `Documentation <http://halonctl.readthedocs.org/en/latest/>`_
+* `Issues <https://github.com/HalonSecurity/halonctl/issues>`_
+
 Changelog
 ---------
 
@@ -40,9 +46,3 @@ Changelog
 #####
   
 * Initial release
-
-Links
------
-
-* `Documentation <http://halonctl.readthedocs.org/en/latest/>`_
-* `Issues <https://github.com/HalonSecurity/halonctl/issues>`_

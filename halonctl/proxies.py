@@ -1,9 +1,7 @@
 import signal
 import inspect
-import socket
+import requests
 from base64 import b64encode, b64decode
-from natsort import natsorted
-from tornado.httpclient import *
 from halonctl.util import async_dispatch
 
 
@@ -32,23 +30,10 @@ class NodeSoapProxy(object):
     def __getattr__(self, name):
         def _soap_proxy_executor(*args, **kwargs):
             context = self.node.make_request(name, *args, **kwargs)
-            if not context:
-                return (0, "Couldn't connect")
-            
-            http_client = HTTPClient()
-            request = HTTPRequest(context.client.location(), method="POST",
-                body=context.envelope, headers=context.client.headers(),
-                auth_username=self.node.username, auth_password=self.node.password,
-                connect_timeout=5, request_timeout=10)
-            try:
-                result = http_client.fetch(request)
-                return context.process_reply(result.body, result.code, result.reason)
-            except HTTPError as e:
-                return context.process_reply(e.response.body if getattr(e, 'response', None) else None, e.code, e.message)
-            except socket.error as e:
-                return (0, e.message)
-            finally:
-                http_client.close()
+            r = requests.post(context.client.location(), auth=(self.node.username, self.node.password),
+                headers=context.client.headers(), data=context.envelope,
+                timeout=10)
+            return context.process_reply(r.text, r.status_code, r.reason)
         
         return _soap_proxy_executor
 

@@ -38,7 +38,6 @@ setup(name='halonctl',
 		'natsort',		# Natural sorting of node names
 		'suds-jurko',	# SOAP client library; improved fork of suds
 		'texttable',	# Easily print fancy ASCII tables
-		'tornado',		# Asynchronous processing and networking
 		'requests',		# "HTTP for Humans"
 	],
 	package_data={

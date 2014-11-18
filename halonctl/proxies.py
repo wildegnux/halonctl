@@ -100,15 +100,10 @@ class CommandProxy(object):
         object as an iterator.'''
         
         while True:
-            code, data = self.node.service.commandPoll(commandid=self.cid)
+            code, data = self.read()
             
             if code == 200:
-                # If the process is still running, but hasn't given any output
-                # since we asked last time, try again until something happens
-                if not hasattr(data, 'item'):
-                    continue
-                
-                return ''.join([b64decode(item) for item in data.item])
+                return data
             else:
                 self.done = True
                 raise StopIteration()

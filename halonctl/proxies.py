@@ -110,6 +110,8 @@ class CommandProxy(object):
     
     '''
     
+    done = False
+    
     def __init__(self, node, cid):
         self.node = node
         self.cid = cid
@@ -136,6 +138,7 @@ class CommandProxy(object):
                 
                 return ''.join([b64decode(item) for item in data.item])
             else:
+                self.done = True
                 raise StopIteration()
     
     def all(self):
@@ -146,7 +149,11 @@ class CommandProxy(object):
     def write(self, data):
         '''Writes some data to the remote process' stdin.'''
         
-        return self.node.service.commandPush(commandid=self.cid, data=b64encode(data))
+        code, res = self.node.service.commandPush(commandid=self.cid, data=b64encode(data))
+        if code != 200:
+            self.done = True
+        
+        return code, res
     
     def signal(self, sigid):
         '''Sends a signal to the remote process.
@@ -161,11 +168,16 @@ class CommandProxy(object):
             # If it's not, try to get the signal by name from the signal module
             sig = int(getattr(signal, sigid.upper()))
         
-        return self.node.service.commandSignal(commandid=self.cid, signal=sig)
+        code, res = self.node.service.commandSignal(commandid=self.cid, signal=sig)
+        if code != 200:
+            self.done = True
+        
+        return code, res
     
     def stop(self):
         '''Terminates the remote process.'''
         
+        self.done = True
         return self.node.service.commandStop(commandid=self.cid)
     
     def __str__(self):

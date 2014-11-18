@@ -5,6 +5,7 @@ from base64 import b64encode, b64decode
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 from .proxies import *
+from . import cache
 
 
 
@@ -113,7 +114,7 @@ class Node(object):
 			transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
 			
 			try:
-				self._client = Client(url + '?wsdl', location=url, transport=transport, timeout=5, faults=False, nosend=True)
+				self._client = Client("file://" + cache.get_path('wsdl.xml'), location=url, transport=transport, timeout=5, faults=False, nosend=True)
 			except urllib2.URLError as e:
 				self._client = None
 		

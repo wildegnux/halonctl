@@ -7,9 +7,12 @@ import importlib
 import argparse
 import json
 import logging
+import arrow
+import requests
 from natsort import natsorted
 from .models import *
 from .util import *
+from . import cache
 
 # Figure out where this script is, and change the PATH appropriately
 BASE = os.path.abspath(os.path.dirname(sys.modules[__name__].__file__))
@@ -147,6 +150,21 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 	
 	return NodeList(natsorted(targets, key=lambda t: [t.cluster.name, t.name]))
 
+def download_wsdl(nodes):
+	path = cache.get_path('wsdl.xml')
+	min_mtime = arrow.utcnow().replace(hours=-12)
+	if not os.path.exists(path) or arrow.get(os.path.getmtime(path)) < min_mtime:
+		print "Downloading and caching service data... (this may take a moment)"
+		for node in nodes:
+			r = requests.get("%s://%s/remote/?wsdl" % (node.scheme, node.host), stream=True)
+			if r.status_code == 200:
+				with open(path, 'wb') as f:
+					for chunk in r.iter_content(256):
+						f.write(chunk)
+				break
+			else:
+				print " -> %s is unavailable!" % node
+
 
 
 def main():
@@ -180,6 +198,9 @@ def main():
 	# Load configuration
 	config = load_config(args.config or open_config())
 	nodes, clusters = process_config(config)
+	
+	# Grab a WSDL file from somewhere...
+	download_wsdl(nodes.itervalues())
 	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]

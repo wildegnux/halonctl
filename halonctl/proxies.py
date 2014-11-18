@@ -124,6 +124,7 @@ class CommandProxy(object):
     def next(self):
         '''Returns a chunk of the remote process' stdout. Lets you treat this
         object as an iterator.'''
+        
         while True:
             code, data = self.node.service.commandPoll(commandid=self.cid)
             
@@ -154,7 +155,7 @@ class CommandProxy(object):
         signal name (eg. SIGTERM).'''
         
         try:
-            # This will throw a ValueError if the string is not numeric
+            # This will raise a ValueError if the string is not numeric
             sig = int(sigid)
         except ValueError:
             # If it's not, try to get the signal by name from the signal module

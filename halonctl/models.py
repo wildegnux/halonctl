@@ -141,15 +141,10 @@ class Node(object):
 		with the running process.'''
 		
 		# Allow calls as command("cmd", "arg1", "arg2") or command("cmd arg1 arg2")
-		parts = [command] + list(args)
-		if not args:
-			parts = command.split(' ')
+		parts = [command] + list(args) if args else command.split(' ')
 		
 		code, cid = self.service.commandRun(argv={'item': [b64encode(part) for part in parts]})
-		if code == 200:
-			return (200, CommandProxy(self, cid))
-		else:
-			return (code, None)
+		return (200, CommandProxy(self, cid)) if code == 200 else (code, None)
 	
 	def __unicode__(self):
 		s = u"%s (%s)" % (self.name, self.host)

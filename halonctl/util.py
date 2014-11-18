@@ -27,12 +27,12 @@ def ask_confirm(prompt, default=True):
 	suffixes = { True: '[Yn]', False: '[yN]' }
 	
 	while True:
-		answer = raw_input("%s %s: " % (prompt, suffixes[default])).lower()
-		if answer in answers:
-			return answers[answer]
-		else:
+		answer = raw_input("%s %s " % (prompt, suffixes[default])).lower()
+		if not answer in answers:
 			print "Enter either y/yes or n/no, or nothing for default (%s)" % \
 				('yes' if default else 'no')
+			continue
+		return answers[answer]
 
 def hql_from_filters(filters, timezone):
 	'''Gets a HQL statement from a list of filter components.

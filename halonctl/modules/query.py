@@ -60,6 +60,7 @@ class QueryModule(Module):
 	
 	def do_show(self, nodes, args, hql):
 		yield ('Cluster', 'Node', 'From', 'To', 'Subject')
+		
 		for node, result in nodes.service.mailQueue(filter=hql, offset=args.offset, limit=args.limit).iteritems():
 			if result[0] != 200:
 				self.partial = True

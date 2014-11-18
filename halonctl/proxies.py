@@ -6,11 +6,9 @@ from base64 import b64encode, b64decode
 from natsort import natsorted
 from tornado.ioloop import IOLoop
 from tornado.concurrent import *
-from concurrent.futures import ThreadPoolExecutor
 from tornado import gen
 from tornado.httpclient import *
-
-thread_pool_executor = ThreadPoolExecutor(64)
+from halonctl.util import thread_pool_executor
 
 
 
@@ -145,6 +143,15 @@ class CommandProxy(object):
         '''Waits for the process to exit, and returns all of its output.'''
         
         return ''.join(self)
+    
+    def read(self):
+        '''Reads some data from the remote process' stdin'''
+        
+        code, res = self.node.service.commandPoll(commandid=self.cid)
+        if code != 200:
+            self.done = True
+        
+        return (code, ''.join([b64decode(item) for item in res.item]) if hasattr(res, 'item') else res)
     
     def write(self, data):
         '''Writes some data to the remote process' stdin.'''

@@ -1,8 +1,21 @@
 import re
 import arrow
 from dateutil import tz
+from concurrent.futures import ThreadPoolExecutor
+from tornado import gen
+from tornado.ioloop import IOLoop
+from natsort import natsorted
 
-filter_timestamp_re = re.compile(r'\{(.*)\}')
+thread_pool_executor = ThreadPoolExecutor(64)
+
+def async_dispatch(tasks, node_sort_results=False):
+	@gen.coroutine
+	def _inner():
+		results = yield { k: thread_pool_executor.submit(v) for k, v in tasks.iteritems() }
+		if node_sort_results:
+			results = OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name]))
+		raise gen.Return(results)
+	return IOLoop.instance().run_sync(_inner)
 
 def ask_confirm(prompt, default=True):
 	'''Ask the user for confirmation.
@@ -34,6 +47,7 @@ def ask_confirm(prompt, default=True):
 			continue
 		return answers[answer]
 
+filter_timestamp_re = re.compile(r'\{(.*)\}')
 def hql_from_filters(filters, timezone):
 	'''Gets a HQL statement from a list of filter components.
 	

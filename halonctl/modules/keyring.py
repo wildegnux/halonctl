@@ -17,7 +17,7 @@ class KeyringStatusModule(Module):
 			if result[0] == 200:
 				status = True
 			elif result[0] == 401:
-				status = True
+				status = False
 			
 			yield (node.cluster.name, node.name, node.host, status)
 

@@ -160,7 +160,6 @@ def download_wsdl(nodes):
 	path = cache.get_path('wsdl.xml')
 	min_mtime = arrow.utcnow().replace(hours=-12)
 	if not os.path.exists(path) or arrow.get(os.path.getmtime(path)) < min_mtime:
-		print "Downloading and caching service data... (this may take a moment)"
 		for node in nodes:
 			r = requests.get("%s://%s/remote/?wsdl" % (node.scheme, node.host), stream=True)
 			if r.status_code == 200:

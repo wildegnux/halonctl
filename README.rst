@@ -24,20 +24,22 @@ You are strongly recommended to use a `virtualenv <http://virtualenv.readthedocs
 Changelog
 ---------
 
-* 1.0.1
-  
-  **Improved:**
-  
-  * WSDL files are now cached, which shaves off a good couple of seconds *per node* from program startup.
-  
-  **Fixed:**
-  
-  * Cluster logins now work as intended, even when username and password are gotten from different nodes.
-  * The Keychain module no longer incorrectly reports incorrect authentication status in some cases.
+1.0.1
+#####
 
-* 1.0.0
+**Improved:**
+
+* WSDL files are now cached, which shaves off a good couple of seconds *per node* from program startup.
+
+**Fixed:**
+
+* Cluster logins now work as intended, even when username and password are gotten from different nodes.
+* The Keychain module no longer reports incorrect authentication status in some cases.
+
+1.0.0
+#####
   
-  * Initial release
+* Initial release
 
 Links
 -----

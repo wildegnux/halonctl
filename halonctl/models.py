@@ -2,6 +2,7 @@ import socket
 import urllib2
 import keyring
 from base64 import b64encode, b64decode
+from threading import Lock
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 from .proxies import *
@@ -42,6 +43,12 @@ class Node(object):
 		return NodeSoapProxy(self)
 	
 	@property
+	def url(self):
+		'''The base URL for the node.'''
+		
+		return self.scheme + '://' + self.host + '/remote/'
+	
+	@property
 	def username(self):
 		return self.local_username or self.cluster.username
 	
@@ -70,6 +77,7 @@ class Node(object):
 		
 		self.name = name
 		self.cluster = cluster if not cluster is None else NodeList([self])
+		
 		if data:
 			self.load_data(data)
 	
@@ -100,25 +108,9 @@ class Node(object):
 				self.username = parts[0]
 		else:
 			self.host = parts[0]
-	
-	def _connect(self):
-		'''Returns a SOAP client for the node.
 		
-		The first time this is called, it's a blocking operation, as the node's
-		WSDL will be downloaded on the current thread.
-		
-		If the node is unreachable, None is returned.
-		
-		:returns: A suds.client.Client, or None if the server could not be found
-		'''
-		
-		if not hasattr(self, '_client'):
-			url = self.scheme + '://' + self.host + '/remote/'
-			transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
-			
-			self._client = Client("file://" + cache.get_path('wsdl.xml'), location=url, transport=transport, timeout=5, faults=False, nosend=True)
-		
-		return self._client
+		# Make a SOAP client
+		self._client = Client("file://" + cache.get_path('wsdl.xml'), location=url, faults=False, nosend=True)
 	
 	def make_request(self, name, *args, **kwargs):
 		'''Convenience function that creates a SOAP request context from a
@@ -127,7 +119,7 @@ class Node(object):
 		The first call to this function is blocking, as the node's WSDL file
 		will be downloaded synchronously.'''
 		
-		return getattr(self._connect().service, name)(*args, **kwargs)
+		return getattr(self._client.service, name)(*args, **kwargs)
 	
 	def command(self, command, *args):
 		'''Convenience function that executes a command on the node, and returns

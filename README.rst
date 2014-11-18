@@ -35,7 +35,7 @@ Changelog
 
 **Fixed:**
 
-* Stupid bug preventing NodeList cluster initialization from working
+* Stupid bug preventing dict-style cluster initialization from working
 
 1.0.1
 #####

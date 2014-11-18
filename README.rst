@@ -30,6 +30,13 @@ Links
 Changelog
 ---------
 
+1.0.2
+#####
+
+**Fixed:**
+
+* Stupid bug preventing NodeList cluster initialization from working
+
 1.0.1
 #####
 

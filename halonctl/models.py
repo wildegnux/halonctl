@@ -116,10 +116,7 @@ class Node(object):
 			url = self.scheme + '://' + self.host + '/remote/'
 			transport = HttpAuthenticated(username=self.username, password=self.password, timeout=5)
 			
-			try:
-				self._client = Client("file://" + cache.get_path('wsdl.xml'), location=url, transport=transport, timeout=5, faults=False, nosend=True)
-			except urllib2.URLError as e:
-				self._client = None
+			self._client = Client("file://" + cache.get_path('wsdl.xml'), location=url, transport=transport, timeout=5, faults=False, nosend=True)
 		
 		return self._client
 	
@@ -128,13 +125,9 @@ class Node(object):
 		function name and a set of parameters.
 		
 		The first call to this function is blocking, as the node's WSDL file
-		will be dowbloaded synchronously.
+		will be downloaded synchronously.'''
 		
-		If the node is unreachable, None is returned.'''
-		
-		client = self._connect()
-		if client:
-			return getattr(client.service, name)(*args, **kwargs)
+		return getattr(self._connect().service, name)(*args, **kwargs)
 	
 	def command(self, command, *args):
 		'''Convenience function that executes a command on the node, and returns

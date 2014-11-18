@@ -160,15 +160,18 @@ def download_wsdl(nodes):
 	path = cache.get_path('wsdl.xml')
 	min_mtime = arrow.utcnow().replace(hours=-12)
 	if not os.path.exists(path) or arrow.get(os.path.getmtime(path)) < min_mtime:
+		has_been_downloaded = False
 		for node in nodes:
 			r = requests.get("%s://%s/remote/?wsdl" % (node.scheme, node.host), stream=True)
 			if r.status_code == 200:
 				with open(path, 'wb') as f:
 					for chunk in r.iter_content(256):
 						f.write(chunk)
+				has_been_downloaded = True
 				break
-			else:
-				print " -> %s is unavailable!" % node
+		
+		if not has_been_downloaded:
+			sys.exit("None of your nodes are available, can't download WSDL")
 
 
 

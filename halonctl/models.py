@@ -110,7 +110,7 @@ class Node(object):
 			self.host = parts[0]
 		
 		# Make a SOAP client
-		self._client = Client("file://" + cache.get_path('wsdl.xml'), location=url, faults=False, nosend=True)
+		self._client = Client("file://" + cache.get_path('wsdl.xml'), location=self.url, faults=False, nosend=True)
 	
 	def make_request(self, name, *args, **kwargs):
 		'''Convenience function that creates a SOAP request context from a

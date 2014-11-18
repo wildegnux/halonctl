@@ -226,9 +226,9 @@ class NodeList(list):
 		overwriting any existing data.'''
 		
 		if 'username' in data:
-			self.username = data['username']
+			self.local_username = data['username']
 		if 'password' in data:
-			self.password = data['password']
+			self.local_password = data['password']
 	
 	def __unicode__(self):
 		return u"%s -> [%s]" % (self.name, ', '.join([node.name for node in self]))

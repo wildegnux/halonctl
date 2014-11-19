@@ -43,5 +43,6 @@ setup(name='halonctl',
 	],
 	package_data={
 		'': ['*.json']
-	}
+	},
+	use_2to3=True
 )

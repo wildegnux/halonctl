@@ -111,13 +111,8 @@ def load_config(f):
 def process_config(config):
 	'''Processes a configuration dictionary into usable components.'''
 	
-	nodes = {}
+	nodes = async_dispatch({ name: (Node, [data, name]) for name, data in config.get('nodes', {}).iteritems() })
 	clusters = {}
-	
-	for name, data in config.get('nodes', {}).iteritems():
-		node = Node(data)
-		node.name = name
-		nodes[name] = node
 	
 	for name, data in config.get('clusters', {}).iteritems():
 		nids = data['nodes'] if isinstance(data, dict) else data

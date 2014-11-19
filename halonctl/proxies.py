@@ -65,7 +65,7 @@ class NodeListSoapProxy(object):
 
     def __getattr__(self, name):
         def _soap_proxy_executor(*args, **kwargs):
-            return nodesort(async_dispatch({node: lambda: getattr(node.service, name)(*args, **kwargs) for node in self.nodelist}))
+            return nodesort(async_dispatch({node: (getattr(node.service, name), args, kwargs) for node in self.nodelist}))
         return _soap_proxy_executor
 
 class CommandProxy(object):

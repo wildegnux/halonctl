@@ -8,11 +8,13 @@ from natsort import natsorted
 executor = ThreadPoolExecutor(64)
 
 def async_dispatch(tasks):
-	futures = { executor.submit(v): k for k, v in tasks.iteritems() }
+	futures = {
+		executor.submit(v[0], *(v[1] if len(v) >= 2 else []), **(v[2] if len(v) >= 3 else {})): k
+		for k, v in tasks.iteritems()
+	}
 	done, not_done = wait(futures)
-	results = { futures[future]: future.result() for future in futures }
 	
-	return results
+	return { futures[future]: future.result() for future in done }
 
 def nodesort(nodes):
 	return OrderedDict(natsorted(nodes.items(), key=lambda t: [t[0].cluster.name, t[0].name]))

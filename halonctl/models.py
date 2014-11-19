@@ -197,7 +197,7 @@ class NodeList(list):
 	def command(self, command, *args):
 		'''Executes a command across all contained nodes.'''
 		
-		return nodesort(async_dispatch({ node: lambda: node.command(command, *args) for node in self }))
+		return nodesort(async_dispatch({ node: (node.command, (command,) + args) for node in self }))
 	
 	
 	

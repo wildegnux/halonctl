@@ -198,10 +198,10 @@ def main():
 	
 	# Load configuration
 	config = load_config(args.config or open_config())
-	nodes, clusters = process_config(config)
+	nodes, clusters = process_config(config, preload_wsdl=True)
 	
 	# Grab a WSDL file from somewhere...
-	download_wsdl(nodes.itervalues(), preload_wsdl=True)
+	download_wsdl(nodes.itervalues())
 	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]

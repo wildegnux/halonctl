@@ -30,6 +30,18 @@ Links
 Changelog
 ---------
 
+1.0.4
+#####
+
+**Improved:**
+
+* Startup time is now constant, rather than linearly increasing with the number of configured nodes
+* Sending Ctrl+C's to commands run through the ``cmd`` module now only takes as long as the slowest node
+
+**Fixed:**
+
+* An awful bug that caused all nodes to report the same data
+
 1.0.3
 #####
 

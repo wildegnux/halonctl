@@ -37,7 +37,7 @@ setup(name='halonctl',
 		'keyring',		# Secure credential storage
 		'natsort',		# Natural sorting of node names
 		'suds-jurko',	# SOAP client library; improved fork of suds
-		'texttable',	# Easily print fancy ASCII tables
+		'prettytable',	# Fancy ASCII tables, feat. Py3 compatibility
 		'requests',		# "HTTP for Humans"
 		'blessings',	# Terminal magic made simple
 	],

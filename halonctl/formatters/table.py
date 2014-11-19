@@ -1,11 +1,15 @@
-from texttable import Texttable
-from blessings import Terminal
-from halonctl.util import textualize_rows
+from prettytable import PrettyTable
+from halonctl.util import textualize_row
 
 def format(rows):
-	rows = textualize_rows(rows)
-	term = Terminal()
-	table = Texttable(term.width)
-	table.set_deco(Texttable.HEADER)
-	table.add_rows(rows)
-	return table.draw()
+	table = PrettyTable(rows[0])
+	
+	table.align = "l"
+	table.border = False
+	table.left_padding_width = 0
+	table.right_padding_width = 2
+	
+	for row in rows[1:]:
+		table.add_row(textualize_row(row))
+	
+	return table.get_string()

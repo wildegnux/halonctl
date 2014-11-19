@@ -115,13 +115,11 @@ def process_config(config):
 	clusters = {}
 	
 	for name, data in config.get('clusters', {}).iteritems():
-		nids = data['nodes'] if isinstance(data, dict) else data
-		
 		cluster = NodeList()
 		cluster.name = name
 		cluster.load_data(data)
 		
-		for nid in nids:
+		for nid in data['nodes'] if isinstance(data, dict) else data:
 			node = nodes[nid]
 			node.cluster = cluster
 			cluster.append(node)

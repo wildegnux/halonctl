@@ -39,6 +39,7 @@ setup(name='halonctl',
 		'suds-jurko',	# SOAP client library; improved fork of suds
 		'texttable',	# Easily print fancy ASCII tables
 		'requests',		# "HTTP for Humans"
+		'blessings',	# Terminal magic made simple
 	],
 	package_data={
 		'': ['*.json']

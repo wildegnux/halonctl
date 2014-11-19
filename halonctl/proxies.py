@@ -2,7 +2,7 @@ import signal
 import inspect
 import requests
 from base64 import b64encode, b64decode
-from halonctl.util import async_dispatch
+from halonctl.util import async_dispatch, nodesort
 
 
 
@@ -65,7 +65,7 @@ class NodeListSoapProxy(object):
 
     def __getattr__(self, name):
         def _soap_proxy_executor(*args, **kwargs):
-            return async_dispatch({node: lambda: getattr(node.service, name)(*args, **kwargs) for node in self.nodelist}, True)
+            return nodesort(async_dispatch({node: lambda: getattr(node.service, name)(*args, **kwargs) for node in self.nodelist}))
         return _soap_proxy_executor
 
 class CommandProxy(object):

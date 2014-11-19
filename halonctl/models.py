@@ -6,7 +6,7 @@ from threading import Lock
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 from .proxies import *
-from .util import async_dispatch
+from .util import async_dispatch, nodesort
 from . import cache
 
 
@@ -197,7 +197,7 @@ class NodeList(list):
 	def command(self, command, *args):
 		'''Executes a command across all contained nodes.'''
 		
-		return async_dispatch({ node: lambda: node.command(command, *args) for node in self }, True)
+		return nodesort(async_dispatch({ node: lambda: node.command(command, *args) for node in self }))
 	
 	
 	

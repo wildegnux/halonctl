@@ -7,12 +7,15 @@ from natsort import natsorted
 
 executor = ThreadPoolExecutor(64)
 
-def async_dispatch(tasks, node_sort_results=False):
+def async_dispatch(tasks):
 	futures = { executor.submit(v): k for k, v in tasks.iteritems() }
 	done, not_done = wait(futures)
 	results = { futures[future]: future.result() for future in futures }
 	
-	return results if not node_sort_results else OrderedDict(natsorted(results.items(), key=lambda t: [t[0].cluster.name, t[0].name]))
+	return results
+
+def nodesort(nodes):
+	return OrderedDict(natsorted(nodes.items(), key=lambda t: [t[0].cluster.name, t[0].name]))
 
 def ask_confirm(prompt, default=True):
 	'''Ask the user for confirmation.

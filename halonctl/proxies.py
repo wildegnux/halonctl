@@ -30,7 +30,8 @@ class NodeSoapProxy(object):
 	def __getattr__(self, name):
 		def _soap_proxy_executor(*args, **kwargs):
 			context = self.node.make_request(name, *args, **kwargs)
-			r = requests.post(context.client.location(), auth=(self.node.username, self.node.password),
+			r = requests.post(context.client.location(),
+				auth=(self.node.username, self.node.password),
 				headers=context.client.headers(), data=context.envelope,
 				timeout=10)
 			return context.process_reply(r.text, r.status_code, r.reason)

@@ -3,7 +3,10 @@ halonctl
 
 A commandline utility for managing Halon nodes and clusters.
 
-Currently, only Python 2.7 is supported, 3.x support is coming.
+Requirements
+------------
+
+* Python 2.7+ or 3.3+
 
 Installation
 ------------
@@ -29,6 +32,17 @@ Links
 
 Changelog
 ---------
+
+1.1.0
+#####
+
+**Added:**
+
+* Python 3 support!
+
+**Changed:**
+
+* TextTable dropped for PrettyTable - in other words, tables look different
 
 1.0.4
 #####

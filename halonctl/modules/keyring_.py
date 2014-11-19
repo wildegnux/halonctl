@@ -26,7 +26,7 @@ class KeyringLoginModule(Module):
 	
 	def run(self, nodes, args):
 		for node in nodes:
-			prefix = "%s / %s (%s)" % (node.cluster.name, node.name, node.host)
+			prefix = "{cluster} / {name} ({host})".format(cluster=node.cluster.name, name=node.name, host=node.host)
 			if not node.username:
 				print prefix + " - No username configured for node or cluster"
 				continue
@@ -40,7 +40,7 @@ class KeyringLoginModule(Module):
 			elif result == 401:
 				print prefix + " - Enter password (blank to skip):"
 				while True:
-					password = getpass.getpass("%s@%s> " % (node.username, node.host))
+					password = getpass.getpass("{user}@{host}> ".format(user=node.username, host=node.host))
 					if password == "":
 						break
 					
@@ -56,10 +56,10 @@ class KeyringLoginModule(Module):
 						print "The node has gone away"
 						break
 					else:
-						print "An error occurred, code %s" % result
+						print "An error occurred, code {0}".format(result)
 						break
 			else:
-				print "An error occurred, code %s" % result
+				print "An error occurred, code {0}".format(result)
 
 class KeyringLogoutModule(Module):
 	'''Deletes stored credentials for the node(s)'''
@@ -73,7 +73,7 @@ class KeyringLogoutModule(Module):
 			if not keyring.get_password(node.host, node.username):
 				continue
 			
-			if args.yes or ask_confirm("Log out from %s / %s (%s)?" % (node.cluster.name, node.name, node.host)):
+			if args.yes or ask_confirm("Log out from {cluster} / {name} ({host})?".format(cluster=node.cluster.name, name=node.name, host=node.host)):
 				keyring.delete_password(node.host, node.username)
 
 class KeyringModule(Module):

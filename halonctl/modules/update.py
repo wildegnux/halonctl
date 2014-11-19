@@ -19,7 +19,7 @@ class UpdateStatusModule(Module):
 			elif result[0] == 200:
 				status_code = int(result[1])
 				if status_code <= 100:
-					status = "Downloading: %d%%" % status_code
+					status = "Downloading: {0}%%".format(status_code)
 				elif status_code == 101:
 					status = "Checksumming..."
 				elif status_code == 102:
@@ -36,7 +36,7 @@ class UpdateDownloadModule(Module):
 		for node, result in nodes.service.updateDownloadStart().iteritems():
 			if result[0] != 200:
 				self.partial = True
-				print "Failure on %s!" % (node)
+				print "Failure on {0}!".format(node)
 
 class UpdateInstallModule(Module):
 	'''Installs a downloaded update'''
@@ -47,10 +47,10 @@ class UpdateInstallModule(Module):
 	
 	def run(self, nodes, args):
 		for node in nodes:
-			if args.yes or ask_confirm("Install pending update and reboot %s?" % node):
+			if args.yes or ask_confirm("Install pending update and reboot {0}?".format(node)):
 				code, _ = node.service.updateInstall()
 				if code != 200:
-					print "Failure on %s!" % node
+					print "Failure on {0}!".format(node)
 
 class UpdateCancelModule(Module):
 	'''Cancels a pending update'''
@@ -59,7 +59,7 @@ class UpdateCancelModule(Module):
 		for node, result in nodes.service.updateDownloadCancel().iteritems():
 			if result[0] != 200:
 				self.partial = True
-				print "Failure on %s!" % (node)
+				print "Failure on {0}!".format(node)
 
 class UpdateModule(Module):
 	'''Manages node updates'''

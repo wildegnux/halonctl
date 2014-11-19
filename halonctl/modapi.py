@@ -73,7 +73,7 @@ class Module(object):
 		    def run(self, nodes, args):
 		        for node, result in nodes.service.someCall(arg=123).iteritems():
 		            if result[0] != 200:
-		                print "Failure on %s: %s" % (node, result[1])
+		                print "Failure on {node}: {result}".format(node=node, result=result[1])
 		'''
 		# The default implementation simply delegates to a subcommand
 		if self.submodules:

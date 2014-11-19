@@ -75,7 +75,7 @@ class QueryModule(Module):
 		
 		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate):
 			if result[0] != 200:
-				print "Failure on %s" % (node)
+				print "Failure on {0}".format(node)
 	
 	def do_delete(self, nodes, args, hql):
 		if not hql and not ask_confirm("You have no filter, do you really want to delete everything!?", False):
@@ -83,6 +83,6 @@ class QueryModule(Module):
 		
 		for node, result in nodes.service.mailQueueDeleteBulk(filter=hql):
 			if result[0] != 200:
-				print "Failure on %s" (node)
+				print "Failure on {0}".format(node)
 
 module = QueryModule()

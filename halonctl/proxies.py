@@ -60,7 +60,7 @@ class NodeListSoapProxy(object):
 				continue
 			
 			# result[1] is the response data
-			print "%s: %s" % (node, result[1])
+			print "{node}: {result}".format(node=node, result=result[1])
 	
 	'''
 	

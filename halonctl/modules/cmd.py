@@ -9,9 +9,9 @@ def print_waiting_message(sigint_sent, num_dots, max_dots):
 		dots = ('.' * num_dots).ljust(max_dots)
 		num_dots = num_dots + 1 if num_dots < max_dots else 1
 		if not sigint_sent:
-			sys.stderr.write("\rWaiting for processes to complete%s (Press Ctrl+C to stop it)" % dots)
+			sys.stderr.write("\rWaiting for processes to complete{0} (Press Ctrl+C to stop it)".format(dots))
 		else:
-			sys.stderr.write("\rTermination requested, waiting%s (Press Ctrl+C to kill)" % dots)
+			sys.stderr.write("\rTermination requested, waiting{0} (Press Ctrl+C to kill)".format(dots))
 	
 	return num_dots
 
@@ -63,7 +63,7 @@ class CommandModule(Module):
 		
 		for node, buf in natsorted(buffers.items(), key=lambda t: [t[0].cluster.name, t[0].name]):
 			for line in buf.split('\r\n'):
-				print "%s / %s> %s" % (node.cluster.name, node.name, line)
+				print "{cluster} / {name}> {line}".format(cluster=node.cluster.name, name=node.name, line=line)
 			
 			print ""
 			

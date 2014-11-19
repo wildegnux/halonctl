@@ -144,9 +144,9 @@ class Node(object):
 		return (200, CommandProxy(self, cid)) if code == 200 else (code, None)
 	
 	def __unicode__(self):
-		s = u"%s (%s)" % (self.name, self.host)
+		s = u"{name} ({host})".format(name=self.name, host=self.host)
 		if self.cluster.name:
-			s = u"%s/%s" % (self.cluster.name, s)
+			s = u"{cluster}/{s}".format(cluster=self.cluster.name, s=s)
 		return s
 	
 	def __str__(self):
@@ -214,7 +214,7 @@ class NodeList(list):
 			self.local_password = data['password']
 	
 	def __unicode__(self):
-		return u"%s -> [%s]" % (self.name, ', '.join([node.name for node in self]))
+		return u"{name} -> [{nodes}]".format(name=self.name, nodes=', '.join([node.name for node in self]))
 	
 	def __str__(self):
 		return unicode(self).encode('utf-8')

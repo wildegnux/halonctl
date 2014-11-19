@@ -46,7 +46,7 @@ def load_modules():
 		if hasattr(mod, 'module'):
 			register_module(name.rstrip('_'), mod.module)
 		else:
-			print "Ignoring invalid module (missing 'module' variable): %s" % name
+			print "Ignoring invalid module (missing 'module' variable): {name}".format(name=name)
 
 def load_formatters():
 	'''Load all formatters from the 'formatters' directory.'''
@@ -57,7 +57,7 @@ def load_formatters():
 		if hasattr(fmt, 'format'):
 			formatters[name.rstrip('_')] = fmt.format
 		else:
-			print "Ignoring invalid formatter (missing 'format' member): %s" % name
+			print "Ignoring invalid formatter (missing 'format' member): {name}".format(name)
 
 def register_module(name, mod):
 	'''Registers a loaded module instance'''
@@ -90,12 +90,12 @@ def open_config():
 		print "Please create one in one of the following locations:"
 		print ""
 		for p in config_paths:
-			print "  - %s" % p
+			print "  - {0}".format(p)
 		print ""
 		print "Or use the -C/--config flag to specify a path."
 		print "A sample config can be found at:"
 		print ""
-		print "  - %s" % os.path.abspath(os.path.join(BASE, 'halonctl.sample.json'))
+		print "  - {0}".format(os.path.abspath(os.path.join(BASE, 'halonctl.sample.json')))
 		print ""
 		sys.exit(1)
 	
@@ -155,7 +155,7 @@ def download_wsdl(nodes):
 	if not os.path.exists(path) or arrow.get(os.path.getmtime(path)) < min_mtime:
 		has_been_downloaded = False
 		for node in nodes:
-			r = requests.get("%s://%s/remote/?wsdl" % (node.scheme, node.host), stream=True)
+			r = requests.get("{scheme}://{host}/remote/?wsdl".format(scheme=node.scheme, host=node.host), stream=True)
 			if r.status_code == 200:
 				with open(path, 'wb') as f:
 					for chunk in r.iter_content(256):
@@ -180,14 +180,14 @@ def main():
 	# Add parser arguments
 	parser.add_argument('-C', '--config', type=argparse.FileType('rU'),
 		help="use specified configuration file")
-
+	
 	parser.add_argument('-n', '--node', dest='nodes', action='append', metavar="NODES",
 		default=[], help="target nodes")
 	parser.add_argument('-c', '--cluster', dest='clusters', action='append', metavar="CLUSTERS",
 		default=[], help="target clusters")
 	parser.add_argument('-s', '--slice', dest='slice',
 		default='', help="slicing, as a Python slice expression")
-
+	
 	parser.add_argument('-i', '--ignore-partial', action='store_true',
 		help="exit normally even for partial results")
 	parser.add_argument('-f', '--format', choices=formatters.keys(), default='table',
@@ -206,14 +206,14 @@ def main():
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
 	if invalid_clusters:
-		print "Unknown clusters: %s" % ', '.join(invalid_clusters)
-		print "Available: %s" % ', '.join(clusters.iterkeys())
+		print "Unknown clusters: {0}".format(', '.join(invalid_clusters))
+		print "Available: {0}".format(', '.join(clusters.iterkeys()))
 		sys.exit(1)
 	
 	invalid_nodes = [nid for nid in args.nodes if not nid in nodes]
 	if invalid_nodes:
-		print "Unknown nodes: %s" % ', '.join(invalid_nodes)
-		print "Available: %s" % ', '.join(nodes.iterkeys())
+		print "Unknown nodes: {0}".format(', '.join(invalid_nodes))
+		print "Available: {0}".format(', '.join(nodes.iterkeys()))
 		sys.exit(1)
 	
 	# Filter nodes to choices

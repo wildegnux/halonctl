@@ -53,10 +53,9 @@ def ask_confirm(prompt, default=True):
 	suffixes = { True: '[Yn]', False: '[yN]' }
 	
 	while True:
-		answer = raw_input("%s %s " % (prompt, suffixes[default])).lower()
+		answer = raw_input("{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default])).lower()
 		if not answer in answers:
-			print "Enter either y/yes or n/no, or nothing for default (%s)" % \
-				('yes' if default else 'no')
+			print "Enter either y/yes or n/no, or nothing for default ({0})".format('yes' if default else 'no')
 			continue
 		return answers[answer]
 

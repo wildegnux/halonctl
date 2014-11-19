@@ -66,7 +66,7 @@ class QueryModule(Module):
 				self.partial = True
 			elif 'item' in result[1]['result']:
 				for msg in result[1]['result']['item']:
-					msg['msgsubject'] = b64decode(msg['msgsubject'])
+					msg['msgsubject'] = b64decode(msg['msgsubject'].encode('utf-8')).decode('utf-8')
 					yield (node.cluster.name, node.name, msg['msgfrom'], msg['msgto'], msg['msgsubject'])
 	
 	def do_deliver(self, nodes, args, hql, duplicate):

@@ -124,12 +124,12 @@ class CommandProxy(object):
 		if code != 200:
 			self.done = True
 		
-		return (code, ''.join([b64decode(item) for item in res.item]) if hasattr(res, 'item') else res)
+		return (code, ''.join([b64decode(item.encode('utf-8')).decode('utf-8') for item in res.item]) if hasattr(res, 'item') else res)
 	
 	def write(self, data):
 		'''Writes some data to the remote process' stdin.'''
 		
-		code, res = self.node.service.commandPush(commandid=self.cid, data=b64encode(data))
+		code, res = self.node.service.commandPush(commandid=self.cid, data=b64encode(data.encode('utf-8')).decode('utf-8'))
 		if code != 200:
 			self.done = True
 		

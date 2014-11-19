@@ -1,5 +1,4 @@
 from halonctl.modapi import Module
-from base64 import b64encode, b64decode
 
 class QueueModule(Module):
 	'''Checks queue count'''

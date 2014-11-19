@@ -111,7 +111,7 @@ def load_config(f):
 def process_config(config):
 	'''Processes a configuration dictionary into usable components.'''
 	
-	nodes = async_dispatch({ name: (Node, [data, name]) for name, data in config.get('nodes', {}).iteritems() })
+	nodes = async_dispatch({ name: (Node, [data, name], {'load_wsdl': True}) for name, data in config.get('nodes', {}).iteritems() })
 	clusters = {}
 	
 	for name, data in config.get('clusters', {}).iteritems():

@@ -72,7 +72,7 @@ class Node(object):
 	
 	
 	
-	def __init__(self, data=None, name=None, cluster=None):
+	def __init__(self, data=None, name=None, cluster=None, load_wsdl=False):
 		'''Initializes a Node with the given configuration data and name.'''
 		
 		self.name = name
@@ -80,6 +80,9 @@ class Node(object):
 		
 		if data:
 			self.load_data(data)
+		
+		if load_wsdl:
+			self.load_wsdl()
 	
 	def load_data(self, s):
 		'''Updates the node's data from the given configuration string,

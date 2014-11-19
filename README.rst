@@ -1,7 +1,7 @@
 halonctl
 ========
 
-A commandline utility for managing Halon SP nodes and clusters.
+A commandline utility for managing Halon nodes and clusters.
 
 Currently, only Python 2.7 is supported, 3.x support is coming.
 

@@ -4,6 +4,7 @@
 /include
 /local
 /man
+/pyvenv.cfg
 
 # Built products
 /docs/_build

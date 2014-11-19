@@ -26,6 +26,8 @@ def async_dispatch(tasks):
 	return { futures[future]: future.result() for future in done }
 
 def nodesort(nodes):
+	'''Sorts a dictionary of nodes into an OrderedDict, by cluster and name.'''
+	
 	return OrderedDict(natsorted(nodes.items(), key=lambda t: [t[0].cluster.name, t[0].name]))
 
 def ask_confirm(prompt, default=True):

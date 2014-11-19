@@ -109,8 +109,15 @@ class Node(object):
 		else:
 			self.host = parts[0]
 		
-		# Make a SOAP client
-		self._client = Client("file://" + cache.get_path('wsdl.xml'), location=self.url, faults=False, nosend=True)
+	def load_wsdl(self):
+		'''Loads the cached WSDL file.
+		
+		This is called automatically the first time a SOAP call is attempted,
+		or you may call it yourself on startup to e.g. create a bunch of
+		clients at once over a bunch of threads.'''
+		
+		if not hasattr(self, '_client'):
+			self._client = Client("file://" + cache.get_path('wsdl.xml'), location=self.url, faults=False, nosend=True)
 	
 	def make_request(self, name, *args, **kwargs):
 		'''Convenience function that creates a SOAP request context from a
@@ -119,6 +126,7 @@ class Node(object):
 		The first call to this function is blocking, as the node's WSDL file
 		will be downloaded synchronously.'''
 		
+		self.load_wsdl()
 		return getattr(self._client.service, name)(*args, **kwargs)
 	
 	def command(self, command, *args):

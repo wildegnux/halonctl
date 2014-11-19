@@ -54,11 +54,9 @@ class CommandModule(Module):
 				if not sigint_sent:
 					sigint_sent = True
 					print_waiting_message(True, num_dots, max_dots)
-					for node, cmd in unfinished.iteritems():
-						cmd.signal('SIGINT')
+					async_dispatch({ node: (cmd.signal, ['SIGINT']) for node, cmd in unfinished.iteritems() })
 				else:
-					for node, cmd in unfinished.items():
-						cmd.stop()
+					async_dispatch({ node: (cmd.stop,) for node, cmd in unfinished.iteritems() })
 			
 			finally:
 				sys.stderr.write("\r")

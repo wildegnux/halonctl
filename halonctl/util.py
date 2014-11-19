@@ -8,6 +8,15 @@ from natsort import natsorted
 executor = ThreadPoolExecutor(64)
 
 def async_dispatch(tasks):
+	'''Dispatches jobs into a thread pool.
+	
+	This will take a set of jobs as a dictionary in the form::
+	
+	    { 'key': (callable, args, kwargs) }
+	
+	And dispatch it into a thread pool, completing the tasks asynchronously,
+	and returning the results. This will take as long as the slowest job.'''
+	
 	futures = {
 		executor.submit(v[0], *(v[1] if len(v) >= 2 else []), **(v[2] if len(v) >= 3 else {})): k
 		for k, v in tasks.iteritems()

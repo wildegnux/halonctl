@@ -35,7 +35,7 @@ class NodeSoapProxy(object):
 					auth=(self.node.username, self.node.password),
 					headers=context.client.headers(), data=context.envelope,
 					timeout=10)
-				return context.process_reply(r.text, r.status_code, r.reason)
+				return context.process_reply(r.content, r.status_code, r.reason)
 			except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
 				return (0, None)
 		

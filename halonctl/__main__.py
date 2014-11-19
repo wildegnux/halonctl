@@ -20,7 +20,8 @@ sys.path.insert(0, BASE)
 
 # Create an argument parser
 parser = argparse.ArgumentParser(description="Easily manage Halon nodes and clusters.")
-subparsers = parser.add_subparsers(title='subcommands', metavar='cmd')
+subparsers = parser.add_subparsers(title='subcommands', dest='_mod_name', metavar='cmd')
+subparsers.required = True
 
 # All available modules and output formatters
 modules = {}

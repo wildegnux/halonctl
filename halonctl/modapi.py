@@ -35,7 +35,8 @@ class Module(object):
 		
 		# The default implementation adds subcommands if there are any
 		if self.submodules:
-			subparsers = parser.add_subparsers(metavar='subcommand')
+			subparsers = parser.add_subparsers(dest=type(self).__name__ + '_mod_name', metavar='subcommand')
+			subparsers.required = True
 			for name, mod in self.submodules.iteritems():
 				p = subparsers.add_parser(name, help=mod.__doc__)
 				p.set_defaults(**{type(self).__name__ + '_mod': mod})

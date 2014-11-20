@@ -33,6 +33,13 @@ Links
 Changelog
 ---------
 
+1.1.1
+#####
+
+**Fixed:**
+
+* A bug preventing non-ASCII content from being displayed properly on Python 2
+
 1.1.0
 #####
 

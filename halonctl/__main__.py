@@ -233,7 +233,7 @@ def main():
 		if hasattr(retval, 'draw'):
 			print retval.draw()
 		else:
-			print formatters[args.format](retval)
+			print formatters[args.format](retval).encode("utf-8")
 	
 	# Let the module decide the exit code - either by explicitly setting it, or
 	# by marking the result as partial, in which case a standard exit code is

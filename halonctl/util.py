@@ -84,12 +84,12 @@ def textualize_item(item):
 	'''Formats an item in an output table for presentation.'''
 	
 	if item is None:
-		return '-'
+		return u"-"
 	elif item is True:
-		return 'Yes'
+		return u"Yes"
 	elif item is False:
-		return 'No'
-	return item
+		return u"No"
+	return unicode(item)
 
 def textualize_row(row):
 	'''Formats a row in an output table for presentation.'''

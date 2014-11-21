@@ -59,7 +59,7 @@ def ask_confirm(prompt, default=True):
 			continue
 		return answers[answer]
 
-filter_timestamp_re = re.compile(r'\{(.*)\}')
+filter_timestamp_re = re.compile(r'\{([^}]*)\}')
 def hql_from_filters(filters, timezone):
 	'''Gets a HQL statement from a list of filter components.
 	

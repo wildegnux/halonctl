@@ -7,9 +7,9 @@ class QueryModule(Module):
 	'''Queries emails and performs actions'''
 	
 	def register_arguments(self, parser):
-		parser.add_argument('--offset', type=int, default=0,
+		parser.add_argument('--offset', type=int,
 			help="offset when just showing emails (default: 0)")
-		parser.add_argument('--limit', type=int, default=100,
+		parser.add_argument('--limit', type=int,
 			help="limit when just showing emails (default: 100)")
 		
 		tzgroup = parser.add_mutually_exclusive_group()
@@ -61,7 +61,7 @@ class QueryModule(Module):
 	def do_show(self, nodes, args, hql):
 		yield ('Cluster', 'Node', 'From', 'To', 'Subject')
 		
-		for node, result in nodes.service.mailQueue(filter=hql, offset=args.offset, limit=args.limit).iteritems():
+		for node, result in nodes.service.mailQueue(filter=hql, offset=args.offset or None, limit=args.limit or 100).iteritems():
 			if result[0] != 200:
 				self.partial = True
 			elif 'item' in result[1]['result']:
@@ -73,16 +73,16 @@ class QueryModule(Module):
 		if not hql and not ask_confirm("You have no filter, do you really want to try to deliver everything?", False):
 			return
 		
-		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate):
+		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=int(duplicate)).iteritems():
 			if result[0] != 200:
-				print "Failure on {0}".format(node)
+				print "Failure on {0}: {1}".format(node, result[1])
 	
 	def do_delete(self, nodes, args, hql):
 		if not hql and not ask_confirm("You have no filter, do you really want to delete everything!?", False):
 			return
 		
-		for node, result in nodes.service.mailQueueDeleteBulk(filter=hql):
+		for node, result in nodes.service.mailQueueDeleteBulk(filter=hql).iteritems():
 			if result[0] != 200:
-				print "Failure on {0}".format(node)
+				print "Failure on {0}: {1}".format(node, result[1])
 
 module = QueryModule()

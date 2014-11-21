@@ -33,6 +33,13 @@ Links
 Changelog
 ---------
 
+1.1.2
+#####
+
+**Fixed:**
+
+* A bug sometimes preventing WSDL files from being downloaded
+
 1.1.1
 #####
 

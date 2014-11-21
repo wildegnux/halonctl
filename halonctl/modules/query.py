@@ -11,6 +11,8 @@ class QueryModule(Module):
 			help="offset when just showing emails (default: 0)")
 		parser.add_argument('--limit', type=int,
 			help="limit when just showing emails (default: 100)")
+		parser.add_argument('--debug-hql', action='store_true',
+			help="print resulting hql queries, for debugging")
 		
 		tzgroup = parser.add_mutually_exclusive_group()
 		tzgroup.add_argument('--utc', dest='timezone', action='store_const', const=0,
@@ -47,6 +49,8 @@ class QueryModule(Module):
 		
 		# Make a proper filter string
 		hql = hql_from_filters(args.filter, args.timezone)
+		if args.debug_hql:
+			print hql
 		
 		# Dispatch!
 		if args.action is None:

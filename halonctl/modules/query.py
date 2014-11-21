@@ -67,6 +67,7 @@ class QueryModule(Module):
 		
 		for node, result in nodes.service.mailQueue(filter=hql, offset=args.offset or None, limit=args.limit or 100).iteritems():
 			if result[0] != 200:
+				print "Failure on {0}: {1}".format(node, result[1])
 				self.partial = True
 			elif 'item' in result[1]['result']:
 				for msg in result[1]['result']['item']:

@@ -112,8 +112,12 @@ def load_config(f):
 def process_config(config, preload_wsdl=False):
 	'''Processes a configuration dictionary into usable components.'''
 	
-	nodes = async_dispatch({ name: (Node, [data, name], {'load_wsdl': preload_wsdl}) for name, data in config.get('nodes', {}).iteritems() })
+	nodes = { name: Node(data, name) for name, data in config.get('nodes', {}).iteritems() }
 	clusters = {}
+
+	if preload_wsdl:
+		download_wsdl(nodes.itervalues())
+		async_dispatch({ node: (node.load_wsdl,) for node in nodes.itervalues() })
 	
 	for name, data in config.get('clusters', {}).iteritems():
 		cluster = NodeList()
@@ -203,9 +207,6 @@ def main():
 	# Load configuration
 	config = load_config(args.config or open_config())
 	nodes, clusters = process_config(config, preload_wsdl=True)
-	
-	# Grab a WSDL file from somewhere...
-	download_wsdl(nodes.itervalues())
 	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]

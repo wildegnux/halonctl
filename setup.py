@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(name='halonctl',
-	version='1.1.2',
+	version='1.2.0',
 	description='Manage Halon nodes from the commandline',
 	author='Halon Security',
 	author_email='support@halon.se',
@@ -15,7 +15,7 @@ setup(name='halonctl',
 	},
 	license='BSD',
 	classifiers=[
-		'Development Status :: 4 - Beta',
+		'Development Status :: 5 - Production/Stable',
 		'Environment :: Console',
 		'Intended Audience :: Developers',
 		'Intended Audience :: System Administrators',

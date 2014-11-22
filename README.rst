@@ -33,6 +33,19 @@ Links
 Changelog
 ---------
 
+1.2.0
+#####
+
+**Added:**
+
+* ``--debug-hql`` flag to the ``query`` module, which prints executed queries
+* Errors from non-action ``query`` calls are now printed
+
+**Fixed:**
+
+* Some ``query`` flags not working properly
+* ``query`` statements with multiple timestamps not being parsed correctly
+
 1.1.2
 #####
 

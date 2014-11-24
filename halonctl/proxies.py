@@ -1,8 +1,7 @@
 import signal
 import inspect
 import requests
-from base64 import b64encode, b64decode
-from halonctl.util import async_dispatch, nodesort
+from halonctl.util import async_dispatch, nodesort, from_base64, to_base64
 
 
 
@@ -124,12 +123,12 @@ class CommandProxy(object):
 		if code != 200:
 			self.done = True
 		
-		return (code, ''.join([b64decode(item.encode('utf-8')).decode('utf-8') for item in res.item]) if hasattr(res, 'item') else res)
+		return (code, ''.join([from_base64(item) for item in res.item]) if hasattr(res, 'item') else res)
 	
 	def write(self, data):
 		'''Writes some data to the remote process' stdin.'''
 		
-		code, res = self.node.service.commandPush(commandid=self.cid, data=b64encode(data.encode('utf-8')).decode('utf-8'))
+		code, res = self.node.service.commandPush(commandid=self.cid, data=to_base64(data))
 		if code != 200:
 			self.done = True
 		

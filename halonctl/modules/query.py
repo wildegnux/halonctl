@@ -1,7 +1,6 @@
 import argparse
-from base64 import b64decode
 from halonctl.modapi import Module
-from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm
+from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm, from_base64
 
 class QueryModule(Module):
 	'''Queries emails and performs actions'''
@@ -71,7 +70,7 @@ class QueryModule(Module):
 				self.partial = True
 			elif 'item' in result[1]['result']:
 				for msg in result[1]['result']['item']:
-					msg['msgsubject'] = b64decode(msg['msgsubject'].encode('utf-8')).decode('utf-8')
+					msg['msgsubject'] = from_base64(msg['msgsubject'])
 					yield (node.cluster.name, node.name, msg['msgfrom'], msg['msgto'], msg['msgsubject'])
 	
 	def do_deliver(self, nodes, args, hql, duplicate):

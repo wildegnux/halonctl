@@ -1,5 +1,6 @@
 import re
 import arrow
+from base64 import b64decode, b64encode
 from collections import OrderedDict
 from concurrent.futures import ThreadPoolExecutor, wait
 from dateutil import tz
@@ -98,3 +99,19 @@ def textualize_row(row):
 def textualize_rows(rows):
 	'''Formats a set of rows in an output table for presentation.'''
 	return [textualize_row(row) for row in rows]
+
+def from_base64(s):
+	'''Decodes a Base64-encoded string.
+	
+	This exists because base64.b64decode doesn't take strings in Python 3, and
+	there's an awful lot of boilerplate with encodings and handling Nones.'''
+	
+	return u"" if not s else b64decode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')
+
+def to_base64(s):
+	'''Encodes a unicode string as Base64.
+	
+	This exists because base64.b64decode doesn't take strings in Python 3, and
+	there's an awful lot of boilerplate with encodings and handling Nones.'''
+	
+	return u"" if not s else b64encode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')

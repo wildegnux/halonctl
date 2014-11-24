@@ -1,12 +1,11 @@
 import socket
 import urllib2
 import keyring
-from base64 import b64encode, b64decode
 from threading import Lock
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
 from .proxies import *
-from .util import async_dispatch, nodesort
+from .util import async_dispatch, nodesort, to_base64, from_base64
 from . import cache
 
 
@@ -140,7 +139,7 @@ class Node(object):
 		# Allow calls as command("cmd", "arg1", "arg2") or command("cmd arg1 arg2")
 		parts = [command] + list(args) if args else command.split(' ')
 		
-		code, cid = self.service.commandRun(argv={'item': [b64encode(part.encode('utf-8')).decode('utf-8') for part in parts]})
+		code, cid = self.service.commandRun(argv={'item': [to_base64(part) for part in parts]})
 		return (200, CommandProxy(self, cid)) if code == 200 else (code, None)
 	
 	def __unicode__(self):

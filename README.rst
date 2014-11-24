@@ -33,6 +33,13 @@ Links
 Changelog
 ---------
 
+1.2.1
+#####
+
+**Fixed:**
+
+* Crashes when ``query`` got an email with no subject line, or invalid UTF-8
+
 1.2.0
 #####
 

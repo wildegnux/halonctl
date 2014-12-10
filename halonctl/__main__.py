@@ -13,6 +13,7 @@ from natsort import natsorted
 from .models import *
 from .util import *
 from . import cache
+from . import config as g_config
 
 # Figure out where this script is, and change the PATH appropriately
 BASE = os.path.abspath(os.path.dirname(sys.modules[__name__].__file__))
@@ -107,6 +108,7 @@ def load_config(f):
 	
 	conf = json.load(f, encoding='utf-8')
 	f.close()
+	g_config.config.update(conf)
 	return conf
 
 def process_config(config, preload_wsdl=False):

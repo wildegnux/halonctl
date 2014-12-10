@@ -107,3 +107,14 @@ Due to this, you can either specify a username (and password) on the cluster or 
    A password used for all nodes in the cluster, behaves just like username.
    
    You're probably tired of seeing this by now, but you really should use the ``keyring`` module over this.
+
+Others
+------
+
+Other configuration settings can be added at the end of the file. These are all optional, and have default values - which also means you won't get an error if you mistype the key name, it'll just not take effect.
+
+.. option:: verify_ssl
+   
+   Enable or disable verification of SSL certificates. Defaults to ``true``.
+   
+   This can also be set to a string, which should be a path to a .pem file from which a trusted certificate is loaded. This is useful especially if you're using self-signed certificates.

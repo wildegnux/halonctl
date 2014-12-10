@@ -33,6 +33,15 @@ Links
 Changelog
 ---------
 
+1.2.2
+#####
+
+**Added:**
+
+* More useful error messages for invalid configuration files
+* More useful error messages for invalid SSL certificates
+* The ability to disable verification of SSL certificates
+
 1.2.1
 #####
 

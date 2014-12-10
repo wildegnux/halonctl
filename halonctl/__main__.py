@@ -106,7 +106,11 @@ def open_config():
 def load_config(f):
 	'''Loads configuration data from a given file.'''
 	
-	conf = json.load(f, encoding='utf-8')
+	try:
+		conf = json.load(f, encoding='utf-8')
+	except ValueError as e:
+		sys.exit("Configuration Syntax Error: " + str(e))
+	
 	f.close()
 	g_config.config.update(conf)
 	return conf
@@ -127,6 +131,8 @@ def process_config(config, preload_wsdl=False):
 		cluster.load_data(data)
 		
 		for nid in data['nodes'] if isinstance(data, dict) else data:
+			if not nid in nodes:
+				sys.exit("Configuration Error: Cluster '{cid}' references nonexistent node '{nid}'".format(cid=cluster.name, nid=nid))
 			node = nodes[nid]
 			node.cluster = cluster
 			cluster.append(node)

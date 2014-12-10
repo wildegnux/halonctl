@@ -5,6 +5,7 @@ from collections import OrderedDict
 from concurrent.futures import ThreadPoolExecutor, wait
 from dateutil import tz
 from natsort import natsorted
+from .config import config
 
 executor = ThreadPoolExecutor(64)
 
@@ -115,3 +116,15 @@ def to_base64(s):
 	there's an awful lot of boilerplate with encodings and handling Nones.'''
 	
 	return u"" if not s else b64encode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')
+
+def print_ssl_error(node):
+	print "ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name)
+	print ""
+	print "If you'd like to disable SSL verification, add this to your config:"
+	print "    \"verify_ssl\": false"
+	print ""
+	print "Or, if you're using a self-signed certificate, add this instead:"
+	print "    \"verify_ssl\": \"/path/to/my/cert.pem\""
+	print ""
+	print "You can also connect over plain HTTP by adjusting your node definition."
+	print ""

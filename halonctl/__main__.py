@@ -33,6 +33,9 @@ config = {}
 nodes = {}
 clusters = {}
 
+# Disable unverified HTTPS warnings - we know what we're doing
+requests.packages.urllib3.disable_warnings()
+
 
 
 def load_modules():
@@ -120,9 +123,9 @@ def process_config(config, preload_wsdl=False):
 	
 	nodes = { name: Node(data, name) for name, data in config.get('nodes', {}).iteritems() }
 	clusters = {}
-
+	
 	if preload_wsdl:
-		download_wsdl(nodes.itervalues())
+		download_wsdl(nodes.itervalues(), verify=config.get('verify_ssl', True))
 		async_dispatch({ node: (node.load_wsdl,) for node in nodes.itervalues() })
 	
 	for name, data in config.get('clusters', {}).iteritems():
@@ -162,20 +165,23 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 	
 	return NodeList(natsorted(targets, key=lambda t: [t.cluster.name, t.name]))
 
-def download_wsdl(nodes):
+def download_wsdl(nodes, verify):
 	path = cache.get_path('wsdl.xml')
 	min_mtime = arrow.utcnow().replace(hours=-12)
 	if not os.path.exists(path) or arrow.get(os.path.getmtime(path)) < min_mtime:
 		has_been_downloaded = False
 		for node in nodes:
 			try:
-				r = requests.get("{scheme}://{host}/remote/?wsdl".format(scheme=node.scheme, host=node.host), stream=True)
+				r = requests.get("{scheme}://{host}/remote/?wsdl".format(scheme=node.scheme, host=node.host), stream=True, verify=verify)
 				if r.status_code == 200:
 					with open(path, 'wb') as f:
 						for chunk in r.iter_content(256):
 							f.write(chunk)
 					has_been_downloaded = True
 					break
+			except requests.exceptions.SSLError:
+				print_ssl_error(node)
+				sys.exit(1)
 			except:
 				pass
 		

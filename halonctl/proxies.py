@@ -1,7 +1,9 @@
+import sys
 import signal
 import inspect
 import requests
-from halonctl.util import async_dispatch, nodesort, from_base64, to_base64
+from halonctl.util import async_dispatch, nodesort, from_base64, to_base64, print_ssl_error
+from halonctl.config import config
 
 
 
@@ -33,8 +35,13 @@ class NodeSoapProxy(object):
 				r = requests.post(context.client.location(),
 					auth=(self.node.username, self.node.password),
 					headers=context.client.headers(), data=context.envelope,
-					timeout=10)
+					timeout=10,
+					verify=config.get('verify_ssl', True)
+				)
 				return context.process_reply(r.content, r.status_code, r.reason)
+			except requests.exceptions.SSLError:
+				print_ssl_error(self.node)
+				sys.exit(1)
 			except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
 				return (0, None)
 		

@@ -42,38 +42,33 @@ class QueryModule(Module):
 			print "--offset/--limit cannot be used together with actions!"
 			self.exitcode = 1
 			return
-
+		
 		if args.action and args.history:
 			print "--history cannot be used together with actions!"
 			self.exitcode = 1
 			return
-
+		
 		if args.action and args.fields:
 			print "--fields cannot be used together with actions!"
 			self.exitcode = 1
 			return
-
+		
 		# Build an array with all supported fields for a particular source
 		supported_fields = ['action', 'actionid', 'cluster', 'from', 'ip',
 			'messageid', 'node', 'queueid', 'sasl', 'server', 'size', 'subject',
 			'time', 'to', 'transport']
+		fields = []
+		
 		if args.history:
-			supported_fields.append('historyid')
+			supported_fields += ['historyid']
+			fields = ['cluster', 'node', 'messageid', 'from', 'to', 'subject']
 		else:
-			supported_fields.append('quarantine')
-			supported_fields.append('retry')
-
+			supported_fields += ['quarantine', 'retry']
+			fields = ['cluster', 'node', 'messageid', 'queueid', 'from', 'to', 'subject']
+		
 		if args.fields:
-			if args.fields == '-':
-				fields = supported_fields
-			else:
-				fields = args.fields.split(',')
-		else:
-			if args.history:
-				fields = ['cluster', 'node', 'messageid', 'from', 'to', 'subject']
-			else:
-				fields = ['cluster', 'node', 'messageid', 'queueid', 'from', 'to', 'subject']
-
+			fields = supported_fields if args.fields == '-' else args.fields.split(',')
+			
 		for f in fields:
 			if not f in supported_fields:
 				print "Field '{0}' is not available!".format(f)
@@ -82,7 +77,7 @@ class QueryModule(Module):
 					print " {0}".format(p)
 				self.exitcode = 1
 				return
-
+		
 		# Timestamp placeholders need a timezone specified!
 		for s in args.filter:
 			if args.timezone is None and filter_timestamp_re.search(s):

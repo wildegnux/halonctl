@@ -1,4 +1,4 @@
-import argparse
+import argparse, datetime
 from halonctl.modapi import Module
 from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm, from_base64
 
@@ -16,6 +16,8 @@ class QueryModule(Module):
 			help="print resulting hql queries, for debugging")
 		parser.add_argument('--fields',
 			help="print selected fields")
+		parser.add_argument('-v', '--verbose', action='store_true',
+			help="verbose output")
 		
 		tzgroup = parser.add_mutually_exclusive_group()
 		tzgroup.add_argument('--utc', dest='timezone', action='store_const', const=0,
@@ -127,7 +129,7 @@ class QueryModule(Module):
 						elif f == 'server': p.append(msg['msglistener'])
 						elif f == 'size': p.append(msg['msgsize'])
 						elif f == 'subject': p.append(from_base64(msg['msgsubject']))
-						elif f == 'time': p.append(msg['msgts0'])
+						elif f == 'time': p.append(msg['msgts0'] if args.verbose else datetime.datetime.utcfromtimestamp(int(msg['msgts0']) + (args.timezone*60*60 if args.timezone else 0)))
 						elif f == 'to': p.append(msg['msgto'])
 						elif f == 'transport': p.append(msg['msgtransport'])
 					yield p

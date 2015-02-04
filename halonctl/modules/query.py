@@ -6,6 +6,8 @@ class QueryModule(Module):
 	'''Queries emails and performs actions'''
 	
 	def register_arguments(self, parser):
+		parser.add_argument('--history', action='store_true',
+			help="query history instead of queue")
 		parser.add_argument('--offset', type=int,
 			help="offset when just showing emails (default: 0)")
 		parser.add_argument('--limit', type=int,
@@ -38,6 +40,11 @@ class QueryModule(Module):
 			print "--offset/--limit cannot be used together with actions!"
 			self.exitcode = 1
 			return
+
+		if args.action and args.history:
+			print "--history cannot be used together with actions!"
+			self.exitcode = 1
+			return
 		
 		# Timestamp placeholders need a timezone specified!
 		for s in args.filter:
@@ -64,7 +71,8 @@ class QueryModule(Module):
 	def do_show(self, nodes, args, hql):
 		yield ('Cluster', 'Node', 'From', 'To', 'Subject')
 		
-		for node, result in nodes.service.mailQueue(filter=hql, offset=args.offset or None, limit=args.limit or 100).iteritems():
+		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
+		for node, result in source(filter=hql, offset=args.offset or None, limit=args.limit or 100).iteritems():
 			if result[0] != 200:
 				print "Failure on {0}: {1}".format(node, result[1])
 				self.partial = True

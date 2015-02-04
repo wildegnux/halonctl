@@ -77,7 +77,7 @@ class QueryModule(Module):
 		if not hql and not ask_confirm("You have no filter, do you really want to try to deliver everything?", False):
 			return
 		
-		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=int(duplicate)).iteritems():
+		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate).iteritems():
 			if result[0] != 200:
 				print "Failure on {0}: {1}".format(node, result[1])
 	

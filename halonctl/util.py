@@ -62,7 +62,7 @@ def ask_confirm(prompt, default=True):
 		return answers[answer]
 
 def get_date(s, timezone=0):
-	'''Returns a timezone-adjusted date as an arrow object'''
+	'''Returns a timezone-adjusted date as an arrow object.'''
 	return arrow.get(arrow.get(s).naive, tz.tzoffset(None, timezone*60*60 if timezone else 0))
 
 filter_timestamp_re = re.compile(r'\{([^}]*)\}')

@@ -6,7 +6,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
-   user_guide
+   configuration
+   basics
    modules
 
 

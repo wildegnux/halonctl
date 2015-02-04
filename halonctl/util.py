@@ -61,6 +61,10 @@ def ask_confirm(prompt, default=True):
 			continue
 		return answers[answer]
 
+def get_date(s, timezone=0):
+	'''Returns a timezone-adjusted date as an arrow object'''
+	return arrow.get(arrow.get(s).naive, tz.tzoffset(None, timezone*60*60 if timezone else 0))
+
 filter_timestamp_re = re.compile(r'\{([^}]*)\}')
 def hql_from_filters(filters, timezone=0):
 	'''Gets a HQL statement from a list of filter components.
@@ -72,12 +76,9 @@ def hql_from_filters(filters, timezone=0):
 	:param list filters: A list of filters to glue together
 	:param int timezone: The UTC offset of the assumed timezone
 	'''
-	def get_date(s):
-		return arrow.get(arrow.get(s).naive, tz.tzoffset(None, timezone*60*60))
-	
 	conditions = []
 	for s in filters:
-		s = filter_timestamp_re.sub(lambda m: str(get_date(m.groups(0)[0]).timestamp), s)
+		s = filter_timestamp_re.sub(lambda m: str(get_date(m.groups(0)[0]).timestamp), lambda s: get_date(s, timezone))
 		conditions.append(s)
 	
 	return ' '.join(conditions)

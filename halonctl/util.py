@@ -78,7 +78,7 @@ def hql_from_filters(filters, timezone=0):
 	'''
 	conditions = []
 	for s in filters:
-		s = filter_timestamp_re.sub(lambda m: str(get_date(m.groups(0)[0]).timestamp), lambda s: get_date(s, timezone))
+		s = filter_timestamp_re.sub(lambda m: str(get_date(m.groups(0)[0], timezone).timestamp), s)
 		conditions.append(s)
 	
 	return ' '.join(conditions)

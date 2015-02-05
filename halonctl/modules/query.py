@@ -129,7 +129,7 @@ class QueryModule(Module):
 						elif f == 'server': p.append(msg['msglistener'])
 						elif f == 'size': p.append(msg['msgsize'])
 						elif f == 'subject': p.append(from_base64(msg['msgsubject']))
-						elif f == 'time': p.append(msg['msgts0'] if args.verbose else get_date(msg['msgts0'], args.timezone).format())
+						elif f == 'time': p.append(msg['msgts0'] if args.verbose else get_date(msg['msgts0'], args.timezone))
 						elif f == 'to': p.append(msg['msgto'])
 						elif f == 'transport': p.append(msg['msgtransport'])
 					yield p

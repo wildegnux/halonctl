@@ -1,14 +1,10 @@
 ``status`` - Node Status
 ========================
-
-The ``status`` module is used to quickly check the status of all configured nodes - if they're online, and their uptime.
-
 ::
 
-    halonctl status [-v|--verbose]
+    halonctl status
 
-Commandline Arguments
----------------------
+The ``status`` module is used to quickly check the status of all configured nodes - if they're online, and their uptime.
 
 .. option:: -v --verbose
     

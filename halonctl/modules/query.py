@@ -1,4 +1,4 @@
-import argparse, datetime
+import argparse
 from halonctl.modapi import Module
 from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm, from_base64, get_date
 

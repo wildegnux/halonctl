@@ -8,7 +8,7 @@ Contents:
    
    configuration
    basics
-   modules
+   api
 
 
 

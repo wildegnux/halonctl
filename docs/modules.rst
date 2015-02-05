@@ -6,4 +6,5 @@ Halonctl is little more than a framework, handling all the heavy lifting around 
 .. toctree::
    :maxdepth: 1
    
+   modules/keyring
    modules/status

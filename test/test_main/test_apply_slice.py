@@ -3,7 +3,7 @@ from halonctl.__main__ import apply_slice
 
 class TestApplySlice(unittest.TestCase):
 	def setUp(self):
-		self.items = range(1, 11) # [1, 2, ..., 10]
+		self.items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	
 	def test_empty(self):
 		self.assertEqual(apply_slice(self.items, ''), self.items)

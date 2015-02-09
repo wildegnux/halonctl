@@ -2,6 +2,7 @@ from __future__ import print_function
 import six
 import sys
 import argparse
+from blessings import Terminal
 from natsort import natsorted
 from halonctl.modapi import Module
 from halonctl.util import async_dispatch
@@ -10,10 +11,11 @@ def print_waiting_message(sigint_sent, num_dots, max_dots):
 	if sys.stderr.isatty():
 		dots = ('.' * num_dots).ljust(max_dots)
 		num_dots = num_dots + 1 if num_dots < max_dots else 1
-		if not sigint_sent:
-			sys.stderr.write("\rWaiting for processes to complete{0} (Press Ctrl+C to stop it)".format(dots))
-		else:
-			sys.stderr.write("\rTermination requested, waiting{0} (Press Ctrl+C to kill)".format(dots))
+		msg = "Waiting for processes to complete{0} (Press Ctrl+C to stop it)" if not sigint_sent else \
+				"\rTermination requested, waiting{0} (Press Ctrl+C to kill)"
+		
+		term = Terminal(stream=sys.stderr)
+		print("\r{msg}{clear}".format(msg=msg.format(dots), clear=term.clear_eol), file=sys.stderr, end='')
 	
 	return num_dots
 

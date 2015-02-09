@@ -117,4 +117,4 @@ Other configuration settings can be added at the end of the file. These are all 
    
    Enable or disable verification of SSL certificates. Defaults to ``true``.
    
-   This can also be set to a string, which should be a path to a .pem file from which a trusted certificate is loaded. This is useful especially if you're using self-signed certificates.
+   Can be either a boolean or a string, in the latter case it's taken to be a .pem file to verify the certificate against. If you're using self-signed certificates, you'll probably want to change this to either ``false`` or a local copy of your certificate.

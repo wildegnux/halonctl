@@ -40,9 +40,9 @@ setup(name='halonctl',
 		'prettytable',	# Fancy ASCII tables, feat. Py3 compatibility
 		'requests',		# "HTTP for Humans"
 		'blessings',	# Terminal magic made simple
+		'six',			# Python 2/3 compatibility utilities
 	],
 	package_data={
 		'': ['*.json']
 	},
-	use_2to3=True
 )

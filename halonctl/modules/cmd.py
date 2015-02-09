@@ -63,7 +63,7 @@ class CommandModule(Module):
 			finally:
 				sys.stderr.write("\r")
 		
-		for node, buf in natsorted(buffers.items(), key=lambda t: [t[0].cluster.name, t[0].name]):
+		for node, buf in natsorted(list(buffers.items()), key=lambda t: [t[0].cluster.name, t[0].name]):
 			for line in buf.split('\r\n'):
 				print("{cluster} / {name}> {line}".format(cluster=node.cluster.name, name=node.name, line=line))
 			

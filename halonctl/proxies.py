@@ -80,7 +80,7 @@ class NodeListSoapProxy(object):
 			return nodesort(async_dispatch({node: (getattr(node.service, name), args, kwargs) for node in self.nodelist}))
 		return _soap_proxy_executor
 
-class CommandProxy(object):
+class CommandProxy(six.Iterator):
 	'''Proxy for a command executing on a remote server.
 	
 	This abstracts away all the messy ``commandRun()``/``commandPoll()`` logic,
@@ -103,11 +103,7 @@ class CommandProxy(object):
 	def __iter__(self):
 		return self
 	
-	# Python 3 compatibility
 	def __next__(self):
-		return self.next()
-	
-	def next(self):
 		'''Returns a chunk of the remote process' stdout. Lets you treat this
 		object as an iterator.'''
 		

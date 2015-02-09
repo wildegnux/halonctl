@@ -21,7 +21,7 @@ class QueueModule(Module):
 				self.partial = True
 				continue
 			
-			count = long(result[1].all().strip().split('=')[1])
+			count = int(result[1].all().strip().split('=')[1])
 			totalCount += count
 			
 			if not args.quiet:

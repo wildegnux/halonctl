@@ -158,7 +158,7 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 	targets = []
 	
 	if len(nodes) == 0 and len(clusters) == 0:
-		targets = apply_slice(available_nodes.values(), slice_)
+		targets = apply_slice(list(available_nodes.values()), slice_)
 	elif len(clusters) > 0:
 		for cid in clusters:
 			targets += apply_slice(available_clusters[cid], slice_)
@@ -215,7 +215,7 @@ def main():
 	
 	parser.add_argument('-i', '--ignore-partial', action='store_true',
 		help="exit normally even for partial results")
-	parser.add_argument('-f', '--format', choices=formatters.keys(), default='table',
+	parser.add_argument('-f', '--format', choices=list(formatters.keys()), default='table',
 		help="use the specified output format (default: table)")
 	
 	# Parse!
@@ -229,13 +229,13 @@ def main():
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
 	if invalid_clusters:
 		print("Unknown clusters: {0}".format(', '.join(invalid_clusters)))
-		print("Available: {0}".format(', '.join(clusters.iterkeys())))
+		print("Available: {0}".format(', '.join(six.iterkeys(clusters))))
 		sys.exit(1)
 	
 	invalid_nodes = [nid for nid in args.nodes if not nid in nodes]
 	if invalid_nodes:
 		print("Unknown nodes: {0}".format(', '.join(invalid_nodes)))
-		print("Available: {0}".format(', '.join(nodes.iterkeys())))
+		print("Available: {0}".format(', '.join(six.iterkeys(nodes))))
 		sys.exit(1)
 	
 	# Filter nodes to choices

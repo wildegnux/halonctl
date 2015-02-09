@@ -32,7 +32,7 @@ def async_dispatch(tasks):
 def nodesort(nodes):
 	'''Sorts a dictionary of nodes into an OrderedDict, by cluster and name.'''
 	
-	return OrderedDict(natsorted(nodes.items(), key=lambda t: [t[0].cluster.name, t[0].name]))
+	return OrderedDict(natsorted(list(nodes.items()), key=lambda t: [t[0].cluster.name, t[0].name]))
 
 def ask_confirm(prompt, default=True):
 	'''Ask the user for confirmation.
@@ -57,7 +57,7 @@ def ask_confirm(prompt, default=True):
 	suffixes = { True: '[Yn]', False: '[yN]' }
 	
 	while True:
-		answer = raw_input("{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default])).lower()
+		answer = six.moves.input("{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default])).lower()
 		if not answer in answers:
 			print("Enter either y/yes or n/no, or nothing for default ({0})".format('yes' if default else 'no'))
 			continue

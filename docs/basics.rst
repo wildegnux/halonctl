@@ -56,26 +56,29 @@ Slicing
 
 So far so good. But what if I want to do something with the first five nodes of the ``c1`` cluster?
 
-You could list them all, but that would end up in a lot of typing. Instead, halonctl lets you apply a "slice" to the selected nodes, to cut the selection any way you like. The slice consists of up to three parts, separated by a ``:``, and is essentially the same thing as Python's Slice Operator.
+You could list them all, but that would end up in a lot of typing. Instead, halonctl lets you apply a "slice" to the selected nodes, to cut the selection any way you like. The slice consists of up to three parts, separated by a ``:``, inspired by Python's slice operator.
 
-The simplest form of a slice is a single number. This will execute the ``status`` command against the first node - remember, list indices start at 0::
+.. note::
+   There's one big difference compared to Python's slice operator: **indices start at 1**. This is to allow the slices to be read more naturally by non-programmers.
 
-    halonctl -s 0 status
+The simplest form of a slice is a single number. This will execute the ``status`` command against the first node::
 
-It can also be combined with the ``-c`` flag - this will target the 4th node of the ``c2`` cluster::
+    halonctl -s 1 status
+
+It can also be combined with the ``-c`` flag - this will target the 3rd node of the ``c2`` cluster::
 
     halonctl -c c2 -s 3 status
 
-For targeting multiple nodes, you can use a range; these are both equivalent, and will target the first, second and third configured nodes - the 0 is implicit here::
+For targeting multiple nodes, you can use a range; these are both equivalent, and will target the first, second and third configured nodes - the 1 is implicit here::
 
-    halonctl -s 0:3 status
+    halonctl -s 1:3 status
     halonctl -s :3 status
 
-This will instead start 3 steps in, with the 4th node, and continue until the last one::
+This will instead start with the 3rd node, and continue until the last one::
 
     halonctl -s 3:
 
-Obviously, you can also do this to skip the first 4, and target the 5th and 6th node::
+Obviously, you can also do this to skip the first 3, and target the 4th, 5th and 6th node::
 
     halonctl -s 4:6 status
 
@@ -86,7 +89,7 @@ The slice actually has a less known third member: the step. By default, this is 
 
     halonctl -s ::-1 status
 
-This will cause it to go through each of your nodes... backwards. While this is not particularly useful, setting it to something like 2 or 3 is - this will skip over every other node::
+This will cause it to go through each of your nodes... backwards. While this is not particularly useful, setting it to something like 2 can be - this will skip over every other node::
 
     halonctl -s ::2 status
 
@@ -98,9 +101,9 @@ Now, you obviously don't want to take down your entire cluster by restarting all
 
     halonctl -c mycluster -s ::2 update install
 
-When they've all rebooted and are up and running again, you can skip the first node, and update the other half::
+When they've all rebooted and are up and running again, you can skip the first node (start on the 2nd), and update the other half::
 
-    halonctl -c mycluster -s 1::2 update install
+    halonctl -c mycluster -s 2::2 update install
 
 Choosing an output format
 -------------------------

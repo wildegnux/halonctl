@@ -1,3 +1,4 @@
+from __future__ import print_function
 from halonctl.modapi import Module
 from halonctl.util import ask_confirm
 
@@ -36,7 +37,7 @@ class UpdateDownloadModule(Module):
 		for node, result in nodes.service.updateDownloadStart().iteritems():
 			if result[0] != 200:
 				self.partial = True
-				print "Failure on {0}!".format(node)
+				print("Failure on {0}!".format(node))
 
 class UpdateInstallModule(Module):
 	'''Installs a downloaded update'''
@@ -50,7 +51,7 @@ class UpdateInstallModule(Module):
 			if args.yes or ask_confirm("Install pending update and reboot {0}?".format(node)):
 				code, _ = node.service.updateInstall()
 				if code != 200:
-					print "Failure on {0}!".format(node)
+					print("Failure on {0}!".format(node))
 
 class UpdateCancelModule(Module):
 	'''Cancels a pending update'''
@@ -59,7 +60,7 @@ class UpdateCancelModule(Module):
 		for node, result in nodes.service.updateDownloadCancel().iteritems():
 			if result[0] != 200:
 				self.partial = True
-				print "Failure on {0}!".format(node)
+				print("Failure on {0}!".format(node))
 
 class UpdateModule(Module):
 	'''Manages node updates'''

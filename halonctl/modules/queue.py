@@ -1,3 +1,4 @@
+from __future__ import print_function
 from halonctl.modapi import Module
 
 class QueueModule(Module):
@@ -28,6 +29,6 @@ class QueueModule(Module):
 		if not args.quiet:
 			yield ('Total', totalCount)
 		else:
-			print totalCount
+			print(totalCount)
 
 module = QueueModule()

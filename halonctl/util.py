@@ -1,3 +1,4 @@
+from __future__ import print_function
 import re
 import arrow
 from base64 import b64decode, b64encode
@@ -57,7 +58,7 @@ def ask_confirm(prompt, default=True):
 	while True:
 		answer = raw_input("{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default])).lower()
 		if not answer in answers:
-			print "Enter either y/yes or n/no, or nothing for default ({0})".format('yes' if default else 'no')
+			print("Enter either y/yes or n/no, or nothing for default ({0})".format('yes' if default else 'no'))
 			continue
 		return answers[answer]
 
@@ -119,13 +120,13 @@ def to_base64(s):
 	return u"" if not s else b64encode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')
 
 def print_ssl_error(node):
-	print "ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name)
-	print ""
-	print "If you'd like to disable SSL verification, add this to your config:"
-	print "    \"verify_ssl\": false"
-	print ""
-	print "Or, if you're using a self-signed certificate, add this instead:"
-	print "    \"verify_ssl\": \"/path/to/my/cert.pem\""
-	print ""
-	print "You can also connect over plain HTTP by adjusting your node definition."
-	print ""
+	print("ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name))
+	print("")
+	print("If you'd like to disable SSL verification, add this to your config:")
+	print("    \"verify_ssl\": false")
+	print("")
+	print("Or, if you're using a self-signed certificate, add this instead:")
+	print("    \"verify_ssl\": \"/path/to/my/cert.pem\"")
+	print("")
+	print("You can also connect over plain HTTP by adjusting your node definition.")
+	print("")

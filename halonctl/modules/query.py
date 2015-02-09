@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 from halonctl.modapi import Module
 from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm, from_base64, get_date
@@ -41,17 +42,17 @@ class QueryModule(Module):
 	def run(self, nodes, args):
 		# Prevent accidents caused by calls such as "--delete --limit ..."
 		if args.action and (args.offset or args.limit):
-			print "--offset/--limit cannot be used together with actions!"
+			print("--offset/--limit cannot be used together with actions!")
 			self.exitcode = 1
 			return
 		
 		if args.action and args.history:
-			print "--history cannot be used together with actions!"
+			print("--history cannot be used together with actions!")
 			self.exitcode = 1
 			return
 		
 		if args.action and args.fields:
-			print "--fields cannot be used together with actions!"
+			print("--fields cannot be used together with actions!")
 			self.exitcode = 1
 			return
 		
@@ -73,24 +74,24 @@ class QueryModule(Module):
 			
 		for f in fields:
 			if not f in supported_fields:
-				print "Field '{0}' is not available!".format(f)
-				print "Available fields:"
+				print("Field '{0}' is not available!".format(f))
+				print("Available fields:")
 				for p in supported_fields:
-					print " {0}".format(p)
+					print(" {0}".format(p))
 				self.exitcode = 1
 				return
 		
 		# Timestamp placeholders need a timezone specified!
 		for s in args.filter:
 			if args.timezone is None and filter_timestamp_re.search(s):
-				print "Timestamp placeholders need a --timezone/--utc parameter!"
+				print("Timestamp placeholders need a --timezone/--utc parameter!")
 				self.exitcode = 1
 				return
 		
 		# Make a proper filter string
 		hql = hql_from_filters(args.filter, args.timezone)
 		if args.debug_hql:
-			print hql
+			print(hql)
 		
 		# Dispatch!
 		if args.action is None:
@@ -108,7 +109,7 @@ class QueryModule(Module):
 		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
 		for node, result in source(filter=hql, offset=args.offset or None, limit=args.limit or 100).iteritems():
 			if result[0] != 200:
-				print "Failure on {0}: {1}".format(node, result[1])
+				print("Failure on {0}: {1}".format(node, result[1]))
 				self.partial = True
 			elif 'item' in result[1]['result']:
 				for msg in result[1]['result']['item']:
@@ -140,7 +141,7 @@ class QueryModule(Module):
 		
 		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate).iteritems():
 			if result[0] != 200:
-				print "Failure on {0}: {1}".format(node, result[1])
+				print("Failure on {0}: {1}".format(node, result[1]))
 	
 	def do_delete(self, nodes, args, hql):
 		if not hql and not ask_confirm("You have no filter, do you really want to delete everything!?", False):
@@ -148,6 +149,6 @@ class QueryModule(Module):
 		
 		for node, result in nodes.service.mailQueueDeleteBulk(filter=hql).iteritems():
 			if result[0] != 200:
-				print "Failure on {0}: {1}".format(node, result[1])
+				print("Failure on {0}: {1}".format(node, result[1]))
 
 module = QueryModule()

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import getpass
 import keyring
 from halonctl.modapi import Module
@@ -28,17 +29,17 @@ class KeyringLoginModule(Module):
 		for node in nodes:
 			prefix = "{cluster} / {name} ({host})".format(cluster=node.cluster.name, name=node.name, host=node.host)
 			if not node.username:
-				print prefix + " - No username configured for node or cluster"
+				print(prefix + " - No username configured for node or cluster")
 				continue
 			
 			result = node.service.login()[0]
 			if result == 0:
-				print prefix + " - Node is unreachable :("
+				print(prefix + " - Node is unreachable :(")
 			elif result == 200:
 				# Follow the good ol' rule of silence
 				pass
 			elif result == 401:
-				print prefix + " - Enter password (blank to skip):"
+				print(prefix + " - Enter password (blank to skip):")
 				while True:
 					password = getpass.getpass("{user}@{host}> ".format(user=node.username, host=node.host))
 					if password == "":
@@ -51,15 +52,15 @@ class KeyringLoginModule(Module):
 						keyring.set_password(node.host, node.username, password)
 						break
 					elif result == 401:
-						print "Invalid login, try again"
+						print("Invalid login, try again")
 					elif result == 0:
-						print "The node has gone away"
+						print("The node has gone away")
 						break
 					else:
-						print "An error occurred, code {0}".format(result)
+						print("An error occurred, code {0}".format(result))
 						break
 			else:
-				print "An error occurred, code {0}".format(result)
+				print("An error occurred, code {0}".format(result))
 
 class KeyringLogoutModule(Module):
 	'''Deletes stored credentials for the node(s)'''

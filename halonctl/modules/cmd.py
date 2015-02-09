@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import argparse
 from natsort import natsorted
@@ -24,7 +25,7 @@ class CommandModule(Module):
 	
 	def run(self, nodes, args):
 		if not args.cli:
-			print "No command specified"
+			print("No command specified")
 			self.exitcode = 1
 			return
 		
@@ -63,8 +64,8 @@ class CommandModule(Module):
 		
 		for node, buf in natsorted(buffers.items(), key=lambda t: [t[0].cluster.name, t[0].name]):
 			for line in buf.split('\r\n'):
-				print "{cluster} / {name}> {line}".format(cluster=node.cluster.name, name=node.name, line=line)
+				print("{cluster} / {name}> {line}".format(cluster=node.cluster.name, name=node.name, line=line))
 			
-			print ""
+			print("")
 			
 module = CommandModule()

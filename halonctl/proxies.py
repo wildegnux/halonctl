@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import signal
 import inspect
@@ -20,9 +21,9 @@ class NodeSoapProxy(object):
 		status, response = node.myCall(param='abc')
 		if status != 200:
 			# ... the call failed, handle the error ...
-			print "Error: " + status
+			print("Error: " + status)
 		
-		print response
+		print(response)
 	'''
 	
 	def __init__(self, node):
@@ -62,11 +63,11 @@ class NodeListSoapProxy(object):
 			# result[0] is the response status; 200 = Success
 			if result[0] != 200:
 				# ... the call failed, handle the error ...
-				print "Error: " + status
+				print("Error: " + status)
 				continue
 			
 			# result[1] is the response data
-			print "{node}: {result}".format(node=node, result=result[1])
+			print("{node}: {result}".format(node=node, result=result[1]))
 	
 	'''
 	
@@ -88,7 +89,7 @@ class CommandProxy(object):
 	
 		cmd = node.command('mycommand')
 		for chunk in cmd:
-			print chunk
+			print(chunk)
 	
 	'''
 	

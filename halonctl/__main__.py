@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import os, sys
 import inspect
 import pkgutil
@@ -51,7 +52,7 @@ def load_modules():
 		if hasattr(mod, 'module'):
 			register_module(name.rstrip('_'), mod.module)
 		else:
-			print "Ignoring invalid module (missing 'module' variable): {name}".format(name=name)
+			print("Ignoring invalid module (missing 'module' variable): {name}".format(name=name))
 
 def load_formatters():
 	'''Load all formatters from the 'formatters' directory.'''
@@ -62,7 +63,7 @@ def load_formatters():
 		if hasattr(fmt, 'format'):
 			formatters[name.rstrip('_')] = fmt.format
 		else:
-			print "Ignoring invalid formatter (missing 'format' member): {name}".format(name)
+			print("Ignoring invalid formatter (missing 'format' member): {name}".format(name))
 
 def register_module(name, mod):
 	'''Registers a loaded module instance'''
@@ -90,18 +91,18 @@ def open_config():
 			break
 	
 	if not config_path:
-		print "No configuration file found!"
-		print ""
-		print "Please create one in one of the following locations:"
-		print ""
+		print("No configuration file found!")
+		print("")
+		print("Please create one in one of the following locations:")
+		print("")
 		for p in config_paths:
-			print "  - {0}".format(p)
-		print ""
-		print "Or use the -C/--config flag to specify a path."
-		print "A sample config can be found at:"
-		print ""
-		print "  - {0}".format(os.path.abspath(os.path.join(BASE, 'halonctl.sample.json')))
-		print ""
+			print("  - {0}".format(p))
+		print("")
+		print("Or use the -C/--config flag to specify a path.")
+		print("A sample config can be found at:")
+		print("")
+		print("  - {0}".format(os.path.abspath(os.path.join(BASE, 'halonctl.sample.json'))))
+		print("")
 		sys.exit(1)
 	
 	return open(config_path, 'rU')
@@ -226,14 +227,14 @@ def main():
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
 	if invalid_clusters:
-		print "Unknown clusters: {0}".format(', '.join(invalid_clusters))
-		print "Available: {0}".format(', '.join(clusters.iterkeys()))
+		print("Unknown clusters: {0}".format(', '.join(invalid_clusters)))
+		print("Available: {0}".format(', '.join(clusters.iterkeys())))
 		sys.exit(1)
 	
 	invalid_nodes = [nid for nid in args.nodes if not nid in nodes]
 	if invalid_nodes:
-		print "Unknown nodes: {0}".format(', '.join(invalid_nodes))
-		print "Available: {0}".format(', '.join(nodes.iterkeys()))
+		print("Unknown nodes: {0}".format(', '.join(invalid_nodes)))
+		print("Available: {0}".format(', '.join(nodes.iterkeys())))
 		sys.exit(1)
 	
 	# Filter nodes to choices
@@ -250,9 +251,9 @@ def main():
 	# Print something, if there's anything to print
 	if retval:
 		if hasattr(retval, 'draw'):
-			print retval.draw()
+			print(retval.draw())
 		else:
-			print formatters[args.format](retval).encode("utf-8")
+			print(formatters[args.format](retval).encode("utf-8"))
 	
 	# Let the module decide the exit code - either by explicitly setting it, or
 	# by marking the result as partial, in which case a standard exit code is

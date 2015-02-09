@@ -148,8 +148,9 @@ def apply_slice(list_, slice_):
 	if not slice_:
 		return list_
 	
-	parts = [int(p) if p else None for p in slice_.split(':')]
-	return list_[slice(*parts)]
+	offsets = [-1, 0, 0]
+	parts = [int(p) + offsets[i] if p else None for i, p in enumerate(slice_.split(':'))]
+	return list_[slice(*parts)] if len(parts) > 1 else [list_[parts[0]]]
 
 def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''):
 	targets = []

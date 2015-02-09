@@ -43,7 +43,7 @@ class CommandModule(Module):
 			
 			# Listen for Ctrl+C presses while we poll the commands for output
 			try:
-				for node, cmd in unfinished.items():
+				for node, cmd in list(unfinished.items()):
 					code, res = cmd.read()
 					
 					if code == 200:

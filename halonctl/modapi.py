@@ -1,3 +1,6 @@
+from __future__ import print_function
+import six
+
 class Module(object):
 	'''Base class for all modules.
 	
@@ -37,7 +40,7 @@ class Module(object):
 		if self.submodules:
 			subparsers = parser.add_subparsers(dest=type(self).__name__ + '_mod_name', metavar='subcommand')
 			subparsers.required = True
-			for name, mod in self.submodules.iteritems():
+			for name, mod in six.iteritems(self.submodules):
 				p = subparsers.add_parser(name, help=mod.__doc__)
 				p.set_defaults(**{type(self).__name__ + '_mod': mod})
 				mod.register_arguments(p)
@@ -58,7 +61,7 @@ class Module(object):
 		        yield ("Cluster", "Node", "Result")
 		        
 		        # Make a call on all given nodes
-		        for node, result in nodes.service.someCall(arg=123).iteritems():
+		        for node, result in six.iteritems(nodes.service.someCall(arg=123)):
 		            # Mark the results as partial if a node isn't responding
 		            if result[0] != 200:
 		                self.partial = True
@@ -72,7 +75,7 @@ class Module(object):
 		and say nothing unless there's an error::
 		
 		    def run(self, nodes, args):
-		        for node, result in nodes.service.someCall(arg=123).iteritems():
+		        for node, result in six.iteritems(nodes.service.someCall(arg=123)):
 		            if result[0] != 200:
 		                print "Failure on {node}: {result}".format(node=node, result=result[1])
 		'''

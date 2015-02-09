@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 from halonctl.modapi import Module
 from halonctl.util import ask_confirm
 
@@ -10,7 +11,7 @@ class UpdateStatusModule(Module):
 		
 		versions = nodes.service.getVersion()
 		
-		for node, result in nodes.service.updateDownloadStatus().iteritems():
+		for node, result in six.iteritems(nodes.service.updateDownloadStatus()):
 			if result[0] != 200:
 				self.partial = True
 			
@@ -34,7 +35,7 @@ class UpdateDownloadModule(Module):
 	'''Downloads an available update'''
 	
 	def run(self, nodes, args):
-		for node, result in nodes.service.updateDownloadStart().iteritems():
+		for node, result in six.iteritems(nodes.service.updateDownloadStart()):
 			if result[0] != 200:
 				self.partial = True
 				print("Failure on {0}!".format(node))
@@ -57,7 +58,7 @@ class UpdateCancelModule(Module):
 	'''Cancels a pending update'''
 	
 	def run(self, nodes, args):
-		for node, result in nodes.service.updateDownloadCancel().iteritems():
+		for node, result in six.iteritems(nodes.service.updateDownloadCancel()):
 			if result[0] != 200:
 				self.partial = True
 				print("Failure on {0}!".format(node))

@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 import getpass
 import keyring
 from halonctl.modapi import Module
@@ -10,7 +11,7 @@ class KeyringStatusModule(Module):
 	def run(self, nodes, args):
 		yield ('Cluster', 'Name', 'Address', 'Authorized?')
 		
-		for node, result in nodes.service.login().iteritems():
+		for node, result in six.iteritems(nodes.service.login()):
 			if result[0] != 200:
 				self.partial = True
 			

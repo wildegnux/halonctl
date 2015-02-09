@@ -1,5 +1,5 @@
 import csv
-from StringIO import StringIO
+from six.moves import StringIO
 from halonctl.util import textualize_rows
 
 def format(rows):

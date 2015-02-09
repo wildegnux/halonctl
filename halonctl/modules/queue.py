@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 from halonctl.modapi import Module
 
 class QueueModule(Module):
@@ -13,7 +14,7 @@ class QueueModule(Module):
 			yield ('Node', 'Messages')
 		
 		totalCount = 0
-		for node, result in nodes.command('statd -g mail-queue-count').iteritems():
+		for node, result in six.iteritems(nodes.command('statd -g mail-queue-count')):
 			if result[0] != 200:
 				if not args.quiet:
 					yield (node.name, None)

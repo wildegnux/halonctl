@@ -1,5 +1,6 @@
+from __future__ import print_function
+import six
 import socket
-import urllib2
 import keyring
 from threading import Lock
 from suds.client import Client
@@ -10,6 +11,7 @@ from . import cache
 
 
 
+@six.python_2_unicode_compatible
 class Node(object):
 	'''A single Halon node.
 	
@@ -142,17 +144,15 @@ class Node(object):
 		code, cid = self.service.commandRun(argv={'item': [to_base64(part) for part in parts]})
 		return (200, CommandProxy(self, cid)) if code == 200 else (code, None)
 	
-	def __unicode__(self):
+	def __str__(self):
 		s = u"{name} ({host})".format(name=self.name, host=self.host)
 		if self.cluster.name:
 			s = u"{cluster}/{s}".format(cluster=self.cluster.name, s=s)
 		return s
-	
-	def __str__(self):
-		return unicode(self).encode('utf-8')
 
 
 
+@six.python_2_unicode_compatible
 class NodeList(list):
 	'''A list of Halon nodes.
 	
@@ -212,8 +212,5 @@ class NodeList(list):
 		if 'password' in data:
 			self.local_password = data['password']
 	
-	def __unicode__(self):
-		return u"{name} -> [{nodes}]".format(name=self.name, nodes=', '.join([node.name for node in self]))
-	
 	def __str__(self):
-		return unicode(self).encode('utf-8')
+		return u"{name} -> [{nodes}]".format(name=self.name, nodes=', '.join([node.name for node in self]))

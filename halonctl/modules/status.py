@@ -1,3 +1,5 @@
+from __future__ import print_function
+import six
 from halonctl.modapi import Module
 import arrow
 
@@ -58,7 +60,7 @@ class StatusModule(Module):
 		
 		yield ('Cluster', 'Name', 'Address', 'Uptime', 'Status')
 		
-		for node, result in nodes.service.getUptime().iteritems():
+		for node, result in six.iteritems(nodes.service.getUptime()):
 			# If some nodes cannot be reached, mark the results as partial
 			# This will cause halonctl to exit with status 99 at the end, unless
 			# the --ignore-partial flag is set.

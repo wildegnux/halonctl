@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+import six
 import os, sys
 import inspect
 import pkgutil
@@ -122,14 +123,14 @@ def load_config(f):
 def process_config(config, preload_wsdl=False):
 	'''Processes a configuration dictionary into usable components.'''
 	
-	nodes = { name: Node(data, name) for name, data in config.get('nodes', {}).iteritems() }
+	nodes = { name: Node(data, name) for name, data in six.iteritems(config.get('nodes', {})) }
 	clusters = {}
 	
 	if preload_wsdl:
-		download_wsdl(nodes.itervalues(), verify=config.get('verify_ssl', True))
-		async_dispatch({ node: (node.load_wsdl,) for node in nodes.itervalues() })
+		download_wsdl(six.itervalues(nodes), verify=config.get('verify_ssl', True))
+		async_dispatch({ node: (node.load_wsdl,) for node in six.itervalues(nodes) })
 	
-	for name, data in config.get('clusters', {}).iteritems():
+	for name, data in six.iteritems(config.get('clusters', {})):
 		cluster = NodeList()
 		cluster.name = name
 		cluster.load_data(data)
@@ -253,7 +254,7 @@ def main():
 		if hasattr(retval, 'draw'):
 			print(retval.draw())
 		else:
-			print(formatters[args.format](retval).encode("utf-8"))
+			print(formatters[args.format](retval))
 	
 	# Let the module decide the exit code - either by explicitly setting it, or
 	# by marking the result as partial, in which case a standard exit code is

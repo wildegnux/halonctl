@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 import argparse
 from halonctl.modapi import Module
 from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm, from_base64, get_date
@@ -107,7 +108,7 @@ class QueryModule(Module):
 		yield fields
 		
 		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
-		for node, result in source(filter=hql, offset=args.offset or None, limit=args.limit or 100).iteritems():
+		for node, result in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100)):
 			if result[0] != 200:
 				print("Failure on {0}: {1}".format(node, result[1]))
 				self.partial = True
@@ -139,7 +140,7 @@ class QueryModule(Module):
 		if not hql and not ask_confirm("You have no filter, do you really want to try to deliver everything?", False):
 			return
 		
-		for node, result in nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate).iteritems():
+		for node, result in six.iteritems(nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate)):
 			if result[0] != 200:
 				print("Failure on {0}: {1}".format(node, result[1]))
 	
@@ -147,7 +148,7 @@ class QueryModule(Module):
 		if not hql and not ask_confirm("You have no filter, do you really want to delete everything!?", False):
 			return
 		
-		for node, result in nodes.service.mailQueueDeleteBulk(filter=hql).iteritems():
+		for node, result in six.iteritems(nodes.service.mailQueueDeleteBulk(filter=hql)):
 			if result[0] != 200:
 				print("Failure on {0}: {1}".format(node, result[1]))
 

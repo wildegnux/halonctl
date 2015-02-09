@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 import sys
 import argparse
 from natsort import natsorted
@@ -30,7 +31,7 @@ class CommandModule(Module):
 			return
 		
 		buffers = { node: "" for node in nodes }
-		handles = { node: result[1] for node, result in nodes.command(*args.cli).iteritems() if result[0] == 200 }
+		handles = { node: result[1] for node, result in six.iteritems(nodes.command(*args.cli)) if result[0] == 200 }
 		unfinished = handles
 		
 		max_dots = 3
@@ -55,9 +56,9 @@ class CommandModule(Module):
 				if not sigint_sent:
 					sigint_sent = True
 					print_waiting_message(True, num_dots, max_dots)
-					async_dispatch({ node: (cmd.signal, ['SIGINT']) for node, cmd in unfinished.iteritems() })
+					async_dispatch({ node: (cmd.signal, ['SIGINT']) for node, cmd in six.iteritems(unfinished) })
 				else:
-					async_dispatch({ node: (cmd.stop,) for node, cmd in unfinished.iteritems() })
+					async_dispatch({ node: (cmd.stop,) for node, cmd in six.iteritems(unfinished) })
 			
 			finally:
 				sys.stderr.write("\r")

@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 import sys
 import signal
 import inspect
@@ -59,7 +60,7 @@ class NodeListSoapProxy(object):
 	
 	Example::
 	
-		for node, result in nodes.myCall(param='abc').iteritems():
+		for node, result in six.iteritems(nodes.myCall(param='abc')):
 			# result[0] is the response status; 200 = Success
 			if result[0] != 200:
 				# ... the call failed, handle the error ...

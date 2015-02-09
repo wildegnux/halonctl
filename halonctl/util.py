@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 import re
 import arrow
 from base64 import b64decode, b64encode
@@ -22,7 +23,7 @@ def async_dispatch(tasks):
 	
 	futures = {
 		executor.submit(v[0], *(v[1] if len(v) >= 2 else []), **(v[2] if len(v) >= 3 else {})): k
-		for k, v in tasks.iteritems()
+		for k, v in six.iteritems(tasks)
 	}
 	done, not_done = wait(futures)
 	
@@ -93,7 +94,7 @@ def textualize_item(item):
 		return u"Yes"
 	elif item is False:
 		return u"No"
-	return unicode(item)
+	return six.text_type(item)
 
 def textualize_row(row):
 	'''Formats a row in an output table for presentation.'''

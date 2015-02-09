@@ -83,7 +83,7 @@ def hql_from_filters(filters, timezone=0):
 		s = filter_timestamp_re.sub(lambda m: str(get_date(m.groups(0)[0], timezone).timestamp), s)
 		conditions.append(s)
 	
-	return u"".join(conditions)
+	return u" ".join(conditions)
 
 def textualize_item(item):
 	'''Formats an item in an output table for presentation.'''

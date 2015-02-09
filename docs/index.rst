@@ -9,6 +9,7 @@ Contents:
    configuration
    basics
    modules
+   extending
    api
 
 

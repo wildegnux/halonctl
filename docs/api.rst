@@ -7,12 +7,6 @@ halonctl.models module
 .. automodule:: halonctl.models
     :members:
 
-halonctl.modules module
------------------------
-
-.. automodule:: halonctl.modules
-    :members:
-
 halonctl.proxies module
 -----------------------
 

@@ -1,2 +1,6 @@
 # Needed for readthedocs.org build to succeed
 setuptools==12.0.5
+
+# Needed to build documentation locally
+sphinx==1.2.3
+sphinx_rtd_theme==0.1.6

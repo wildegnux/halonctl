@@ -64,7 +64,7 @@ def load_formatters():
 		if hasattr(fmt, 'format'):
 			formatters[name.rstrip('_')] = fmt.format
 		else:
-			print(u"Ignoring invalid formatter (missing 'format' member): {name}".format(name), file=sys.stderr)
+			print(u"Ignoring invalid formatter (missing 'format' member): {name}".format(name=name), file=sys.stderr)
 
 def register_module(name, mod):
 	'''Registers a loaded module instance'''

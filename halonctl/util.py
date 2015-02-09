@@ -1,5 +1,6 @@
 from __future__ import print_function
 import six
+import sys
 import re
 import arrow
 from base64 import b64decode, b64encode
@@ -57,9 +58,10 @@ def ask_confirm(prompt, default=True):
 	suffixes = { True: u"[Yn]", False: u"[yN]" }
 	
 	while True:
-		answer = six.moves.input(u"{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default])).lower()
+		print(u"{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default]), file=sys.stderr, end='')
+		answer = six.moves.input().lower()
 		if not answer in answers:
-			print(u"Enter either y/yes or n/no, or nothing for default ({0})".format(u"yes" if default else u"no"))
+			print(u"Enter either y/yes or n/no, or nothing for default ({0})".format(u"yes" if default else u"no"), file=sys.stderr)
 			continue
 		return answers[answer]
 
@@ -121,13 +123,13 @@ def to_base64(s):
 	return u"" if not s else b64encode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')
 
 def print_ssl_error(node):
-	print(u"ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name))
-	print(u"")
-	print(u"If you'd like to disable SSL verification, add this to your config:")
-	print(u"    \"verify_ssl\": false")
-	print(u"")
-	print(u"Or, if you're using a self-signed certificate, add this instead:")
-	print(u"    \"verify_ssl\": \"/path/to/my/cert.pem\"")
-	print(u"")
-	print(u"You can also connect over plain HTTP by adjusting your node definition.")
-	print(u"")
+	print(u"ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name), file=sys.stderr)
+	print(u"", file=sys.stderr)
+	print(u"If you'd like to disable SSL verification, add this to your config:", file=sys.stderr)
+	print(u"    \"verify_ssl\": false", file=sys.stderr)
+	print(u"", file=sys.stderr)
+	print(u"Or, if you're using a self-signed certificate, add this instead:", file=sys.stderr)
+	print(u"    \"verify_ssl\": \"/path/to/my/cert.pem\"", file=sys.stderr)
+	print(u"", file=sys.stderr)
+	print(u"You can also connect over plain HTTP by adjusting your node definition.", file=sys.stderr)
+	print(u"", file=sys.stderr)

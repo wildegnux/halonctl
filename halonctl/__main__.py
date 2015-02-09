@@ -53,7 +53,7 @@ def load_modules():
 		if hasattr(mod, 'module'):
 			register_module(name.rstrip('_'), mod.module)
 		else:
-			print(u"Ignoring invalid module (missing 'module' variable): {name}".format(name=name))
+			print(u"Ignoring invalid module (missing 'module' variable): {name}".format(name=name), file=sys.stderr)
 
 def load_formatters():
 	'''Load all formatters from the 'formatters' directory.'''
@@ -64,7 +64,7 @@ def load_formatters():
 		if hasattr(fmt, 'format'):
 			formatters[name.rstrip('_')] = fmt.format
 		else:
-			print(u"Ignoring invalid formatter (missing 'format' member): {name}".format(name))
+			print(u"Ignoring invalid formatter (missing 'format' member): {name}".format(name), file=sys.stderr)
 
 def register_module(name, mod):
 	'''Registers a loaded module instance'''
@@ -92,18 +92,18 @@ def open_config():
 			break
 	
 	if not config_path:
-		print(u"No configuration file found!")
-		print(u"")
-		print(u"Please create one in one of the following locations:")
-		print(u"")
+		print(u"No configuration file found!", file=sys.stderr)
+		print(u"", file=sys.stderr)
+		print(u"Please create one in one of the following locations:", file=sys.stderr)
+		print(u"", file=sys.stderr)
 		for p in config_paths:
-			print("  - {0}".format(p))
-		print(u"")
-		print(u"Or use the -C/--config flag to specify a path.")
-		print(u"A sample config can be found at:")
-		print(u"")
-		print(u"  - {0}".format(os.path.abspath(os.path.join(BASE, 'halonctl.sample.json'))))
-		print(u"")
+			print("  - {0}".format(p), file=sys.stderr)
+		print(u"", file=sys.stderr)
+		print(u"Or use the -C/--config flag to specify a path.", file=sys.stderr)
+		print(u"A sample config can be found at:", file=sys.stderr)
+		print(u"", file=sys.stderr)
+		print(u"  - {0}".format(os.path.abspath(os.path.join(BASE, 'halonctl.sample.json'))), file=sys.stderr)
+		print(u"", file=sys.stderr)
 		sys.exit(1)
 	
 	return open(config_path, 'rU')
@@ -228,14 +228,14 @@ def main():
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
 	if invalid_clusters:
-		print(u"Unknown clusters: {0}".format(', '.join(invalid_clusters)))
-		print(u"Available: {0}".format(', '.join(six.iterkeys(clusters))))
+		print(u"Unknown clusters: {0}".format(', '.join(invalid_clusters)), file=sys.stderr)
+		print(u"Available: {0}".format(', '.join(six.iterkeys(clusters))), file=sys.stderr)
 		sys.exit(1)
 	
 	invalid_nodes = [nid for nid in args.nodes if not nid in nodes]
 	if invalid_nodes:
-		print(u"Unknown nodes: {0}".format(', '.join(invalid_nodes)))
-		print(u"Available: {0}".format(', '.join(six.iterkeys(nodes))))
+		print(u"Unknown nodes: {0}".format(', '.join(invalid_nodes)), file=sys.stderr)
+		print(u"Available: {0}".format(', '.join(six.iterkeys(nodes))), file=sys.stderr)
 		sys.exit(1)
 	
 	# Filter nodes to choices

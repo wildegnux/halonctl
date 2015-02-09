@@ -119,7 +119,7 @@ class CommandProxy(six.Iterator):
 	def all(self):
 		'''Waits for the process to exit, and returns all of its output.'''
 		
-		return ''.join(self)
+		return u"".join(self)
 	
 	def read(self):
 		'''Reads some data from the remote process' stdin'''

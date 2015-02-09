@@ -11,11 +11,11 @@ def print_waiting_message(sigint_sent, num_dots, max_dots):
 	if sys.stderr.isatty():
 		dots = ('.' * num_dots).ljust(max_dots)
 		num_dots = num_dots + 1 if num_dots < max_dots else 1
-		msg = "Waiting for processes to complete{0} (Press Ctrl+C to stop it)" if not sigint_sent else \
-				"\rTermination requested, waiting{0} (Press Ctrl+C to kill)"
+		msg = u"Waiting for processes to complete{0} (Press Ctrl+C to stop it)" if not sigint_sent else \
+				u"\rTermination requested, waiting{0} (Press Ctrl+C to kill)"
 		
 		term = Terminal(stream=sys.stderr)
-		print("\r{msg}{clear}".format(msg=msg.format(dots), clear=term.clear_eol), file=sys.stderr, end='')
+		print(u"\r{msg}{clear}".format(msg=msg.format(dots), clear=term.clear_eol), file=sys.stderr, end='')
 	
 	return num_dots
 
@@ -24,11 +24,11 @@ class CommandModule(Module):
 	
 	def register_arguments(self, parser):
 		parser.add_argument('cli', nargs=argparse.REMAINDER, metavar="...",
-			help="The command to execute")
+			help=u"The command to execute")
 	
 	def run(self, nodes, args):
 		if not args.cli:
-			print("No command specified")
+			print(u"No command specified")
 			self.exitcode = 1
 			return
 		
@@ -67,8 +67,8 @@ class CommandModule(Module):
 		
 		for node, buf in natsorted(list(buffers.items()), key=lambda t: [t[0].cluster.name, t[0].name]):
 			for line in buf.split('\r\n'):
-				print("{cluster} / {name}> {line}".format(cluster=node.cluster.name, name=node.name, line=line))
+				print(u"{cluster} / {name}> {line}".format(cluster=node.cluster.name, name=node.name, line=line))
 			
-			print("")
+			print(u"")
 			
 module = CommandModule()

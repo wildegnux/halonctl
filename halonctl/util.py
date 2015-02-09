@@ -50,16 +50,16 @@ def ask_confirm(prompt, default=True):
 		raise TypeError("The default value for ask_confirm must be a bool!")
 	
 	answers = {
-		'y': True, 'yes': True,
-		'n': False, 'no': False,
-		'': default
+		u"y": True, u"yes": True,
+		u"n": False, u"no": False,
+		u"": default
 	}
-	suffixes = { True: '[Yn]', False: '[yN]' }
+	suffixes = { True: u"[Yn]", False: u"[yN]" }
 	
 	while True:
-		answer = six.moves.input("{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default])).lower()
+		answer = six.moves.input(u"{prompt} {suffix} ".format(prompt=prompt, suffix=suffixes[default])).lower()
 		if not answer in answers:
-			print("Enter either y/yes or n/no, or nothing for default ({0})".format('yes' if default else 'no'))
+			print(u"Enter either y/yes or n/no, or nothing for default ({0})".format(u"yes" if default else u"no"))
 			continue
 		return answers[answer]
 
@@ -83,7 +83,7 @@ def hql_from_filters(filters, timezone=0):
 		s = filter_timestamp_re.sub(lambda m: str(get_date(m.groups(0)[0], timezone).timestamp), s)
 		conditions.append(s)
 	
-	return ' '.join(conditions)
+	return u"".join(conditions)
 
 def textualize_item(item):
 	'''Formats an item in an output table for presentation.'''
@@ -121,13 +121,13 @@ def to_base64(s):
 	return u"" if not s else b64encode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')
 
 def print_ssl_error(node):
-	print("ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name))
-	print("")
-	print("If you'd like to disable SSL verification, add this to your config:")
-	print("    \"verify_ssl\": false")
-	print("")
-	print("Or, if you're using a self-signed certificate, add this instead:")
-	print("    \"verify_ssl\": \"/path/to/my/cert.pem\"")
-	print("")
-	print("You can also connect over plain HTTP by adjusting your node definition.")
-	print("")
+	print(u"ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name))
+	print(u"")
+	print(u"If you'd like to disable SSL verification, add this to your config:")
+	print(u"    \"verify_ssl\": false")
+	print(u"")
+	print(u"Or, if you're using a self-signed certificate, add this instead:")
+	print(u"    \"verify_ssl\": \"/path/to/my/cert.pem\"")
+	print(u"")
+	print(u"You can also connect over plain HTTP by adjusting your node definition.")
+	print(u"")

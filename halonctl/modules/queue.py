@@ -6,12 +6,12 @@ class QueueModule(Module):
 	'''Checks queue count'''
 
 	def register_arguments(self, parser):
-		parser.add_argument('-q', '--quiet', help="no per node information",
-			action='store_true')
+		parser.add_argument('-q', '--quiet', action='store_true',
+			help=u"no per node information")
 	
 	def run(self, nodes, args):
 		if not args.quiet:
-			yield ('Node', 'Messages')
+			yield (u"Node", u"Messages")
 		
 		totalCount = 0
 		for node, result in six.iteritems(nodes.command('statd -g mail-queue-count')):
@@ -28,7 +28,7 @@ class QueueModule(Module):
 				yield (node.name, count)
 		
 		if not args.quiet:
-			yield ('Total', totalCount)
+			yield (u"Total", totalCount)
 		else:
 			print(totalCount)
 

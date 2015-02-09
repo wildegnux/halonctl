@@ -4,7 +4,7 @@ import os
 import tempfile
 
 def get_filename(name):
-	return "halonctl_{name}".format(name=name)
+	return u"halonctl_{name}".format(name=name)
 
 def get_path(name):
 	return os.path.abspath(os.path.join(tempfile.gettempdir(), get_filename(name)))

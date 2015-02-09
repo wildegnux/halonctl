@@ -9,7 +9,7 @@ class KeyringStatusModule(Module):
 	'''Checks the authorization status of all nodes'''
 	
 	def run(self, nodes, args):
-		yield ('Cluster', 'Name', 'Address', 'Authorized?')
+		yield (u'Cluster', u'Name', u'Address', u'Authorized?')
 		
 		for node, result in six.iteritems(nodes.service.login()):
 			if result[0] != 200:
@@ -28,22 +28,22 @@ class KeyringLoginModule(Module):
 	
 	def run(self, nodes, args):
 		for node in nodes:
-			prefix = "{cluster} / {name} ({host})".format(cluster=node.cluster.name, name=node.name, host=node.host)
+			prefix = u"{cluster} / {name} ({host})".format(cluster=node.cluster.name, name=node.name, host=node.host)
 			if not node.username:
-				print(prefix + " - No username configured for node or cluster")
+				print(u"{prefix} - No username configured for node or cluster".format(prefix=prefix))
 				continue
 			
 			result = node.service.login()[0]
 			if result == 0:
-				print(prefix + " - Node is unreachable :(")
+				print(u"{prefix} - Node is unreachable :(".format(prefix=prefix))
 			elif result == 200:
 				# Follow the good ol' rule of silence
 				pass
 			elif result == 401:
-				print(prefix + " - Enter password (blank to skip):")
+				print(u"{prefix} - Enter password (blank to skip):".format(prefix=prefix))
 				while True:
-					password = getpass.getpass("{user}@{host}> ".format(user=node.username, host=node.host))
-					if password == "":
+					password = getpass.getpass(u"{user}@{host}> ".format(user=node.username, host=node.host))
+					if not password:
 						break
 					
 					node.password = password
@@ -53,29 +53,29 @@ class KeyringLoginModule(Module):
 						keyring.set_password(node.host, node.username, password)
 						break
 					elif result == 401:
-						print("Invalid login, try again")
+						print(u"Invalid login, try again")
 					elif result == 0:
-						print("The node has gone away")
+						print(u"The node has gone away")
 						break
 					else:
-						print("An error occurred, code {0}".format(result))
+						print(u"An error occurred, code {0}".format(result))
 						break
 			else:
-				print("An error occurred, code {0}".format(result))
+				print(u"An error occurred, code {0}".format(result))
 
 class KeyringLogoutModule(Module):
 	'''Deletes stored credentials for the node(s)'''
 	
 	def register_arguments(self, parser):
-		parser.add_argument('-y', '--yes', help="don't ask for each node",
-			action='store_true')
+		parser.add_argument('-y', '--yes', action='store_true',
+			help=u"don't ask for each node")
 	
 	def run(self, nodes, args):
 		for node in nodes:
 			if not keyring.get_password(node.host, node.username):
 				continue
 			
-			if args.yes or ask_confirm("Log out from {cluster} / {name} ({host})?".format(cluster=node.cluster.name, name=node.name, host=node.host)):
+			if args.yes or ask_confirm(u"Log out from {cluster} / {name} ({host})?".format(cluster=node.cluster.name, name=node.name, host=node.host)):
 				keyring.delete_password(node.host, node.username)
 
 class KeyringModule(Module):

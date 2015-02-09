@@ -34,7 +34,7 @@ class StatusModule(Module):
 		# 
 		
 		parser.add_argument('-v', '--verbose', action='store_true',
-			help="verbose output")
+			help=u"verbose output")
 	
 	def run(self, nodes, args):
 		# 
@@ -58,7 +58,7 @@ class StatusModule(Module):
 		# args.verbose below.
 		# 
 		
-		yield ('Cluster', 'Name', 'Address', 'Uptime', 'Status')
+		yield (u"Cluster", u"Name", u"Address", u"Uptime", u"Status")
 		
 		for node, result in six.iteritems(nodes.service.getUptime()):
 			# If some nodes cannot be reached, mark the results as partial
@@ -78,15 +78,15 @@ class StatusModule(Module):
 			if args.verbose:
 				status = result[0]
 			elif result[0] == 200:
-				status = "OK"
+				status = u"OK"
 			elif result[0] == 0:
-				status = "Offline"
+				status = u"Offline"
 			elif result[0] == 401:
-				status = "Unauthorized"
+				status = u"Unauthorized"
 			elif result[0] == 599:
-				status = "Timeout"
+				status = u"Timeout"
 			else:
-				status = "Error " + str(result[0])
+				status = u"Error {0}".format(result[0])
 			
 			yield (node.cluster.name, node.name, node.host, uptime, status)
 

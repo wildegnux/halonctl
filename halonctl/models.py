@@ -25,7 +25,7 @@ class Node(object):
 	
 	'''
 	
-	name = "noname"
+	name = u"noname"
 	cluster = None
 	scheme = 'http'
 	host = None
@@ -47,7 +47,7 @@ class Node(object):
 	def url(self):
 		'''The base URL for the node.'''
 		
-		return self.scheme + '://' + self.host + '/remote/'
+		return "{scheme}://{host}/remote/".format(scheme=self.scheme, host=self.host)
 	
 	@property
 	def username(self):
@@ -121,7 +121,7 @@ class Node(object):
 		clients at once over a bunch of threads.'''
 		
 		if not hasattr(self, '_client'):
-			self._client = Client("file://" + cache.get_path('wsdl.xml'), location=self.url, faults=False, nosend=True)
+			self._client = Client("file://{0}".format(cache.get_path('wsdl.xml')), location=self.url, faults=False, nosend=True)
 	
 	def make_request(self, name, *args, **kwargs):
 		'''Convenience function that creates a SOAP request context from a

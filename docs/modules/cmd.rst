@@ -5,12 +5,14 @@
 
    halonctl cmd [command...]
 
-The ``cmd`` module runs a shell command. Halon runs FreeBSD (currently version 10.1) under the hood, and you should refer to `their man pages <https://www.freebsd.org/cgi/man.cgi>`_ for details on the invocation of these commands. Other \*nix flavors (such as Linux) may have subtle, but important, differences in command invocations.
+The ``cmd`` module runs a shell command. Refer to the individual commands' manuals for details on their flags and invocations.
+
+Halon runs FreeBSD (currently version 10.1) under the hood. Other \*nix flavors (such as Linux) may have subtle, but important, differences in command invocations.
 
 The module will wait for the command to exit before printing any output, unless ``Ctrl+C`` is pressed, in which case it will send a SIGTERM to the remote process. If the command does not terminate in a timely fashion, you can press ``Ctrl+C`` again to forcibly terminate the remote process.
 
 .. note::
-   Everything after the ``cmd`` in the invocation of this module is passed straight to the command, normal escaping rules apply.
+   Everything after the ``cmd`` in the invocation of this module is passed straight to the commandline. Normal escaping rules apply.
 
 Available Commands
 ------------------

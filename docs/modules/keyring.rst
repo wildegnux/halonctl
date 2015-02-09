@@ -1,5 +1,5 @@
-``keyring`` - Securely authenticate with nodes
-==============================================
+``keyring`` - Securely store credentials
+========================================
 
 ::
 

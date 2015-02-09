@@ -20,7 +20,7 @@ The ``update`` module downloads and installs system updates.
 This will print update status for each node, eg. current version and installation progress.
 
 .. note::
-   There is currently no way for halonctl to see if an update is available - check the web UI instead.
+   There is currently no way for halonctl to see if an update is available - check the web UI.
 
 ``update download`` - Starts downloading an update
 --------------------------------------------------
@@ -29,9 +29,10 @@ This will print update status for each node, eg. current version and installatio
 
     halonctl update download
 
-This will make the node(s) start downloading an update. Use ``halonctl update status`` to monitor their progress.
+This will make the node(s) start downloading an update.
 
-Note that telling an up-to-date node to download an update will cause it to redownload the latest version. This allows you to reinstall a malfunctioning node, and is a feature, not a bug.
+.. note::
+   Telling an up-to-date node to download an update will cause it to redownload the latest version. This allows you to reinstall a malfunctioning node, and is a feature, not a bug.
 
 ``update cancel`` - Aborts an update
 ------------------------------------
@@ -49,4 +50,4 @@ This will make the node(s) abort an ongoing update download, and delete any down
 
     halonctl update install
 
-Starts the installation process. This can not be aborted until the installation is finished, and the node(s) will drop offline for a few minutes while they reboot to apply it. Use ``halonctl update status`` to check if they're done.
+Starts the installation process. This can not be aborted until the installation is finished, and the node(s) will drop offline for a few minutes while they reboot to apply it.

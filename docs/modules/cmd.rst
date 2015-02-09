@@ -20,7 +20,7 @@ Available Commands
 The most up-to-date list can always be viewed under ``System -> Commands`` in the web UI.
 
 * `arp <https://www.freebsd.org/cgi/man.cgi?query=arp&manpath=FreeBSD+10.1-RELEASE>`_
-* dns - legacy alias for `host <https://www.freebsd.org/cgi/man.cgi?query=host&manpath=FreeBSD+10.1-RELEASE>`_
+* `host <https://www.freebsd.org/cgi/man.cgi?query=host&manpath=FreeBSD+10.1-RELEASE>`_
 * `nc <https://www.freebsd.org/cgi/man.cgi?query=nc&manpath=FreeBSD+10.1-RELEASE>`_
 * `ping <https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+10.1-RELEASE>`_
 * `ping6 <https://www.freebsd.org/cgi/man.cgi?query=ping6&manpath=FreeBSD+10.1-RELEASE>`_

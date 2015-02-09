@@ -40,14 +40,13 @@ requests.packages.urllib3.disable_warnings()
 
 
 
-def load_modules():
+def load_modules(modules_path):
 	'''Load all modules from the 'modules' directory.'''
 	
 	# Figure out where all the modules are, then treat it as a package,
 	# iterating over its modules and attempting to load each of them. The
 	# 'module' variable in the imported module is the module instance to use -
 	# register that with the application. Yay, dynamic loading abuse.
-	modules_path = os.path.join(BASE, 'modules')
 	for loader, name, ispkg in pkgutil.iter_modules(path=[modules_path]):
 		mod = loader.find_module(name).load_module(name)
 		if hasattr(mod, 'module'):
@@ -55,10 +54,9 @@ def load_modules():
 		else:
 			print(u"Ignoring invalid module (missing 'module' variable): {name}".format(name=name), file=sys.stderr)
 
-def load_formatters():
+def load_formatters(formatters_path):
 	'''Load all formatters from the 'formatters' directory.'''
 	
-	formatters_path = os.path.join(BASE, 'formatters')
 	for loader, name, ispkg in pkgutil.iter_modules(path=[formatters_path]):
 		fmt = loader.find_module(name).load_module(name)
 		if hasattr(fmt, 'format'):
@@ -199,8 +197,10 @@ def main():
 	logging.getLogger('suds.client').setLevel(logging.CRITICAL)
 	
 	# Load modules and formatters
-	load_modules()
-	load_formatters()
+	base_paths = [BASE, os.path.expanduser('~/halonctl'), os.path.expanduser('~/.halonctl')]
+	for path in base_paths:
+		load_modules(os.path.join(path, 'modules'))
+		load_formatters(os.path.join(path, 'formatters'))
 	
 	# Add parser arguments
 	parser.add_argument('-C', '--config', type=argparse.FileType('rU'),

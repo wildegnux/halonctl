@@ -116,25 +116,25 @@ class QueryModule(Module):
 				for msg in result[1]['result']['item']:
 					p = []
 					for f in fields:
-						if f == 'action': p.append(msg['msgaction'])
-						elif f == 'actionid': p.append(msg['msgactionid'])
+						if f == 'action': p.append(getattr(msg, 'msgaction', None))
+						elif f == 'actionid': p.append(getattr(msg, 'msgactionid', None))
 						elif f == 'cluster': p.append(node.cluster.name)
-						elif f == 'from': p.append(msg['msgfrom'])
+						elif f == 'from': p.append(getattr(msg, 'msgfrom', None))
 						elif f == 'helo': p.append(getattr(msg, 'msghelo', None)) # Added in 3.3
-						elif f == 'historyid': p.append(msg['id'])
-						elif f == 'ip': p.append(msg['msgfromserver'])
-						elif f == 'messageid': p.append(msg['msgid'])
+						elif f == 'historyid': p.append(getattr(msg, 'id', None))
+						elif f == 'ip': p.append(getattr(msg, 'msgfromserver', None))
+						elif f == 'messageid': p.append(getattr(msg, 'msgid', None))
 						elif f == 'node': p.append(node.name)
-						elif f == 'quarantine': p.append(msg['msgquarantine'])
-						elif f == 'queueid': p.append(msg['msgqueueid' if args.history else 'id'])
-						elif f == 'retry': p.append(msg['msgretries'])
-						elif f == 'sasl': p.append(msg['msgsasl'])
-						elif f == 'server': p.append(msg['msglistener'])
+						elif f == 'quarantine': p.append(getattr(msg, 'msgquarantine', None))
+						elif f == 'queueid': p.append(getattr(msg, 'msgqueueid' if args.history else 'id', None))
+						elif f == 'retry': p.append(getattr(msg, 'msgretries', None))
+						elif f == 'sasl': p.append(getattr(msg, 'msgsasl', None))
+						elif f == 'server': p.append(getattr(msg, 'msglistener', None))
 						elif f == 'size': p.append(getattr(msg, 'msgsize', None)) # Added in 3.3
-						elif f == 'subject': p.append(from_base64(msg['msgsubject']))
-						elif f == 'time': p.append(msg['msgts0'] if args.verbose else get_date(msg['msgts0'], args.timezone))
-						elif f == 'to': p.append(msg['msgto'])
-						elif f == 'transport': p.append(msg['msgtransport'])
+						elif f == 'subject': p.append(from_base64(getattr(msg, 'msgsubject', None)))
+						elif f == 'time': p.append(getattr(msg, 'msgts0', None) if args.verbose else get_date(getattr(msg, 'msgts0', None), args.timezone))
+						elif f == 'to': p.append(getattr(msg, 'msgto', None))
+						elif f == 'transport': p.append(getattr(msg, 'msgtransport', None))
 					yield p
 	
 	def do_deliver(self, nodes, args, hql, duplicate):

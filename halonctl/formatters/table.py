@@ -1,15 +1,17 @@
 from prettytable import PrettyTable
-from halonctl.util import textualize_row
+from halonctl.modapi import Formatter
 
-def format(rows):
-	table = PrettyTable(rows[0])
-	
-	table.align = "l"
-	table.border = False
-	table.left_padding_width = 0
-	table.right_padding_width = 2
-	
-	for row in rows[1:]:
-		table.add_row(textualize_row(row))
-	
-	return table.get_string()
+class TableFormatter(Formatter):
+	def format(self, data):
+		table = PrettyTable(data[0])
+		
+		table.align = "l"
+		table.border = False
+		table.left_padding_width = 0
+		table.right_padding_width = 2
+		
+		for row in data[1:]:
+			table.add_row(row)
+		return table.get_string()
+
+formatter = TableFormatter()

@@ -82,3 +82,78 @@ class Module(object):
 		# The default implementation simply delegates to a subcommand
 		if self.submodules:
 			return getattr(args, type(self).__name__ + '_mod').run(nodes, args)
+
+class Formatter(object):
+	'''Base class for all formatters.
+	
+	:ivar bool raw: Whether the output should be machine- rather than human-friendly
+	'''
+	
+	raw = False
+	
+	def run(self, data):
+		'''
+		Calls format() with data prepared by format_item().
+		
+		Override if you'd like to customize the entire formatting process, such
+		as if you'd prefer to work with another data structure than a
+		two-dimensional list.
+		'''
+		
+		return self.format([[self.format_item(item) for item in row] for row in data])
+	
+	def format(self, data):
+		'''
+		Takes a blob of data, and transforms it into the desired form.
+		
+		What exactly this entrails is obviously up to the formatter, but it
+		should return a string one way or another.
+		
+		Should be overridden in subclasses.
+		'''
+		
+		raise NotImplementedError()
+	
+	def format_item(self, item):
+		'''
+		Takes an emitted item, and returns a more output-friendly form.
+		
+		The default implementation does the following transformations:
+		
+		* If self.raw is True, no transformations are made
+		* None is transformed into "-"
+		* Booleans are transformed into "Yes"/"No"
+		* Everything else is stringified
+		'''
+		
+		if self.raw:
+			return item
+		elif item is None:
+			return u"-"
+		elif item is True:
+			return u"Yes"
+		elif item is False:
+			return u"No"
+		return six.text_type(item)
+
+class DictFormatter(Formatter):
+	'''
+	Convenience subclass of Formatter that works with dicts.
+	
+	The :func:`run() <Formatter.run>` method is customized to use a list of
+	dicts, rather than lists. The dict's keys are generated from the headers,
+	using the new :func:`format_key` method.
+	'''
+	
+	def run(self, data):
+		keys = [self.format_key(header) for header in data[0]]
+		return self.format([{keys[i]: row[i] for i in six.moves.xrange(len(row))} for row in data[1:]])
+	
+	def format_key(self, header):
+		'''
+		Takes a header, and returns the key it should map to in the dictionary.
+		
+		The default implementation simply calls :func:`format_item()
+		<Formatter.format_item>`.
+		'''
+		return self.format_item(header)

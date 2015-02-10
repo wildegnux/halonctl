@@ -59,10 +59,10 @@ def load_formatters(formatters_path):
 	
 	for loader, name, ispkg in pkgutil.iter_modules(path=[formatters_path]):
 		fmt = loader.find_module(name).load_module(name)
-		if hasattr(fmt, 'format'):
-			formatters[name.rstrip('_')] = fmt.format
+		if hasattr(fmt, 'formatter'):
+			formatters[name.rstrip('_')] = fmt.formatter
 		else:
-			print(u"Ignoring invalid formatter (missing 'format' member): {name}".format(name=name), file=sys.stderr)
+			print(u"Ignoring invalid formatter (missing 'formatter' member): {name}".format(name=name), file=sys.stderr)
 
 def register_module(name, mod):
 	'''Registers a loaded module instance'''
@@ -217,6 +217,8 @@ def main():
 		help=u"exit normally even for partial results")
 	parser.add_argument('-f', '--format', choices=list(formatters.keys()), default='table',
 		help=u"use the specified output format (default: table)")
+	parser.add_argument('-r', '--raw', action='store_true',
+		help=u"don't humanize the output, output it as raw as possible")
 	
 	parser.add_argument('--clear-cache', action='store_true',
 		help=u"clear the WSDL cache")
@@ -252,7 +254,7 @@ def main():
 	mod = args._mod
 	retval = mod.run(target_nodes, args)
 	
-	# Normalize generator mods into lists
+	# Normalize generator mods into lists (to detect emptiness)
 	if inspect.isgenerator(retval):
 		retval = list(retval)
 	
@@ -261,7 +263,9 @@ def main():
 		if hasattr(retval, 'draw'):
 			print(retval.draw())
 		else:
-			print(formatters[args.format](retval))
+			formatter = formatters[args.format]
+			formatter.raw = args.raw
+			print(formatter.run(retval))
 	
 	# Let the module decide the exit code - either by explicitly setting it, or
 	# by marking the result as partial, in which case a standard exit code is

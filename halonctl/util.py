@@ -113,7 +113,7 @@ def textualize(item, raw=False):
 	* ``None``, ``True``, ``False``
 	* `datetime.timedelta <https://docs.python.org/2/library/datetime.html#timedelta-objects>`_
 	
-	:param bool raw: Whether to format for machines rather than humans
+	:param bool raw: Be explicit and machine-readable over human-readable
 	'''
 	if item is None:
 		return u"-" if not raw else None

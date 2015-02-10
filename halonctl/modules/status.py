@@ -1,7 +1,7 @@
 from __future__ import print_function
 import six
 from halonctl.modapi import Module
-import arrow
+import datetime
 
 # This is intended as kind of a template module, and thus will be more
 # extensively documented than anything else. Reading this should give you a
@@ -22,19 +22,6 @@ import arrow
 
 class StatusModule(Module):
 	'''Checks node statuses'''
-	
-	def register_arguments(self, parser):
-		# 
-		# This runs on startup, and can be used to register your own arguments.
-		# Each module gets their own namespace, so don't worry about stepping
-		# on other modules' toes.
-		# 
-		# See the Python documentation for argparse for more info:
-		# https://docs.python.org/2/library/argparse.html#the-add-argument-method
-		# 
-		
-		parser.add_argument('-v', '--verbose', action='store_true',
-			help=u"verbose output")
 	
 	def run(self, nodes, args):
 		# 
@@ -70,12 +57,9 @@ class StatusModule(Module):
 			# Use the excellent Arrow library to format the uptime
 			uptime = None
 			if result[0] == 200:
-				if not args.verbose:
-					uptime = arrow.utcnow().replace(seconds=-result[1]).humanize().replace(' ago', '')
-				else:
-					uptime = result[1]
+				uptime = datetime.timedelta(seconds=result[1])
 			
-			if args.verbose:
+			if args.raw:
 				status = result[0]
 			elif result[0] == 200:
 				status = u"OK"

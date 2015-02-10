@@ -218,8 +218,15 @@ def main():
 	parser.add_argument('-f', '--format', choices=list(formatters.keys()), default='table',
 		help=u"use the specified output format (default: table)")
 	
+	parser.add_argument('--clear-cache', action='store_true',
+		help=u"clear the WSDL cache")
+	
 	# Parse!
 	args = parser.parse_args()
+	
+	# Clear cache if requested
+	if args.clear_cache:
+		os.remove(cache.get_path(u"wsdl.xml"))
 	
 	# Load configuration
 	config = load_config(args.config or open_config())

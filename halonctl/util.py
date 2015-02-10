@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from dateutil import tz
 from natsort import natsorted
 from .config import config
+from .roles import BaseRole
 
 executor = ThreadPoolExecutor(64)
 
@@ -112,6 +113,7 @@ def textualize(item, raw=False):
 	
 	* ``None``, ``True``, ``False``
 	* `datetime.timedelta <https://docs.python.org/2/library/datetime.html#timedelta-objects>`_
+	* :class:`halonctl.roles.BaseRole`
 	
 	:param bool raw: Be explicit and machine-readable over human-readable
 	'''
@@ -134,6 +136,8 @@ def textualize(item, raw=False):
 			return s.rstrip().format(d=item.days, h=item.seconds // 3600, m=(item.seconds // 60) % 60)
 		else:
 			return int(item.total_seconds())
+	elif isinstance(item, BaseRole):
+		return item.human() if not raw else item.raw()
 	return six.text_type(item)
 
 def print_ssl_error(node):

@@ -7,6 +7,12 @@ halonctl.modapi module
 .. automodule:: halonctl.modapi
     :members:
 
+halonctl.roles module
+----------------------
+
+.. automodule:: halonctl.roles
+    :members:
+
 halonctl.models module
 ----------------------
 

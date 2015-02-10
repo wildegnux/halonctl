@@ -1,7 +1,8 @@
 from __future__ import print_function
 import six
-from halonctl.modapi import Module
 import datetime
+from halonctl.modapi import Module
+from halonctl.roles import HTTPStatus
 
 class StatusModule(Module):
 	'''Checks node statuses'''
@@ -13,23 +14,7 @@ class StatusModule(Module):
 			if code != 200:
 				self.partial = True
 			
-			uptime = None
-			if code == 200:
-				uptime = datetime.timedelta(seconds=result)
-			
-			if args.raw:
-				status = code
-			elif code == 200:
-				status = u"OK"
-			elif code == 0:
-				status = u"Offline"
-			elif code == 401:
-				status = u"Unauthorized"
-			elif code == 599:
-				status = u"Timeout"
-			else:
-				status = u"Error {0}".format(code)
-			
-			yield (node.cluster.name, node.name, node.host, uptime, status)
+			uptime = datetime.timedelta(seconds=result) if code == 200 else None
+			yield (node.cluster.name, node.name, node.host, uptime, HTTPStatus(code))
 
 module = StatusModule()

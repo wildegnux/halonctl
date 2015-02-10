@@ -139,7 +139,7 @@ class Formatter(object):
 
 class DictFormatter(Formatter):
 	'''
-	Convenience subclass of Formatter that works with dicts.
+	Convenience subclass of :class:`Formatter` that works with dicts.
 	
 	The :func:`run() <Formatter.run>` method is customized to use a list of
 	dicts, rather than lists. The dict's keys are generated from the headers,

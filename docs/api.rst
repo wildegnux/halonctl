@@ -1,6 +1,12 @@
 API documentation
 =================
 
+halonctl.modapi module
+----------------------
+
+.. automodule:: halonctl.modapi
+    :members:
+
 halonctl.models module
 ----------------------
 

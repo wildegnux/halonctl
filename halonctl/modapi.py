@@ -129,7 +129,13 @@ class Formatter(object):
 		* Everything else is stringified
 		'''
 		
-		if isinstance(item, datetime.timedelta):
+		if item is None:
+			return u"-" if not self.raw else "None"
+		elif item is True:
+			return u"Yes" if not self.raw else "True"
+		elif item is False:
+			return u"No" if not self.raw else "False"
+		elif isinstance(item, datetime.timedelta):
 			if not self.raw:
 				s = u""
 				if item > datetime.timedelta(days=1):
@@ -141,12 +147,6 @@ class Formatter(object):
 				return s.rstrip().format(d=item.days, h=item.seconds // 3600, m=(item.seconds // 60) % 60)
 			else:
 				return int(item.total_seconds())
-		elif item is None:
-			return u"-" if not self.raw else "None"
-		elif item is True:
-			return u"Yes" if not self.raw else "True"
-		elif item is False:
-			return u"No" if not self.raw else "False"
 		return six.text_type(item)
 
 class DictFormatter(Formatter):

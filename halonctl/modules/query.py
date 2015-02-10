@@ -120,7 +120,7 @@ class QueryModule(Module):
 						elif f == 'actionid': p.append(msg['msgactionid'])
 						elif f == 'cluster': p.append(node.cluster.name)
 						elif f == 'from': p.append(msg['msgfrom'])
-						elif f == 'helo': p.append(msg['msghelo'])
+						elif f == 'helo': p.append(getattr(msg, 'msghelo', None)) # Added in 3.3
 						elif f == 'historyid': p.append(msg['id'])
 						elif f == 'ip': p.append(msg['msgfromserver'])
 						elif f == 'messageid': p.append(msg['msgid'])

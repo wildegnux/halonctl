@@ -59,7 +59,8 @@ class Module(object):
 		        # First, yield a header...
 		        yield (u"Cluster", u"Node", u"Result")
 		        
-		        # Make a call on all given nodes
+		        # Make a call on all given nodes; six.iteritems({}) is used over {}.iteritems()
+		        # to maintain efficiency and compatibility on both Python 2 and 3
 		        for node, (code, result) in six.iteritems(nodes.service.someCall(arg=123)):
 		            # Mark the results as partial if a node isn't responding
 		            if code != 200:

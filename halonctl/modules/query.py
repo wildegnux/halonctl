@@ -18,6 +18,8 @@ class QueryModule(Module):
 			help=u"print resulting hql queries, for debugging")
 		parser.add_argument('--fields',
 			help=u"print selected fields")
+		parser.add_argument('-y', '--yes', action='store_true',
+			help=u"don't ask to perform wildcard actions")
 		
 		tzgroup = parser.add_mutually_exclusive_group()
 		tzgroup.add_argument('--utc', dest='timezone', action='store_const', const=0,
@@ -136,7 +138,7 @@ class QueryModule(Module):
 					yield p
 	
 	def do_deliver(self, nodes, args, hql, duplicate):
-		if not hql and not ask_confirm(u"You have no filter, do you really want to try to deliver everything?", False):
+		if not hql and not args.yes and not ask_confirm(u"You have no filter, do you really want to try to deliver everything?", False):
 			return
 		
 		for node, (code, result) in six.iteritems(nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate)):
@@ -144,7 +146,7 @@ class QueryModule(Module):
 				print(u"Failure on {0}: {1}".format(node, result))
 	
 	def do_delete(self, nodes, args, hql):
-		if not hql and not ask_confirm(u"You have no filter, do you really want to delete everything!?", False):
+		if not hql and not args.yes and not ask_confirm(u"You have no filter, do you really want to delete everything!?", False):
 			return
 		
 		for node, (code, result) in six.iteritems(nodes.service.mailQueueDeleteBulk(filter=hql)):

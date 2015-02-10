@@ -60,23 +60,22 @@ class Module(object):
 		        yield (u"Cluster", u"Node", u"Result")
 		        
 		        # Make a call on all given nodes
-		        for node, result in six.iteritems(nodes.service.someCall(arg=123)):
+		        for node, (code, result) in six.iteritems(nodes.service.someCall(arg=123)):
 		            # Mark the results as partial if a node isn't responding
-		            if result[0] != 200:
+		            if code != 200:
 		                self.partial = True
-		                continue
 		            
 		            # Yield a row with the response
-		            yield (node.cluster.name, node.name, results[1])
+		            yield (node.cluster.name, node.name, result or None)
 		
 		Of course, if your command's purpose isn't to retrieve data, you should
 		not do this, and instead adhere to the "rule of silence"; use prints,
 		and say nothing unless there's an error::
 		
 		    def run(self, nodes, args):
-		        for node, result in six.iteritems(nodes.service.someCall(arg=123)):
-		            if result[0] != 200:
-		                print "Failure on {node}: {result}".format(node=node, result=result[1])
+		        for node, (code, result) in six.iteritems(nodes.service.someCall(arg=123)):
+		            if code != 200:
+		                print "Failure on {node}: {result}".format(node=node, result=result)
 		
 		The default implementation simply delegates to a subcommand.
 		'''

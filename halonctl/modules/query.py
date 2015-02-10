@@ -18,8 +18,6 @@ class QueryModule(Module):
 			help=u"print resulting hql queries, for debugging")
 		parser.add_argument('--fields',
 			help=u"print selected fields")
-		parser.add_argument('-v', '--verbose', action='store_true',
-			help=u"verbose output")
 		
 		tzgroup = parser.add_mutually_exclusive_group()
 		tzgroup.add_argument('--utc', dest='timezone', action='store_const', const=0,
@@ -132,7 +130,7 @@ class QueryModule(Module):
 						elif f == 'server': p.append(getattr(msg, 'msglistener', None))
 						elif f == 'size': p.append(getattr(msg, 'msgsize', None)) # Added in 3.3
 						elif f == 'subject': p.append(from_base64(getattr(msg, 'msgsubject', None)))
-						elif f == 'time': p.append(getattr(msg, 'msgts0', None) if args.verbose else get_date(getattr(msg, 'msgts0', None), args.timezone))
+						elif f == 'time': p.append(get_date(getattr(msg, 'msgts0', None), args.timezone))
 						elif f == 'to': p.append(getattr(msg, 'msgto', None))
 						elif f == 'transport': p.append(getattr(msg, 'msgtransport', None))
 					yield p

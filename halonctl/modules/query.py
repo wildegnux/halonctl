@@ -130,7 +130,7 @@ class QueryModule(Module):
 						elif f == 'retry': p.append(msg['msgretries'])
 						elif f == 'sasl': p.append(msg['msgsasl'])
 						elif f == 'server': p.append(msg['msglistener'])
-						elif f == 'size': p.append(msg['msgsize'])
+						elif f == 'size': p.append(getattr(msg, 'msgsize', None)) # Added in 3.3
 						elif f == 'subject': p.append(from_base64(msg['msgsubject']))
 						elif f == 'time': p.append(msg['msgts0'] if args.verbose else get_date(msg['msgts0'], args.timezone))
 						elif f == 'to': p.append(msg['msgto'])

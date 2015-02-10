@@ -33,7 +33,7 @@ class CommandModule(Module):
 			return
 		
 		buffers = { node: "" for node in nodes }
-		handles = { node: result[1] for node, result in six.iteritems(nodes.command(*args.cli)) if result[0] == 200 }
+		handles = { node: result for node, (code, result) in six.iteritems(nodes.command(*args.cli)) if code == 200 }
 		unfinished = handles
 		
 		max_dots = 3

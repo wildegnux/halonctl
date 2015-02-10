@@ -14,14 +14,14 @@ class QueueModule(Module):
 			yield (u"Node", u"Messages")
 		
 		totalCount = 0
-		for node, result in six.iteritems(nodes.command('statd -g mail-queue-count')):
-			if result[0] != 200:
+		for node, (code, result) in six.iteritems(nodes.command('statd -g mail-queue-count')):
+			if code != 200:
 				if not args.quiet:
 					yield (node.name, None)
 				self.partial = True
 				continue
 			
-			count = int(result[1].all().strip().split('=')[1])
+			count = int(result.all().strip().split('=')[1])
 			totalCount += count
 			
 			if not args.quiet:

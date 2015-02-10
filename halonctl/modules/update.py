@@ -11,15 +11,15 @@ class UpdateStatusModule(Module):
 		
 		versions = nodes.service.getVersion()
 		
-		for node, result in six.iteritems(nodes.service.updateDownloadStatus()):
-			if result[0] != 200:
+		for node, (code, result) in six.iteritems(nodes.service.updateDownloadStatus()):
+			if code != 200:
 				self.partial = True
 			
 			status = None
-			if result[0] == 500:
+			if code == 500:
 				status = u"No pending update"
-			elif result[0] == 200:
-				status_code = int(result[1])
+			elif code == 200:
+				status_code = int(result)
 				if status_code <= 100:
 					status = u"Downloading: {0}%%".format(status_code)
 				elif status_code == 101:
@@ -35,8 +35,8 @@ class UpdateDownloadModule(Module):
 	'''Downloads an available update'''
 	
 	def run(self, nodes, args):
-		for node, result in six.iteritems(nodes.service.updateDownloadStart()):
-			if result[0] != 200:
+		for node, (code, result) in six.iteritems(nodes.service.updateDownloadStart()):
+			if code != 200:
 				self.partial = True
 				print(u"Failure on {0}!".format(node))
 
@@ -58,8 +58,8 @@ class UpdateCancelModule(Module):
 	'''Cancels a pending update'''
 	
 	def run(self, nodes, args):
-		for node, result in six.iteritems(nodes.service.updateDownloadCancel()):
-			if result[0] != 200:
+		for node, (code, result) in six.iteritems(nodes.service.updateDownloadCancel()):
+			if code != 200:
 				self.partial = True
 				print(u"Failure on {0}!".format(node))
 

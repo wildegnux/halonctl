@@ -11,14 +11,14 @@ class KeyringStatusModule(Module):
 	def run(self, nodes, args):
 		yield (u'Cluster', u'Name', u'Address', u'Authorized?')
 		
-		for node, result in six.iteritems(nodes.service.login()):
-			if result[0] != 200:
+		for node, (code, result) in six.iteritems(nodes.service.login()):
+			if code != 200:
 				self.partial = True
 			
 			status = None
-			if result[0] == 200:
+			if code == 200:
 				status = True
-			elif result[0] == 401:
+			elif code == 401:
 				status = False
 			
 			yield (node.cluster.name, node.name, node.host, status)
@@ -33,13 +33,13 @@ class KeyringLoginModule(Module):
 				print(u"{prefix} - No username configured for node or cluster".format(prefix=prefix))
 				continue
 			
-			result = node.service.login()[0]
-			if result == 0:
+			code = node.service.login()[0]
+			if code == 0:
 				print(u"{prefix} - Node is unreachable :(".format(prefix=prefix))
-			elif result == 200:
+			elif code == 200:
 				# Follow the good ol' rule of silence
 				pass
-			elif result == 401:
+			elif code == 401:
 				print(u"{prefix} - Enter password (blank to skip):".format(prefix=prefix))
 				while True:
 					password = getpass.getpass(u"{user}@{host}> ".format(user=node.username, host=node.host))
@@ -48,20 +48,20 @@ class KeyringLoginModule(Module):
 					
 					node.password = password
 					
-					result = node.service.login()[0]
-					if result == 200:
+					code = node.service.login()[0]
+					if code == 200:
 						keyring.set_password(node.host, node.username, password)
 						break
-					elif result == 401:
+					elif code == 401:
 						print(u"Invalid login, try again")
-					elif result == 0:
+					elif code == 0:
 						print(u"The node has gone away")
 						break
 					else:
-						print(u"An error occurred, code {0}".format(result))
+						print(u"An error occurred, code {0}".format(code))
 						break
 			else:
-				print(u"An error occurred, code {0}".format(result))
+				print(u"An error occurred, code {0}".format(code))
 
 class KeyringLogoutModule(Module):
 	'''Deletes stored credentials for the node(s)'''

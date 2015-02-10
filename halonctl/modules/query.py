@@ -108,12 +108,12 @@ class QueryModule(Module):
 		yield fields
 		
 		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
-		for node, result in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100)):
-			if result[0] != 200:
-				print(u"Failure on {0}: {1}".format(node, result[1]))
+		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100)):
+			if code != 200:
+				print(u"Failure on {0}: {1}".format(node, result))
 				self.partial = True
-			elif 'item' in result[1]['result']:
-				for msg in result[1]['result']['item']:
+			elif 'item' in result['result']:
+				for msg in result['result']['item']:
 					p = []
 					for f in fields:
 						if f == 'action': p.append(getattr(msg, 'msgaction', None))
@@ -141,16 +141,16 @@ class QueryModule(Module):
 		if not hql and not ask_confirm(u"You have no filter, do you really want to try to deliver everything?", False):
 			return
 		
-		for node, result in six.iteritems(nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate)):
-			if result[0] != 200:
-				print(u"Failure on {0}: {1}".format(node, result[1]))
+		for node, (code, result) in six.iteritems(nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate)):
+			if code != 200:
+				print(u"Failure on {0}: {1}".format(node, result))
 	
 	def do_delete(self, nodes, args, hql):
 		if not hql and not ask_confirm(u"You have no filter, do you really want to delete everything!?", False):
 			return
 		
-		for node, result in six.iteritems(nodes.service.mailQueueDeleteBulk(filter=hql)):
-			if result[0] != 200:
-				print(u"Failure on {0}: {1}".format(node, result[1]))
+		for node, (code, result) in six.iteritems(nodes.service.mailQueueDeleteBulk(filter=hql)):
+			if code != 200:
+				print(u"Failure on {0}: {1}".format(node, result))
 
 module = QueryModule()

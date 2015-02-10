@@ -115,6 +115,7 @@ def textualize(item, raw=False):
 	
 	:param bool raw: Be explicit and machine-readable over human-readable
 	'''
+	
 	if item is None:
 		return u"-" if not raw else None
 	elif item is True:

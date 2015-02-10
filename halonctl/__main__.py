@@ -254,7 +254,7 @@ def main():
 	mod = args._mod
 	retval = mod.run(target_nodes, args)
 	
-	# Normalize generator mods into lists (to detect emptiness)
+	# Normalize generator mods into lists (lets us detect emptiness)
 	if inspect.isgenerator(retval):
 		retval = list(retval)
 	

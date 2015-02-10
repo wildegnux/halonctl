@@ -110,7 +110,6 @@ class QueryModule(Module):
 		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
 		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100)):
 			if code != 200:
-				print(u"Failure on {0}: {1}".format(node, result))
 				self.partial = True
 			elif 'item' in result['result']:
 				for msg in result['result']['item']:

@@ -2,6 +2,20 @@ from __future__ import print_function
 import six
 from halonctl.modapi import Module
 from halonctl.util import ask_confirm
+from halonctl.roles import StatusCode, HTTPStatus
+
+class UpdateStatusCode(StatusCode):
+	codes = {
+		101: u"Checksumming...",
+		102: u"Ready to install!",
+		103: u"Installing...",
+		None: u"No pending update"
+	}
+	
+	def get_default(self, code):
+		if code <= 100:
+			return u"Downloading: {0}%%".format(code)
+		return super(UpdateStatusModule, self).get_default(code)
 
 class UpdateStatusModule(Module):
 	'''Checks update status'''
@@ -15,20 +29,7 @@ class UpdateStatusModule(Module):
 			if code != 200:
 				self.partial = True
 			
-			status = None
-			if code == 500:
-				status = u"No pending update"
-			elif code == 200:
-				status_code = int(result)
-				if status_code <= 100:
-					status = u"Downloading: {0}%%".format(status_code)
-				elif status_code == 101:
-					status = u"Checksumming..."
-				elif status_code == 102:
-					status = u"Ready to install!"
-				elif status_code == 103:
-					status = u"Installing"
-			
+			status = UpdateStatusCode(int(result) if code == 200 else None)
 			yield (node.cluster.name, node.name, node.host, versions[node][1], status)
 
 class UpdateDownloadModule(Module):

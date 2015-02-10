@@ -87,25 +87,6 @@ def hql_from_filters(filters, timezone=0):
 	
 	return u" ".join(conditions)
 
-def textualize_item(item):
-	'''Formats an item in an output table for presentation.'''
-	
-	if item is None:
-		return u"-"
-	elif item is True:
-		return u"Yes"
-	elif item is False:
-		return u"No"
-	return six.text_type(item)
-
-def textualize_row(row):
-	'''Formats a row in an output table for presentation.'''
-	return [textualize_item(item) for item in row]
-
-def textualize_rows(rows):
-	'''Formats a set of rows in an output table for presentation.'''
-	return [textualize_row(row) for row in rows]
-
 def from_base64(s):
 	'''Decodes a Base64-encoded string.
 	

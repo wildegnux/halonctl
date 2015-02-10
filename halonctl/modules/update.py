@@ -26,7 +26,7 @@ class UpdateStatusModule(Module):
 		versions = nodes.service.getVersion()
 		
 		for node, (code, result) in six.iteritems(nodes.service.updateDownloadStatus()):
-			if code != 200:
+			if code != 200 and code != 500:
 				self.partial = True
 			
 			status = UpdateStatusCode(int(result) if code == 200 else None)

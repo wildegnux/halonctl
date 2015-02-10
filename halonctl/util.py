@@ -2,6 +2,7 @@ from __future__ import print_function
 import six
 import sys
 import re
+import datetime
 import arrow
 from base64 import b64decode, b64encode
 from collections import OrderedDict
@@ -102,6 +103,37 @@ def to_base64(s):
 	there's an awful lot of boilerplate with encodings and handling Nones.'''
 	
 	return u"" if not s else b64encode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')
+
+def textualize(item, raw=False):
+	'''
+	Performs output conversion of the given item.
+	
+	It currently has converters for:
+	
+	* ``None``, ``True``, ``False``
+	* `datetime.timedelta <https://docs.python.org/2/library/datetime.html#timedelta-objects>`_
+	
+	:param bool raw: Whether to format for machines rather than humans
+	'''
+	if item is None:
+		return u"-" if not raw else None
+	elif item is True:
+		return u"Yes" if not raw else True
+	elif item is False:
+		return u"No" if not raw else False
+	elif isinstance(item, datetime.timedelta):
+		if not raw:
+			s = u""
+			if item > datetime.timedelta(days=1):
+				s += u"{d}d "
+			if item > datetime.timedelta(hours=1):
+				s += u"{h}h "
+			if item > datetime.timedelta(minutes=1):
+				s += u"{m}m "
+			return s.rstrip().format(d=item.days, h=item.seconds // 3600, m=(item.seconds // 60) % 60)
+		else:
+			return int(item.total_seconds())
+	return six.text_type(item)
 
 def print_ssl_error(node):
 	print(u"ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name), file=sys.stderr)

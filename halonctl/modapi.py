@@ -1,7 +1,6 @@
 from __future__ import print_function
 import six
-import math
-import datetime
+from halonctl.util import textualize
 
 class Module(object):
 	'''Base class for all modules.
@@ -121,33 +120,10 @@ class Formatter(object):
 		'''
 		Takes an emitted item, and returns a more output-friendly form.
 		
-		The default implementation does the following transformations:
-		
-		* If self.raw is True, no transformations are made
-		* None is transformed into "-"
-		* Booleans are transformed into "Yes"/"No"
-		* Everything else is stringified
+		The default implementation just calls :func:`halonctl.util.textualize`.
 		'''
 		
-		if item is None:
-			return u"-" if not self.raw else "None"
-		elif item is True:
-			return u"Yes" if not self.raw else "True"
-		elif item is False:
-			return u"No" if not self.raw else "False"
-		elif isinstance(item, datetime.timedelta):
-			if not self.raw:
-				s = u""
-				if item > datetime.timedelta(days=1):
-					s += u"{d}d "
-				if item > datetime.timedelta(hours=1):
-					s += u"{h}h "
-				if item > datetime.timedelta(minutes=1):
-					s += u"{m}m "
-				return s.rstrip().format(d=item.days, h=item.seconds // 3600, m=(item.seconds // 60) % 60)
-			else:
-				return int(item.total_seconds())
-		return six.text_type(item)
+		return textualize(item, self.raw)
 
 class DictFormatter(Formatter):
 	'''

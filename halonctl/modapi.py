@@ -1,5 +1,7 @@
 from __future__ import print_function
 import six
+import math
+import datetime
 
 class Module(object):
 	'''Base class for all modules.
@@ -127,14 +129,24 @@ class Formatter(object):
 		* Everything else is stringified
 		'''
 		
-		if self.raw:
-			return item
+		if isinstance(item, datetime.timedelta):
+			if not self.raw:
+				s = u""
+				if item > datetime.timedelta(days=1):
+					s += u"{d}d "
+				if item > datetime.timedelta(hours=1):
+					s += u"{h}h "
+				if item > datetime.timedelta(minutes=1):
+					s += u"{m}m "
+				return s.rstrip().format(d=item.days, h=item.seconds // 3600, m=(item.seconds // 60) % 60)
+			else:
+				return int(item.total_seconds())
 		elif item is None:
-			return u"-"
+			return u"-" if not self.raw else "None"
 		elif item is True:
-			return u"Yes"
+			return u"Yes" if not self.raw else "True"
 		elif item is False:
-			return u"No"
+			return u"No" if not self.raw else "False"
 		return six.text_type(item)
 
 class DictFormatter(Formatter):

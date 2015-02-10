@@ -9,7 +9,7 @@ class JSONFormatter(DictFormatter):
 	def format_item(self, item):
 		return item
 	
-	def format_header(self, item):
+	def format_key(self, item):
 		return six.text_type(item).lower().replace(' ', '_')
 
 formatter = JSONFormatter()

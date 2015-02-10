@@ -47,7 +47,7 @@ Thou shalt provide adequate guidance
 Thou shalt not abandon thy past nor future
 	We support both Python 2 and 3, and we'd like to continue doing so for the foreseeable future.
 	
-	We use ``from __future__ import print_statement`` to transform the ``print`` statement into a function, and use the excellent `six <https://pythonhosted.org/six/>`_ library to smooth over most of the remaining differences between the two versions.
+	We use ``from __future__ import print_function`` to transform the ``print`` statement into a function, and use the excellent `six <https://pythonhosted.org/six/>`_ library to smooth over most of the remaining differences between the two versions.
 	
 	Please test your module briefly with both versions, if at all possible.
 

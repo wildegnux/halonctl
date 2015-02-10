@@ -6,7 +6,7 @@ class Module(object):
 	
 	:ivar int exitcode: Change the program's exit code, to signal an error. (default: 0)
 	:ivar bool partial: Set to True if the results are partial, will cause the program to exit with code 99 unless ``--ignore-partial`` is specified on the commandline.
-	:ivar dict submodules: If this module has any submodules of its own, specify them as { 'name': ModuleInstance() }, and do not implement register_arguments() or run().
+	:ivar dict submodules: If this module has any submodules of its own, specify them as ``{ 'name': ModuleInstance() }``, and do not reimplement :func:`register_arguments` or :func:`run`.
 	'''
 	
 	exitcode = 0
@@ -19,7 +19,7 @@ class Module(object):
 		
 		Every module has its own subparser, and thus does not have to worry
 		about clobbering other modules' arguments by accident, but should avoid
-		registering arguments that conflict with ``halonctl``'s own arguments.
+		registering arguments that conflict with halonctl's own arguments.
 		
 		Example::
 		
@@ -30,13 +30,13 @@ class Module(object):
 		See Python's argparse_ module for more information, particularly the
 		part about subcommands_.
 		
-		.. _argparse: https://docs.python.org/2/library/argparse.html
-		.. _subcommands: https://docs.python.org/2/library/argparse.html#sub-commands
+		The default implementation registers any subcommands present.
 		
 		:param argparse.ArgumentParser parser: The Argument Parser arguments should be registered on
-		'''
 		
-		# The default implementation adds subcommands if there are any
+		.. _argparse: https://docs.python.org/2/library/argparse.html
+		.. _subcommands: https://docs.python.org/2/library/argparse.html#sub-commands
+		'''
 		if self.submodules:
 			subparsers = parser.add_subparsers(dest=type(self).__name__ + '_mod_name', metavar='subcommand')
 			subparsers.required = True
@@ -46,10 +46,9 @@ class Module(object):
 				mod.register_arguments(p)
 	
 	def run(self, nodes, args):
-		'''Subclass hook for running the command.
-		
-		This is invoked when ``halonctl`` is run with the module's name as an
-		argument, and should contain the actual command logic.
+		'''
+		Invoked when halonctl is run with the module's name as an argument, and
+		should contain the actual command logic.
 		
 		To output data, the preferred way is to ``yield`` a table, one row at a
 		time, with the first row being the header. This will, by default,
@@ -58,7 +57,7 @@ class Module(object):
 		
 		    def run(self, nodes, args):
 		        # First, yield a header...
-		        yield ("Cluster", "Node", "Result")
+		        yield (u"Cluster", u"Node", u"Result")
 		        
 		        # Make a call on all given nodes
 		        for node, result in six.iteritems(nodes.service.someCall(arg=123)):
@@ -78,8 +77,10 @@ class Module(object):
 		        for node, result in six.iteritems(nodes.service.someCall(arg=123)):
 		            if result[0] != 200:
 		                print "Failure on {node}: {result}".format(node=node, result=result[1])
+		
+		The default implementation simply delegates to a subcommand.
 		'''
-		# The default implementation simply delegates to a subcommand
+		
 		if self.submodules:
 			return getattr(args, type(self).__name__ + '_mod').run(nodes, args)
 
@@ -93,7 +94,7 @@ class Formatter(object):
 	
 	def run(self, data):
 		'''
-		Calls format() with data prepared by format_item().
+		Calls :func:`format` with data prepared by :func:`format_item`.
 		
 		Override if you'd like to customize the entire formatting process, such
 		as if you'd prefer to work with another data structure than a

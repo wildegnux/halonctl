@@ -1,4 +1,6 @@
 import six
+import arrow
+from dateutil import tz
 
 @six.python_2_unicode_compatible
 class BaseRole(object):
@@ -126,3 +128,21 @@ class HTTPStatus(StatusCode):
 		0: u"Unreachable",		# Requests
 		None: u"Unreachable",	# Requests
 	}
+
+class UTCDate(BaseRole):
+	'''
+	Format UTC date with optional timezone
+	
+	A UTC date's raw representation is the unixtime itself, the human
+	representation is a nicely formated date string (with timezone)
+	'''
+	
+	def __init__(self, timestamp, timezone=0):
+		self.timestamp = timestamp
+		self.timezone = timezone
+	
+	def raw(self):
+		return self.timestamp
+	
+	def human(self):
+		return str(arrow.get(arrow.get(self.timestamp).naive, tz.tzoffset(None, self.timezone * 3600 if self.timezone else 0)))

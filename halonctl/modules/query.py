@@ -2,7 +2,8 @@ from __future__ import print_function
 import six
 import argparse
 from halonctl.modapi import Module
-from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm, from_base64, get_date
+from halonctl.util import hql_from_filters, filter_timestamp_re, ask_confirm, from_base64
+from halonctl.roles import UTCDate
 
 class QueryModule(Module):
 	'''Queries emails and performs actions'''
@@ -131,7 +132,7 @@ class QueryModule(Module):
 						elif f == 'server': p.append(getattr(msg, 'msglistener', None))
 						elif f == 'size': p.append(getattr(msg, 'msgsize', None)) # Added in 3.3
 						elif f == 'subject': p.append(from_base64(getattr(msg, 'msgsubject', None)))
-						elif f == 'time': p.append(get_date(getattr(msg, 'msgts0', None), args.timezone))
+						elif f == 'time': p.append(UTCDate(getattr(msg, 'msgts0', None), args.timezone))
 						elif f == 'to': p.append(getattr(msg, 'msgto', None))
 						elif f == 'transport': p.append(getattr(msg, 'msgtransport', None))
 					yield p

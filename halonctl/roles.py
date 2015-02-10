@@ -37,13 +37,38 @@ class BaseRole(object):
 	def __str__(self):
 		return self.human()
 
-class HTTPStatus(BaseRole):
+class StatusCode(BaseRole):
+	'''
+	A generic status code.
+	
+	A status code's raw representation is the code itself, the human
+	representation (meaning) is looked up in a dictionary.
+	
+	:ivar dict codes: A dictionary of status codes to their meanings
+	'''
+	
+	codes = {}
+	
+	def __init__(self, code):
+		self.code = code
+	
+	def raw(self):
+		return self.code
+	
+	def human(self):
+		return self.codes[self.code] if self.code in self.codes else self.get_default(self.code)
+	
+	def get_default(self, code):
+		return six.text_type(code)
+
+class HTTPStatus(StatusCode):
 	'''
 	Denotes an HTTP status code.
 	
 	Note that the human representation is not always the spec-defined name of
 	the status - in some cases, verbose names have been shortened.
 	'''
+	
 	codes = {
 		100: u"Continue",
 		101: u"Switching protocols",
@@ -101,12 +126,3 @@ class HTTPStatus(BaseRole):
 		0: u"Unreachable",		# Requests
 		None: u"Unreachable",	# Requests
 	}
-	
-	def __init__(self, code):
-		self.code = code
-	
-	def raw(self):
-		return self.code
-	
-	def human(self):
-		return self.codes[self.code] if self.code in self.codes else six.text_type(self.code)

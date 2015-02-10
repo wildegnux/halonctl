@@ -58,7 +58,7 @@ class QueryModule(Module):
 			return
 		
 		# Build an array with all supported fields for a particular source
-		supported_fields = ['action', 'actionid', 'cluster', 'from', 'ip',
+		supported_fields = ['action', 'actionid', 'cluster', 'from', 'helo', 'ip',
 			'messageid', 'node', 'queueid', 'sasl', 'server', 'size', 'subject',
 			'time', 'to', 'transport']
 		fields = []
@@ -120,6 +120,7 @@ class QueryModule(Module):
 						elif f == 'actionid': p.append(msg['msgactionid'])
 						elif f == 'cluster': p.append(node.cluster.name)
 						elif f == 'from': p.append(msg['msgfrom'])
+						elif f == 'helo': p.append(msg['msghelo'])
 						elif f == 'historyid': p.append(msg['id'])
 						elif f == 'ip': p.append(msg['msgfromserver'])
 						elif f == 'messageid': p.append(msg['msgid'])

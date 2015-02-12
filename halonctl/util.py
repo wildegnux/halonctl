@@ -145,6 +145,26 @@ def textualize(item, raw=False):
 	elif isinstance(item, Node) or isinstance(item, NodeList):
 		return item.name
 	return six.text_type(item)
+	
+def group_by(data, key, unique):
+	'''Groups a set of data by a key.
+	
+	Treating the key as unique will result in a structure of ``{k:v}``,
+	rather than ``{k:[v,...]}`.
+	
+	:param str key: The key to sort by
+	:param bool unique: If the key should be treated as unique
+	'''
+	d = {}
+	for row in data:
+		k = row.get(key, None)
+		if not key:
+			if not k in d:
+				d[k] = []
+			d[k].append(row)
+		else:
+			d[k] = row
+	return d
 
 def print_ssl_error(node):
 	print(u"ERROR: Couldn't contact '{nid}': SSL verification failed!".format(nid=node.name), file=sys.stderr)

@@ -3,7 +3,7 @@ from six.moves import StringIO
 from halonctl.modapi import Formatter
 
 class CSVFormatter(Formatter):
-	def format(self, data):
+	def format(self, data, args):
 		buf = StringIO()
 		w = csv.writer(buf)
 		w.writerows(data)

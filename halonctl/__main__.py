@@ -267,11 +267,7 @@ def main():
 		if hasattr(retval, 'draw'):
 			print(retval.draw())
 		else:
-			formatter = formatters[args.format]
-			formatter.raw = args.raw
-			formatter.group_by = args.group_by
-			formatter.key = args.group_key
-			print(formatter.run(retval))
+			print(formatters[args.format].run(retval, args))
 	
 	# Let the module decide the exit code - either by explicitly setting it, or
 	# by marking the result as partial, in which case a standard exit code is

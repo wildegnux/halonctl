@@ -2,7 +2,7 @@ from prettytable import PrettyTable
 from halonctl.modapi import Formatter
 
 class TableFormatter(Formatter):
-	def format(self, data):
+	def format(self, data, args):
 		table = PrettyTable(data[0])
 		
 		table.align = "l"

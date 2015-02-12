@@ -1,6 +1,6 @@
 from __future__ import print_function
 import six
-from halonctl.util import textualize
+from halonctl.util import textualize, group_by
 
 class Module(object):
 	'''Base class for all modules.
@@ -86,18 +86,9 @@ class Module(object):
 			return getattr(args, type(self).__name__ + '_mod').run(nodes, args)
 
 class Formatter(object):
-	'''Base class for all formatters.
+	'''Base class for all formatters.'''
 	
-	:ivar bool raw: Whether the output should be machine- rather than human-friendly
-	:ivar str group_by: The key to group output by (if supported)
-	:ivar bool group_key: Whether the grouper is a unique key
-	'''
-	
-	raw = False
-	group_by = None
-	group_key = False
-	
-	def run(self, data):
+	def run(self, data, args):
 		'''
 		Calls :func:`format` with data prepared by :func:`format_item`.
 		
@@ -106,9 +97,9 @@ class Formatter(object):
 		two-dimensional list.
 		'''
 		
-		return self.format([[self.format_item(item) for item in row] for row in data])
+		return self.format([[self.format_item(item, args) for item in row] for row in data], args)
 	
-	def format(self, data):
+	def format(self, data, args):
 		'''
 		Takes a blob of data, and transforms it into the desired form.
 		
@@ -120,14 +111,14 @@ class Formatter(object):
 		
 		raise NotImplementedError()
 	
-	def format_item(self, item):
+	def format_item(self, item, args):
 		'''
 		Takes an emitted item, and returns a more output-friendly form.
 		
 		The default implementation just calls :func:`halonctl.util.textualize`.
 		'''
 		
-		return textualize(item, self.raw)
+		return textualize(item, args.raw)
 
 class DictFormatter(Formatter):
 	'''
@@ -138,29 +129,18 @@ class DictFormatter(Formatter):
 	using the new :func:`format_key` method.
 	'''
 	
-	def run(self, data):
-		keys = [self.format_key(header) for header in data[0]]
-		data2 = [{ keys[i]: self.format_item(item) for i, item in enumerate(row) } for row in data[1:]]
-		return self.format(data2 if not self.group_by else self.group_data(data2, self.group_by))
+	def run(self, data, args):
+		keys = [self.format_key(header, args) for header in data[0]]
+		data2 = [{ keys[i]: self.format_item(item, args) for i, item in enumerate(row) } for row in data[1:]]
+		if args.group_by:
+			data2 = group_by(data2, args.group_by, args.group_key)
+		return self.format(data2, args)
 	
-	def group_data(self, data, key):
-		print(key)
-		d = {}
-		for row in data:
-			k = row.get(key, None)
-			if not self.key:
-				if not k in d:
-					d[k] = []
-				d[k].append(row)
-			else:
-				d[k] = row
-		return d
-	
-	def format_key(self, header):
+	def format_key(self, header, args):
 		'''
 		Takes a header, and returns the key it should map to in the dictionary.
 		
 		The default implementation simply calls :func:`format_item()
 		<Formatter.format_item>`.
 		'''
-		return self.format_item(header)
+		return self.format_item(header, args)

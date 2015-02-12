@@ -3,7 +3,7 @@ import arrow
 from dateutil import tz
 
 @six.python_2_unicode_compatible
-class BaseRole(object):
+class Role(object):
 	'''
 	A Role allows you to indicate the meaning of an otherwise context-sensitive
 	value, such as a number. This allows intelligent formatting of values whose
@@ -12,7 +12,7 @@ class BaseRole(object):
 	Feel free to implement your own roles, should you find that no built-in
 	role suits your use-case.
 	
-	To implement your own Role, simply subclass BaseRole, and override the
+	To implement your own Role, simply subclass Role, and override the
 	constructor (to take whatever parameters you need), :func:`raw` and
 	:func:`human`.
 	'''
@@ -39,7 +39,7 @@ class BaseRole(object):
 	def __str__(self):
 		return self.human()
 
-class StatusCode(BaseRole):
+class StatusCode(Role):
 	'''
 	A generic status code.
 	
@@ -129,7 +129,7 @@ class HTTPStatus(StatusCode):
 		None: u"Unreachable",	# Requests
 	}
 
-class UTCDate(BaseRole):
+class UTCDate(Role):
 	'''
 	Format UTC date with optional timezone
 	

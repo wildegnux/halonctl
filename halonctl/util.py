@@ -112,14 +112,14 @@ def textualize(item, raw=False):
 	
 	* ``None``, ``True``, ``False``
 	* `datetime.timedelta <https://docs.python.org/2/library/datetime.html#timedelta-objects>`_
-	* :class:`halonctl.roles.BaseRole`
+	* :class:`halonctl.roles.Role`
 	* :class:`halonctl.models.Node`
 	* :class:`halonctl.models.NodeList`
 	
 	:param bool raw: Be explicit and machine-readable over human-readable
 	'''
 	
-	from .roles import BaseRole
+	from .roles import Role
 	from .models import Node, NodeList
 	
 	if item is None:
@@ -140,7 +140,7 @@ def textualize(item, raw=False):
 			return s.rstrip().format(d=item.days, h=item.seconds // 3600, m=(item.seconds // 60) % 60)
 		else:
 			return int(item.total_seconds())
-	elif isinstance(item, BaseRole):
+	elif isinstance(item, Role):
 		return item.human() if not raw else item.raw()
 	elif isinstance(item, Node) or isinstance(item, NodeList):
 		return item.name

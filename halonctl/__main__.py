@@ -219,6 +219,10 @@ def main():
 		help=u"use the specified output format (default: table)")
 	parser.add_argument('-r', '--raw', action='store_true',
 		help=u"don't humanize the output, output it as raw as possible")
+	parser.add_argument('-g', '--group-by', metavar="KEY",
+		help=u"group output; ignored for table-like formats")
+	parser.add_argument('-k', '--key', dest='group_key', action='store_true',
+		help=u"assume grouper is unique, and key only a single value to it")
 	
 	parser.add_argument('--clear-cache', action='store_true',
 		help=u"clear the WSDL cache")
@@ -265,6 +269,8 @@ def main():
 		else:
 			formatter = formatters[args.format]
 			formatter.raw = args.raw
+			formatter.group_by = args.group_by
+			formatter.key = args.group_key
 			print(formatter.run(retval))
 	
 	# Let the module decide the exit code - either by explicitly setting it, or

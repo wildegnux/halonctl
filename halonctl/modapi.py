@@ -89,9 +89,13 @@ class Formatter(object):
 	'''Base class for all formatters.
 	
 	:ivar bool raw: Whether the output should be machine- rather than human-friendly
+	:ivar str group_by: The key to group output by (if supported)
+	:ivar bool group_key: Whether the grouper is a unique key
 	'''
 	
 	raw = False
+	group_by = None
+	group_key = False
 	
 	def run(self, data):
 		'''
@@ -136,7 +140,21 @@ class DictFormatter(Formatter):
 	
 	def run(self, data):
 		keys = [self.format_key(header) for header in data[0]]
-		return self.format([{ keys[i]: self.format_item(item) for i, item in enumerate(row) } for row in data[1:]])
+		data2 = [{ keys[i]: self.format_item(item) for i, item in enumerate(row) } for row in data[1:]]
+		return self.format(data2 if not self.group_by else self.group_data(data2, self.group_by))
+	
+	def group_data(self, data, key):
+		print(key)
+		d = {}
+		for row in data:
+			k = row.get(key, None)
+			if not self.key:
+				if not k in d:
+					d[k] = []
+				d[k].append(row)
+			else:
+				d[k] = row
+		return d
 	
 	def format_key(self, header):
 		'''

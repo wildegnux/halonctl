@@ -21,7 +21,7 @@ class KeyringStatusModule(Module):
 			elif code == 401:
 				status = False
 			
-			yield (node.cluster.name, node.name, node.host, status)
+			yield (node.cluster, node, node.host, status)
 
 class KeyringLoginModule(Module):
 	'''Attempts to log in to the node(s)'''

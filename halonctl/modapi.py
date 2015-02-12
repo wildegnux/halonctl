@@ -68,7 +68,7 @@ class Module(object):
 		                self.partial = True
 		            
 		            # Yield a row with the response
-		            yield (node.cluster.name, node.name, result or None)
+		            yield (node.cluster, node, result or None)
 		
 		Of course, if your command's purpose isn't to retrieve data, you should
 		not do this, and instead adhere to the "rule of silence"; use prints,

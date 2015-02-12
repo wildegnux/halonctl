@@ -15,6 +15,6 @@ class StatusModule(Module):
 				self.partial = True
 			
 			uptime = datetime.timedelta(seconds=result) if code == 200 else None
-			yield (node.cluster.name, node.name, node.host, uptime, HTTPStatus(code))
+			yield (node.cluster, node, node.host, uptime, HTTPStatus(code))
 
 module = StatusModule()

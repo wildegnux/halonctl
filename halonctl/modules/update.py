@@ -30,7 +30,7 @@ class UpdateStatusModule(Module):
 				self.partial = True
 			
 			status = UpdateStatusCode(int(result) if code == 200 else None)
-			yield (node.cluster.name, node.name, node.host, versions[node][1], status)
+			yield (node.cluster, node, node.host, versions[node][1], status)
 
 class UpdateDownloadModule(Module):
 	'''Downloads an available update'''

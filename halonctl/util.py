@@ -150,7 +150,7 @@ def group_by(data, key, unique):
 	'''Groups a set of data by a key.
 	
 	Treating the key as unique will result in a structure of ``{k:v}``,
-	rather than ``{k:[v,...]}`.
+	rather than ``{k:[v,...]}``.
 	
 	:param str key: The key to sort by
 	:param bool unique: If the key should be treated as unique

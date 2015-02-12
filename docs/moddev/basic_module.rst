@@ -1,38 +1,5 @@
-Module Developer's Guide
-========================
-
-.. note::
-   This document assumes that you have read :doc:`general`.
-
-What is a module?
------------------
-
-A module in halonctl is something that can be called as a subcommand, that executes actions and/or produces some kind of output. A module may have subcommands in themselves, where it makes sense (eg. the :doc:`update <../modules/update>` module).
-
-A good module should
-''''''''''''''''''''
-
-*Do one thing, and do it well*
-   
-   Feature bloat is bad. If your module grows to encompass too many responsibilities, consider splitting it up into multiple, smaller modules.
-
-*Produce structured output, and indicate failures gracefully*
-   
-   Behaving well is important. Scripts as well as humans should be able to use your module, and interpret its output (with some exceptions, such as the :doc:`keyring <../modules/keyring>` module, which would make no sense to script). Prefer using ``yield`` to ``print``, and use exit codes to indicate failures.
-
-A good module should NOT
-''''''''''''''''''''''''
-
-*Concern itself with output formatting in any way*
-   
-   A module should only produce data, it's up to a :doc:`Formatter <formatters>` to make this data take the desired form - this decoupling is what makes it possible to produce optimal output for any format.
-
-*Produce both structured and unstructured output*
-   
-   This may make sense to a human consumer, but not so much to a machine. If you ``print()`` something, then ``yield`` something else, but JSON output is requested, the yielded data will be rendered as JSON, but the printed data will preceed it and turn it all into garbage in a parser's eyes.
-
 A basic module
---------------------
+========================
 
 The base structure for a module looks like this - feel free to use it as a template.
 
@@ -56,10 +23,7 @@ The base structure for a module looks like this - feel free to use it as a templ
 	
 	module = MyFancyModule()
 
-Breaking it down
-----------------
-
-If you understood all of that, feel free to skip this section. If not, here we go::
+If you understood all of that, feel free to skip ahead to the next page. If not, here we go::
 
     from __future__ import print_function
     import six

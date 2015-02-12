@@ -9,7 +9,7 @@ Contents:
    configuration
    basics
    modules
-   extending
+   moddev
    api
 
 

@@ -11,3 +11,5 @@ Contents:
    moddev/general
    moddev/basic_module
    moddev/arguments
+   moddev/submodules
+   moddev/roles

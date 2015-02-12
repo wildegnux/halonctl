@@ -10,3 +10,4 @@ Contents:
    
    moddev/general
    moddev/basic_module
+   moddev/arguments

@@ -136,7 +136,7 @@ class DictFormatter(Formatter):
 	
 	def run(self, data):
 		keys = [self.format_key(header) for header in data[0]]
-		return self.format([{keys[i]: self.format_item(row[i]) for i in six.moves.xrange(len(row))} for row in data[1:]])
+		return self.format([{ keys[i]: self.format_item(item) for i, item in enumerate(row) } for row in data[1:]])
 	
 	def format_key(self, header):
 		'''

@@ -150,6 +150,9 @@ class Node(object):
 		if self.cluster.name:
 			s = u"{cluster}/{s}".format(cluster=self.cluster.name, s=s)
 		return s
+	
+	def __repr__(self):
+		return "Node(name={name}, cluster=<{cluster}>)".format(name=self.name, cluster=self.cluster.name if self.cluster else None)
 
 
 

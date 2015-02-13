@@ -142,28 +142,31 @@ def process_config(config):
 	return (nodes, clusters)
 
 def apply_slice(list_, slice_):
-	if not slice_:
+	if not slice_ or not list_:
 		return list_
 	
 	offsets = [-1, 0, 0]
 	parts = [int(p) + offsets[i] if p else None for i, p in enumerate(slice_.split(':'))]
-	return list_[slice(*parts)] if len(parts) > 1 else [list_[parts[0]]]
+	try:
+		return list_[slice(*parts)] if len(parts) > 1 else [list_[parts[0]]]
+	except IndexError:
+		return []
 
 def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''):
 	targets = OrderedDict()
 	
 	if len(nodes) == 0 and len(clusters) == 0:
-		for node in six.itervalues(available_nodes):
+		for node in six.itervalues(apply_slice(available_nodes, slice_)):
 			targets[node.name] = node
-	else:
+	elif len(clusters) > 0:
 		for cid in clusters:
-			for node in available_clusters[cid]:
+			for node in apply_slice(available_clusters[cid], slice_):
 				targets[node.name] = node
 		
-		for nid in nodes:
+		for nid in apply_slice(nodes, slice_):
 			targets[nid] = available_nodes[nid]
 	
-	return NodeList(apply_slice(list(targets.values()), slice_))
+	return NodeList(targets.values())
 
 def download_wsdl(nodes, verify):
 	path = cache.get_path(u"wsdl.xml")

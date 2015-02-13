@@ -34,11 +34,14 @@ The most up-to-date list can always be viewed under ``System -> Commands`` in th
 * `ifconfig <https://www.freebsd.org/cgi/man.cgi?query=ifconfig&manpath=FreeBSD+10.1-RELEASE>`_
 * `iostat <https://www.freebsd.org/cgi/man.cgi?query=iostat&manpath=FreeBSD+10.1-RELEASE>`_
 * `login <https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+10.1-RELEASE>`_
-* lostfiles - interactive recovery program [#lostfiles]_
 * `mfiutil <https://www.freebsd.org/cgi/man.cgi?query=mfiutil&manpath=FreeBSD+10.1-RELEASE>`_
 * `sysctl <https://www.freebsd.org/cgi/man.cgi?query=sysctl&manpath=FreeBSD+10.1-RELEASE>`_
 * `top <https://www.freebsd.org/cgi/man.cgi?query=top&manpath=FreeBSD+10.1-RELEASE>`_
-* truncsvn - truncates configuration history [#truncsvn]_
 
-.. [#lostfiles] Typically run automatically in the background - you only have to invoke it manually in case of database corruption
-.. [#truncsvn] This solves a very specific problem, and you will likely never to use it
+Support Commands
+----------------
+
+These are also available, but as they're halon-specific utilities for solving very specific problems, most people will never run them.
+
+* lostfiles - interactive recovery program
+* truncsvn - truncates configuration history

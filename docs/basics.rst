@@ -51,18 +51,6 @@ They can be combined - you could target all nodes in ``c2`` as well as ``n1``::
 
     halonctl -c c2 -n n1 status
 
-Dry Runs
---------
-
-If you want to see which nodes would be affected by a command without actually executing it, you can use the ``--dry`` (``-d``) flag::
-
-    $ halonctl --dry status
-    This action would have affected:
-      - n1 (c1)
-      - n2 (c1)
-
-Useful if you want to perfect your filters before executing a potentially dangerous operation.
-
 Slicing
 -------
 
@@ -116,6 +104,20 @@ Now, you obviously don't want to take down your entire cluster by restarting all
 When they've all rebooted and are up and running again, you can skip the first node (start on the 2nd), and update the other half::
 
     halonctl -c mycluster -s 2::2 update install
+
+Dry Runs
+--------
+
+If you want to see which nodes would be affected by a command without actually executing it, you can use the ``--dry`` (``-d``) flag::
+
+    $ halonctl -c c1 -s :2 --dry status
+    This action would have affected:
+      - n1 (c1)
+      - n2 (c1)
+
+Useful if you want to perfect your filters before executing a potentially dangerous operation.
+
+Note that you still need to specify a command, even though it's never actually executed.
 
 Choosing an output format
 -------------------------

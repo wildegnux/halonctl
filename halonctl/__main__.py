@@ -111,7 +111,7 @@ def load_config(f):
 	'''Loads configuration data from a given file.'''
 	
 	try:
-		conf = json.load(f, encoding='utf-8')
+		conf = json.load(f, encoding='utf-8', object_pairs_hook=OrderedDict)
 	except ValueError as e:
 		sys.exit(u"Configuration Syntax Error: {0}".format(e))
 	
@@ -122,7 +122,7 @@ def load_config(f):
 def process_config(config):
 	'''Processes a configuration dictionary into usable components.'''
 	
-	nodes = { name: Node(data, name) for name, data in six.iteritems(config.get('nodes', {})) }
+	nodes = OrderedDict([(name, Node(data, name)) for name, data in six.iteritems(config.get('nodes', {}))])
 	clusters = {}
 	
 	for name, data in six.iteritems(config.get('clusters', {})):

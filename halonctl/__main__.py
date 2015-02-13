@@ -211,6 +211,8 @@ def main():
 		default=[], help=u"target clusters")
 	parser.add_argument('-s', '--slice', dest='slice',
 		default='', help=u"slicing, as a Python slice expression")
+	parser.add_argument('-d', '--dry', dest='dry_run', action='store_true',
+		help=u"only list the nodes that would be affected")
 	
 	parser.add_argument('-i', '--ignore-partial', action='store_true',
 		help=u"exit normally even for partial results")
@@ -252,6 +254,13 @@ def main():
 	
 	# Filter nodes to choices
 	target_nodes = apply_filter(nodes, clusters, args.nodes, args.clusters, args.slice)
+	
+	# If this is a dry run - stop right here and just print the targets
+	if args.dry_run:
+		print(u"This action would have affected:")
+		for node in target_nodes:
+			print(u"  - {name} ({cluster})".format(name=node.name, cluster=node.cluster.name))
+		return
 	
 	# Download WSDL and create client objects
 	download_wsdl(target_nodes, verify=config.get('verify_ssl', True))

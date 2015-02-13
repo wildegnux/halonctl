@@ -51,6 +51,18 @@ They can be combined - you could target all nodes in ``c2`` as well as ``n1``::
 
     halonctl -c c2 -n n1 status
 
+Dry Runs
+--------
+
+If you want to see which nodes would be affected by a command without actually executing it, you can use the ``--dry`` (``-d``) flag::
+
+    $ halonctl --dry status
+    This action would have affected:
+      - n1 (c1)
+      - n2 (c1)
+
+Useful if you want to perfect your filters before executing a potentially dangerous operation.
+
 Slicing
 -------
 

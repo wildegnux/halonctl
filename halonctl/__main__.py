@@ -158,7 +158,7 @@ def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''
 	if len(nodes) == 0 and len(clusters) == 0:
 		for node in six.itervalues(apply_slice(available_nodes, slice_)):
 			targets[node.name] = node
-	elif len(clusters) > 0:
+	else:
 		for cid in clusters:
 			for node in apply_slice(available_clusters[cid], slice_):
 				targets[node.name] = node

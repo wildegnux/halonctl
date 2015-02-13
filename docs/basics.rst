@@ -82,6 +82,14 @@ Obviously, you can also do this to skip the first 3, and target the 4th, 5th and
 
     halonctl -s 4:6 status
 
+Slicing with specified clusters will affect each cluster separately, so if you have a cluster "c1" with the nodes n11 and n12, and a cluster "c2" with the nodes n21 and n22, this will target both n11 and n21::
+
+    halonctl -c c1 -c c2 -s 1 status
+
+You can also select the special cluster "-", which will expand to every configured cluster - if c1 and c2 are your only configured clusters, the above could instead be written as::
+
+    halonctl -c - -s 1 status
+
 Stepping
 --------
 

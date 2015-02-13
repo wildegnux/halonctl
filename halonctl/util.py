@@ -32,9 +32,11 @@ def async_dispatch(tasks):
 	return { futures[future]: future.result() for future in done }
 
 def nodesort(nodes):
-	'''Sorts a dictionary of nodes into an OrderedDict, by cluster and name.'''
+	'''Sorts a list or dictionary of nodes, by cluster and name.'''
 	
-	return OrderedDict(natsorted(list(nodes.items()), key=lambda t: [t[0].cluster.name, t[0].name]))
+	if hasattr(nodes, 'items'):
+		return OrderedDict(natsorted(list(nodes.items()), key=lambda t: [t[0].cluster.name, t[0].name]))
+	return natsorted(nodes, key=lambda t: [t.cluster.name, t.name])
 
 def ask_confirm(prompt, default=True):
 	'''Ask the user for confirmation.

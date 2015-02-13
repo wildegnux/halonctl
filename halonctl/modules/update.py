@@ -14,7 +14,7 @@ class UpdateStatusCode(StatusCode):
 	
 	def get_default(self, code):
 		if code <= 100:
-			return u"Downloading: {0}%%".format(code)
+			return u"Downloading: {0}%".format(code)
 		return super(UpdateStatusModule, self).get_default(code)
 
 class UpdateStatusModule(Module):

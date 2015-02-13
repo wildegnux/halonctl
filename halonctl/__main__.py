@@ -118,15 +118,11 @@ def load_config(f):
 	g_config.config.update(conf)
 	return conf
 
-def process_config(config, preload_wsdl=False):
+def process_config(config):
 	'''Processes a configuration dictionary into usable components.'''
 	
 	nodes = { name: Node(data, name) for name, data in six.iteritems(config.get('nodes', {})) }
 	clusters = {}
-	
-	if preload_wsdl:
-		download_wsdl(six.itervalues(nodes), verify=config.get('verify_ssl', True))
-		async_dispatch({ node: (node.load_wsdl,) for node in six.itervalues(nodes) })
 	
 	for name, data in six.iteritems(config.get('clusters', {})):
 		cluster = NodeList()
@@ -236,7 +232,7 @@ def main():
 	
 	# Load configuration
 	config = load_config(args.config or open_config())
-	nodes, clusters = process_config(config, preload_wsdl=True)
+	nodes, clusters = process_config(config)
 	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
@@ -253,6 +249,11 @@ def main():
 	
 	# Filter nodes to choices
 	target_nodes = apply_filter(nodes, clusters, args.nodes, args.clusters, args.slice)
+	
+	# Download WSDL and create client objects
+	download_wsdl(target_nodes, verify=config.get('verify_ssl', True))
+	for node in target_nodes:
+		node.load_wsdl()
 	
 	# Run the selected module
 	mod = args._mod

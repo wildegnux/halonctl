@@ -11,6 +11,7 @@ import json
 import logging
 import arrow
 import requests
+from collections import OrderedDict
 from natsort import natsorted
 from .models import *
 from .util import *
@@ -149,18 +150,20 @@ def apply_slice(list_, slice_):
 	return list_[slice(*parts)] if len(parts) > 1 else [list_[parts[0]]]
 
 def apply_filter(available_nodes, available_clusters, nodes, clusters, slice_=''):
-	targets = []
+	targets = OrderedDict()
 	
 	if len(nodes) == 0 and len(clusters) == 0:
-		targets = apply_slice(list(available_nodes.values()), slice_)
-	elif len(clusters) > 0:
+		for node in six.itervalues(available_nodes):
+			targets[node.name] = node
+	else:
 		for cid in clusters:
-			targets += apply_slice(available_clusters[cid], slice_)
+			for node in available_clusters[cid]:
+				targets[node.name] = node
+		
+		for nid in nodes:
+			targets[nid] = available_nodes[nid]
 	
-	if len(nodes) > 0:
-		targets += [available_nodes[nid] for nid in nodes]
-	
-	return NodeList(natsorted(targets, key=lambda t: [t.cluster.name, t.name]))
+	return NodeList(apply_slice(list(targets.values()), slice_))
 
 def download_wsdl(nodes, verify):
 	path = cache.get_path(u"wsdl.xml")

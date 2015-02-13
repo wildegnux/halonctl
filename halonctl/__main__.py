@@ -242,6 +242,12 @@ def main():
 	config = load_config(args.config or open_config())
 	nodes, clusters = process_config(config)
 	
+	# Allow wildcard cluster- and node targeting
+	if args.clusters == ['-']:
+		args.clusters = list(clusters.keys())
+	if args.nodes == ['-']:
+		args.nodes = list(nodes.keys())
+	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
 	if invalid_clusters:

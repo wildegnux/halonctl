@@ -121,7 +121,7 @@ class Node(object):
 		clients at once over a bunch of threads.'''
 		
 		if not hasattr(self, '_client'):
-			self._client = Client("file://{0}".format(cache.get_path('wsdl.xml')), location=self.url, faults=False, nosend=True)
+			self._client = Client("file:{0}".format(cache.get_path('wsdl.xml')), location=self.url, faults=False, nosend=True)
 			self._client.set_options(cache=None)
 	
 	def make_request(self, name, *args, **kwargs):

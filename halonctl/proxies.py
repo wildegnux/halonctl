@@ -122,7 +122,7 @@ class CommandProxy(six.Iterator):
 		return u"".join(self)
 	
 	def read(self):
-		'''Reads some data from the remote process' stdin'''
+		'''Reads some data from the remote process' stdout'''
 		
 		code, res = self.node.service.commandPoll(commandid=self.cid)
 		if code != 200:

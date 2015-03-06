@@ -33,6 +33,33 @@ Links
 Changelog
 ---------
 
+1.3.0
+#####
+
+**Added:**
+
+* Native support for Python 3! No more 2to3 nonsense!
+* `Full documentation, including docs for module development! <http://halonctl.readthedocs.org/en/latest/>`_
+* Interactive mode for the ``cmd`` module - you can now run ``top`` and ``hsh``!
+* History querying and printing specific fields with the ``query`` module
+* A new "grouped" output mode, usable with the JSON formatter
+* A ``--raw`` flag for requesting machine-readable rather than human-readable output
+* The ability to "dry run", to test slicing expressions without actually executing anything
+* ``--clear-cache`` module for clearing the WSDL cache after node updates
+
+**Changed:**
+
+* Startup is SO MUCH FASTER, especially with lots of nodes
+* Slices now **start at 1**, for ease of use - update your scripts!
+* Nodes are now sliced in the order they're listed in the configuration
+* Modules and formatters are now a whole lot simpler to build
+
+**Fixed:**
+
+* Occasional 'ghosting' in the ``cmd`` module
+* Inconsistent output from the ``query`` module in some circumstances
+* A bunch of bugs with the WSDL cache causing the strangest bugs
+
 1.2.2
 #####
 

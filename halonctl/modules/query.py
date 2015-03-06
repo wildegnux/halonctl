@@ -9,21 +9,21 @@ class QueryModule(Module):
 	'''Queries emails and performs actions'''
 	
 	def register_arguments(self, parser):
-		parser.add_argument('--history', action='store_true',
+		parser.add_argument('-r', '--history', action='store_true',
 			help=u"query history instead of queue")
-		parser.add_argument('--offset', type=int,
+		parser.add_argument('-o', '--offset', type=int, metavar='N',
 			help=u"offset when just showing emails (default: 0)")
-		parser.add_argument('--limit', type=int,
+		parser.add_argument('-n', '--limit', type=int, metavar='N',
 			help=u"limit when just showing emails (default: 100)")
 		parser.add_argument('--debug-hql', action='store_true',
 			help=u"print resulting hql queries, for debugging")
-		parser.add_argument('--fields',
+		parser.add_argument('-f', '--fields', metavar='x,y',
 			help=u"print selected fields")
 		parser.add_argument('-y', '--yes', action='store_true',
 			help=u"don't ask to perform wildcard actions")
 		
 		tzgroup = parser.add_mutually_exclusive_group()
-		tzgroup.add_argument('--utc', dest='timezone', action='store_const', const=0,
+		tzgroup.add_argument('-u', '--utc', dest='timezone', action='store_const', const=0,
 			help=u"timestamps are given in UTC")
 		tzgroup.add_argument('-t', '--timezone', dest='timezone', type=float, metavar='TZ',
 			help=u"timestamps are given in this UTC offset, in hours")

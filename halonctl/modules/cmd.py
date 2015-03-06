@@ -6,7 +6,9 @@ import platform
 import curses
 import termios
 import tty
+from six.moves.queue import Queue, Empty
 from select import select
+from threading import Thread
 from natsort import natsorted
 from halonctl.modapi import Module
 from halonctl.util import async_dispatch, get_terminal_size
@@ -114,37 +116,80 @@ class CommandModule(Module):
 			self.exitcode = 1
 			return
 		
-		# Save the current terminal flags, then set it to raw mode - there's a
-		# full TTY on the other side of the pipe, we're basically tunneling it
-		old_flags = termios.tcgetattr(sys.stdout)
-		tty.setraw(sys.stdout)
-		
-		# REPL time
-		try:
+		# Write worker - pulls events from an event queue, and informs the
+		# remote process of these; this ensures that events are processed in
+		# the order they are emitted, scrambled input is not fun
+		def do_write_worker(cmd, event_queue):
 			while not cmd.done:
-				# Check for terminal resizes
-				new_size = get_terminal_size()
-				if new_size != size:
-					size = new_size
-					cmd.resize(size)
-				
-				# Read from stdin, use select to avoid blocking
-				indata = u''
-				while select([sys.stdin], [], [], 0) == ([sys.stdin], [], []):
-					indata += sys.stdin.read(1)
-				if indata:
-					cmd.write(indata)
-				
-				# Write to stdout; latency here makes a sleep unnecessary
+				# Process pending events
+				try:
+					type_, data = event_queue.get(True)
+					
+					if type_ == None:
+						break
+					elif type_ == 'write':
+						cmd.write(data)
+					elif type_ == 'resize':
+						cmd.resize(data)
+					
+					event_queue.task_done()
+				except Empty:
+					pass
+		
+		# Read worker - continously polls the server for output, and writes to
+		# the screen; this lets the main thread block as long as it likes to
+		# wait for input, without delaying output in the process
+		# The main thread must obviously not write to stdout with this running
+		def do_read_worker(cmd):
+			while not cmd.done:
+				# Poll for output
 				code, output = cmd.read()
 				if code != 200:
 					if code != 500:
 						print(HTTPStatus(code).human())
 						self.exitcode = 1
 					break
-				sys.stdout.write(output)
-				sys.stdout.flush()
+				if output:
+					sys.stdout.write(output)
+					sys.stdout.flush()
+		
+		# Event queue; handles all necessary locking and accounting internally
+		event_queue = Queue()
+		
+		# Writer; see do_write_worker
+		write_worker = Thread(target=do_write_worker, args=(cmd, event_queue))
+		write_worker.daemon = True
+		write_worker.start()
+		
+		# Reader; see do_read_worker
+		read_worker = Thread(target=do_read_worker, args=(cmd,))
+		read_worker.daemon = True
+		read_worker.start()
+		
+		# Save the current terminal flags, then set it to raw mode - there's a
+		# full TTY on the other side of the pipe, we're basically tunneling it
+		old_flags = termios.tcgetattr(sys.stdout)
+		tty.setraw(sys.stdout)
+		
+		# Poll stdin and the terminal size until the command has finished
+		try:
+			while not cmd.done:
+				# Use select() to poll stdin, without pulling 100% CPU
+				indata = u''
+				while select([sys.stdin], [], [], 0.1) == ([sys.stdin], [], []):
+					indata += sys.stdin.read(1)
+				if indata:
+					event_queue.put(('write', indata))
+				
+				# Check for terminal resizes
+				new_size = get_terminal_size()
+				if new_size != size:
+					size = new_size
+					event_queue.push(('resize', size))
 		finally:
+			# Push a None event to the reader worker, to make it shut down
+			event_queue.put((None, None))
+			
 			# Whatever happens, barring a power outage, restore the user's
 			# terminal to a usable state before exiting!
 			termios.tcsetattr(sys.stdout, termios.TCSADRAIN, old_flags)

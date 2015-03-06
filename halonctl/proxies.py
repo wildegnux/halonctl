@@ -158,6 +158,15 @@ class CommandProxy(six.Iterator):
 		
 		return code, res
 	
+	def resize(self, size=(80, 24)):
+		'''Resizes the command's viewport.'''
+		
+		code, res = self.node.service.commandTermsize(commandid=self.cid, cols=size[0], rows=size[1])
+		if code != 200:
+			self.done = True
+		
+		return code, res
+	
 	def stop(self):
 		'''Terminates the remote process.'''
 		

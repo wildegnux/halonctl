@@ -143,6 +143,7 @@ class CommandModule(Module):
 						self.exitcode = 1
 					break
 				sys.stdout.write(output)
+				sys.stdout.flush()
 		finally:
 			# Whatever happens, barring a power outage, restore the user's
 			# terminal to a usable state before exiting!

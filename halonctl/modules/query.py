@@ -25,7 +25,7 @@ class QueryModule(Module):
 		tzgroup = parser.add_mutually_exclusive_group()
 		tzgroup.add_argument('--utc', dest='timezone', action='store_const', const=0,
 			help=u"timestamps are given in UTC")
-		tzgroup.add_argument('--timezone', dest='timezone', type=float,
+		tzgroup.add_argument('-t', '--timezone', dest='timezone', type=float,
 			help=u"timestamps are given in this UTC offset, in hours")
 		
 		actiongroup = parser.add_mutually_exclusive_group()

@@ -21,26 +21,27 @@ The most up-to-date list can always be viewed under ``System -> Commands`` in th
 
 * `arp <https://www.freebsd.org/cgi/man.cgi?query=arp&manpath=FreeBSD+10.1-RELEASE>`_
 * `host <https://www.freebsd.org/cgi/man.cgi?query=host&manpath=FreeBSD+10.1-RELEASE>`_
+* `nc <https://www.freebsd.org/cgi/man.cgi?query=nc&manpath=FreeBSD+10.1-RELEASE>`_
 * `ping <https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+10.1-RELEASE>`_
 * `ping6 <https://www.freebsd.org/cgi/man.cgi?query=ping6&manpath=FreeBSD+10.1-RELEASE>`_
 * `smtpping <https://github.com/halonsecurity/smtpping>`_
 * `traceroute <https://www.freebsd.org/cgi/man.cgi?query=traceroute&manpath=FreeBSD+10.1-RELEASE>`_
 * `traceroute6 <https://www.freebsd.org/cgi/man.cgi?query=traceroute6&manpath=FreeBSD+10.1-RELEASE>`_
 * `tcpdump <https://www.freebsd.org/cgi/man.cgi?query=tcpdump&manpath=FreeBSD+10.1-RELEASE>`_
+* `telnet <https://www.freebsd.org/cgi/man.cgi?query=telnet&manpath=FreeBSD+10.1-RELEASE>`_
 * `df <https://www.freebsd.org/cgi/man.cgi?query=df&manpath=FreeBSD+10.1-RELEASE>`_
+* hsh - `HSL <http://wiki.halon.se/HSL>`_ shell
 * `ifconfig <https://www.freebsd.org/cgi/man.cgi?query=ifconfig&manpath=FreeBSD+10.1-RELEASE>`_
 * `iostat <https://www.freebsd.org/cgi/man.cgi?query=iostat&manpath=FreeBSD+10.1-RELEASE>`_
+* `login <https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+10.1-RELEASE>`_
 * `mfiutil <https://www.freebsd.org/cgi/man.cgi?query=mfiutil&manpath=FreeBSD+10.1-RELEASE>`_
 * `sysctl <https://www.freebsd.org/cgi/man.cgi?query=sysctl&manpath=FreeBSD+10.1-RELEASE>`_
+* `top <https://www.freebsd.org/cgi/man.cgi?query=top&manpath=FreeBSD+10.1-RELEASE>`_
 
-Unsupported Commands
+Support Commands
 ----------------
 
-These are also available, but as they require additional input or a terminal they cannot be used with the module.
+These are also available, but as they're halon-specific utilities for solving very specific problems, most people will never run them.
 
-* `nc <https://www.freebsd.org/cgi/man.cgi?query=nc&manpath=FreeBSD+10.1-RELEASE>`_
-* `login <https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+10.1-RELEASE>`_
-* hsh - `HSL <http://wiki.halon.se/HSL>`_ shell
-* `top <https://www.freebsd.org/cgi/man.cgi?query=top&manpath=FreeBSD+10.1-RELEASE>`_
 * lostfiles - interactive recovery program
 * truncsvn - truncates configuration history

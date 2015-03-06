@@ -134,13 +134,25 @@ class Node(object):
 		self.load_wsdl()
 		return getattr(self._client.service, name)(*args, **kwargs)
 	
-	def command(self, command, *args, size=(80, 24)):
+	def command(self, command, *args, **kwargs):
 		'''Convenience function that executes a command on the node, and returns
 		a CommandProxy that can be used to iterate the command's output, or interact
-		with the running process.'''
+		with the running process.
+		
+		Note that ``args`` are the command's arguments (first one is the
+		command name), while ``kwargs`` controls how it's executed, specified
+		by the following flags:
+		
+		* ``size`` - the viewport size as (cols, rows), defaults to (80,24)
+		* ``cols``, ``rows`` - individual components of ``size``
+		'''
 		
 		# Allow calls as command("cmd", "arg1", "arg2") or command("cmd arg1 arg2")
 		parts = [command] + list(args) if args else command.split(' ')
+		
+		# Allow size to be specified as size=(cols,rows) or cols=,rows=
+		size = kwargs.get('size', (80, 24))
+		size = (kwargs.get('cols', size[0]), kwargs.get('rows', size[1]))
 		
 		code, cid = self.service.commandRun(argv={'item': [to_base64(part) for part in parts]}, cols=size[0], rows=size[1])
 		return (200, CommandProxy(self, cid)) if code == 200 else (code, None)

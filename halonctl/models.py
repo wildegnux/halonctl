@@ -134,7 +134,7 @@ class Node(object):
 		self.load_wsdl()
 		return getattr(self._client.service, name)(*args, **kwargs)
 	
-	def command(self, command, *args):
+	def command(self, command, *args, size=(80, 24)):
 		'''Convenience function that executes a command on the node, and returns
 		a CommandProxy that can be used to iterate the command's output, or interact
 		with the running process.'''
@@ -142,7 +142,7 @@ class Node(object):
 		# Allow calls as command("cmd", "arg1", "arg2") or command("cmd arg1 arg2")
 		parts = [command] + list(args) if args else command.split(' ')
 		
-		code, cid = self.service.commandRun(argv={'item': [to_base64(part) for part in parts]})
+		code, cid = self.service.commandRun(argv={'item': [to_base64(part) for part in parts]}, cols=size[0], rows=size[1])
 		return (200, CommandProxy(self, cid)) if code == 200 else (code, None)
 	
 	def __str__(self):

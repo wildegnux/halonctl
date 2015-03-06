@@ -166,6 +166,9 @@ class CommandModule(Module):
 		read_worker.daemon = True
 		read_worker.start()
 		
+		# Open a binary, unbuffered copy of stdin
+		bin_stdin = open(sys.stdin.fileno(), 'rb', 0)
+		
 		# Save the current terminal flags, then set it to raw mode - there's a
 		# full TTY on the other side of the pipe, we're basically tunneling it
 		old_flags = termios.tcgetattr(sys.stdout)
@@ -175,9 +178,9 @@ class CommandModule(Module):
 		try:
 			while not cmd.done:
 				# Use select() to poll stdin, without pulling 100% CPU
-				indata = u''
-				while select([sys.stdin], [], [], 0.1) == ([sys.stdin], [], []):
-					indata += sys.stdin.read(1)
+				indata = b''
+				while select([bin_stdin], [], [], 0.1) == ([bin_stdin], [], []):
+					indata += bin_stdin.read(1)
 				if indata:
 					event_queue.put(('write', indata))
 				
@@ -187,12 +190,15 @@ class CommandModule(Module):
 					size = new_size
 					event_queue.push(('resize', size))
 		finally:
-			# Push a None event to the reader worker, to make it shut down
-			event_queue.put((None, None))
-			
 			# Whatever happens, barring a power outage, restore the user's
 			# terminal to a usable state before exiting!
 			termios.tcsetattr(sys.stdout, termios.TCSADRAIN, old_flags)
+			
+			# Push a None event to the reader worker, to make it shut down
+			event_queue.put((None, None))
+			
+			# Close the binary stdin copy
+			bin_stdin.close()
 	
 	def pick_node(self, nodes, args):
 		stdscr = curses.initscr()

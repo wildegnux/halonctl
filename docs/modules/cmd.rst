@@ -43,5 +43,7 @@ Support Commands
 
 These are also available, but as they're halon-specific utilities for solving very specific problems, most people will never run them.
 
+Please do not use these unless you know what you're doing, or if Halon's support has told you to do so.
+
 * lostfiles - interactive recovery program
 * truncsvn - truncates configuration history

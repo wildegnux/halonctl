@@ -179,3 +179,14 @@ def print_ssl_error(node):
 	print(u"", file=sys.stderr)
 	print(u"You can also connect over plain HTTP by adjusting your node definition.", file=sys.stderr)
 	print(u"", file=sys.stderr)
+
+def get_terminal_size(fd=sys.stderr, fallback=(80, 24)):
+	size = fallback
+	if fd.isatty():
+		try:
+			import fcntl, termios, struct, os
+			res = struct.unpack('HH', fcntl.ioctl(fd, termios.TIOCGWINSZ, b' '*4))
+			size = (res[1], res[0])
+		except Exception:
+			pass
+	return size

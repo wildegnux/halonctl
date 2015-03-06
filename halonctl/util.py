@@ -104,7 +104,11 @@ def to_base64(s):
 	This exists because base64.b64decode doesn't take strings in Python 3, and
 	there's an awful lot of boilerplate with encodings and handling Nones.'''
 	
-	return u"" if not s else b64encode(s.encode('utf8', 'replace')).decode('utf-8', 'replace')
+	if not s:
+		return u""
+	if isinstance(s, six.text_type):
+		s = s.encode('utf-8', 'replace')
+	return b64encode(s).decode('utf-8', 'replace')
 
 def textualize(item, raw=False):
 	'''

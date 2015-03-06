@@ -50,7 +50,7 @@ Changelog
 **Changed:**
 
 * Startup is SO MUCH FASTER, especially with lots of nodes
-* Slices now **start at 1**, for ease of use - update your scripts!
+* Slices now start at 1, for ease of use - update your scripts!
 * Nodes are now sliced in the order they're listed in the configuration
 * Modules and formatters are now a whole lot simpler to build
 

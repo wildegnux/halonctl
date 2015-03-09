@@ -2,6 +2,7 @@ from __future__ import print_function
 import sys
 import os
 import six
+import atexit
 from inspect import getmembers
 from code import InteractiveConsole
 from halonctl import __version__ as version
@@ -60,12 +61,11 @@ class ShellModule(Module):
 			completion_vars.update(locals_)
 			readline.set_completer(rlcompleter.Completer(completion_vars).complete)
 			readline.parse_and_bind('tab: complete')
+			
+			atexit.register(readline.write_history_file, history_filename)
 		
 		# Run an interactive console session
 		console = InteractiveConsole(locals_)
 		console.interact(banner)
-		
-		# Save the history file again
-		readline.write_history_file(history_filename)
 
 module = ShellModule()

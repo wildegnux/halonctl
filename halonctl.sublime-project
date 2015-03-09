@@ -4,7 +4,7 @@
 		{
 			"follow_symlinks": true,
 			"path": ".",
-			"folder_exclude_patterns": ["bin", "include", "lib", "local", "man", "build", "dist", "*.egg-info", "__pycache__"],
+			"folder_exclude_patterns": ["bin", "include", "lib", "local", "man", "build", "dist", "*.egg-info", "__pycache__", "py2", "py3"],
 			"file_exclude_patterns": [".Python", "pyvenv.cfg", "pip-selfcheck.json"]
 		}
 	]

@@ -7,6 +7,10 @@
 /pyvenv.cfg
 /pip-selfcheck.json
 
+# Virtualenvs
+/py2
+/py3
+
 # Built products
 /docs/_build
 /build

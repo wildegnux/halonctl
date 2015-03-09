@@ -1,6 +1,7 @@
 from __future__ import print_function
 import six
 import sys
+import os
 import argparse
 import platform
 import curses
@@ -167,7 +168,7 @@ class CommandModule(Module):
 		read_worker.start()
 		
 		# Open a binary, unbuffered copy of stdin
-		bin_stdin = open(sys.stdin.fileno(), 'rb', 0)
+		bin_stdin = os.fdopen(sys.stdin.fileno(), 'rb', 0)
 		
 		# Save the current terminal flags, then set it to raw mode - there's a
 		# full TTY on the other side of the pipe, we're basically tunneling it

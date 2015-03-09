@@ -32,9 +32,6 @@ class ShellModule(Module):
 		self.setup_readline(locals_)
 		
 		console = InteractiveConsole(locals_)
-		console.push('from __future__ import print_function')
-		console.push('import six')
-		console.push('from halonctl.util import *')
 		console.interact(banner)
 	
 	def setup_readline(self, locals_):

@@ -33,6 +33,13 @@ Links
 Changelog
 ---------
 
+1.3.1
+#####
+
+**Fixed:**
+
+* The ``cmd`` module's interactive mode not working on Python 2.7
+
 1.3.0
 #####
 

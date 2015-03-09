@@ -189,7 +189,7 @@ class CommandModule(Module):
 				new_size = get_terminal_size()
 				if new_size != size:
 					size = new_size
-					event_queue.push(('resize', size))
+					event_queue.put(('resize', size))
 		finally:
 			# Whatever happens, barring a power outage, restore the user's
 			# terminal to a usable state before exiting!

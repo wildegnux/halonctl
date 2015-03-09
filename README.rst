@@ -33,6 +33,17 @@ Links
 Changelog
 ---------
 
+1.3.2
+#####
+
+**Added:**
+
+* ``--version`` flag for checking the program version
+
+**Fixed:**
+
+* A typo causing a crash when an interactive session was resized
+
 1.3.1
 #####
 

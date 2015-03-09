@@ -15,6 +15,7 @@ from collections import OrderedDict
 from natsort import natsorted
 from .models import *
 from .util import *
+from . import __version__
 from . import cache
 from . import config as g_config
 
@@ -204,7 +205,20 @@ def main():
 		load_modules(os.path.join(path, 'modules'))
 		load_formatters(os.path.join(path, 'formatters'))
 	
+	# Figure out the program version
+	version = __version__
+	try:
+		head_path = os.path.join(os.path.dirname(__file__), '..', '.git', 'refs', 'heads', 'master')
+		with open(head_path) as f:
+			revision = f.read().strip()[:7]
+			version = "{version} ({revision})".format(version=__version__, revision=revision)
+	except IOError:
+		pass
+	
 	# Add parser arguments
+	parser.add_argument('-V', '--version', action='version', version=u"halonctl {version}".format(version=version),
+		help=u"print version information and exit")
+	
 	parser.add_argument('-C', '--config', type=argparse.FileType('rU'),
 		help="use specified configuration file")
 	

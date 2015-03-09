@@ -5,6 +5,7 @@
 /local
 /man
 /pyvenv.cfg
+/pip-selfcheck.json
 
 # Built products
 /docs/_build

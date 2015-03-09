@@ -1,5 +1,6 @@
 from __future__ import print_function
 import sys
+import os
 import six
 from inspect import getmembers
 from code import InteractiveConsole
@@ -41,6 +42,7 @@ class ShellModule(Module):
 		locals_.update(dict_import('halonctl.util'))
 		
 		# Set up readline for history navigation
+		history_filename = os.path.join(os.path.expanduser('~'), '.halonctl_history')
 		try:
 			import readline
 			import rlcompleter
@@ -48,6 +50,12 @@ class ShellModule(Module):
 			# We're on Windows, what's a readline?
 			pass
 		else:
+			try:
+				readline.read_history_file(history_filename)
+			except IOError:
+				# No history file exists (yet)
+				pass
+			
 			completion_vars = globals()
 			completion_vars.update(locals_)
 			readline.set_completer(rlcompleter.Completer(completion_vars).complete)
@@ -56,5 +64,8 @@ class ShellModule(Module):
 		# Run an interactive console session
 		console = InteractiveConsole(locals_)
 		console.interact(banner)
+		
+		# Save the history file again
+		readline.write_history_file(history_filename)
 
 module = ShellModule()

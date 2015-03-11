@@ -4,10 +4,6 @@ import sys
 import os
 import argparse
 import platform
-if not platform.system() == 'Windows':
-	import curses
-	import termios
-	import tty
 from six.moves.queue import Queue, Empty
 from select import select
 from threading import Thread
@@ -15,6 +11,12 @@ from natsort import natsorted
 from halonctl.modapi import Module
 from halonctl.util import async_dispatch, get_terminal_size
 from halonctl.roles import HTTPStatus
+try:
+	import curses
+	import termios
+	import tty
+except ImportError:
+	pass
 
 ON_WINDOWS = (platform.system() == 'Windows')
 

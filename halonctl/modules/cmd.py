@@ -4,9 +4,10 @@ import sys
 import os
 import argparse
 import platform
-import curses
-import termios
-import tty
+if not platform.system() == 'Windows':
+	import curses
+	import termios
+	import tty
 from six.moves.queue import Queue, Empty
 from select import select
 from threading import Thread

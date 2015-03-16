@@ -9,7 +9,7 @@ Halonctl is little more than a framework, handling all the heavy lifting around 
    modules/keyring
    modules/status
    modules/update
-   modules/queue
    modules/query
+   modules/stat
    modules/cmd
    modules/shell

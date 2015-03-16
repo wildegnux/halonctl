@@ -5,21 +5,25 @@ from collections import OrderedDict
 from halonctl.modapi import Module
 from halonctl.roles import UTCDate
 
-counters = [
-	'system-cpu-usage',
-	'system-mem-usage',
-	'system-storage-iops',
-	'system-storage-latency',
-	'system-storage-usage',
-	'system-swap-iops',
-	'system-swap-usage',
-	'mail-license-count',
-	'mail-quarantine-count',
-	'mail-queue-count',
+COUNTERS = [
+	('system', (
+		'cpu-usage',
+		'mem-usage',
+		'storage-iops',
+		'storage-latency',
+		'storage-usage',
+		'swap-iops',
+		'swap-usage',
+	)),
+	('mail', (
+		'license-count',
+		'quarantine-count',
+		'queue-count',
+	)),
 ]
 
-interface_prefix = 'interface'
-interface_counters = [
+INTERFACE_PREFIX = 'interface'
+INTERFACE_COUNTERS = [
 	'bandwidth',
 	'packets',
 ]
@@ -48,17 +52,20 @@ class StatModule(Module):
 	
 	def run_help(self, nodes, args):
 		print(u"Available counters (all nodes):")
-		for counter in counters:
-			print(u"  - {0}".format(counter))
+		for i, (category, counters) in enumerate(COUNTERS):
+			if i > 0:
+				print(u"")
+			for counter in counters:
+				print(u"  - {category}-{counter}".format(category=category, counter=counter))
 		
 		for node, (code, result) in six.iteritems(nodes.command('ifconfig')):
 			print(u"")
 			print(u"{node.name}:".format(node=node))
 			interfaces = re.findall(r'^([\w\d]+):.*$', result.all(), re.MULTILINE)
 			for interface in interfaces:
-				for counter in interface_counters:
+				for counter in INTERFACE_COUNTERS:
 					print(u"  - {prefix}-{interface}-{counter}".format(
-						prefix=interface_prefix, interface=interface, counter=counter))
+						prefix=INTERFACE_PREFIX, interface=interface, counter=counter))
 	
 	def run_statd(self, nodes, args):
 		sum_ = 0

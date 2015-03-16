@@ -85,6 +85,11 @@ class StatModule(Module):
 				data[key] = count
 				sum_ += count
 			
+			# If we're querying something that only exists on a few nodes, say,
+			# a certain network interface, just skip over nodes with no data
+			if not data:
+				continue
+			
 			if not args.sum:
 				if is_first:
 					yield [u"Node"] + list(data.keys())

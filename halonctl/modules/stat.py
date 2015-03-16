@@ -111,10 +111,14 @@ class StatModule(Module):
 				self.partial = True
 				continue
 			
-			for res in result.item:
-				sum_ += res.count
-				if not args.sum:
-					yield (node, res.key1, res.key2, res.key3, res.count, UTCDate(res.updated), UTCDate(res.created))
+			if hasattr(result, 'item'):
+				for res in result.item:
+					sum_ += res.count
+					if not args.sum:
+						yield (node, res.key1, res.key2, res.key3, res.count, UTCDate(res.updated), UTCDate(res.created))
+			elif result:
+				self.exitcode = 1
+				continue
 		
 		if args.sum:
 			print(sum_)

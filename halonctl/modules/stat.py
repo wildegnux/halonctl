@@ -1,5 +1,7 @@
 from __future__ import print_function
 import six
+import re
+from collections import OrderedDict
 from halonctl.modapi import Module
 from halonctl.roles import UTCDate
 
@@ -16,9 +18,10 @@ counters = [
 	'mail-queue-count',
 ]
 
-network_counters = [
-	'-bandwidth',
-	'-packets',
+interface_prefix = 'interface'
+interface_counters = [
+	'bandwidth',
+	'packets',
 ]
 
 class StatModule(Module):
@@ -45,25 +48,41 @@ class StatModule(Module):
 	
 	def run_help(self, nodes, args):
 		print(u"Available counters (all nodes):")
-		print(u"")
 		for counter in counters:
-			print(u"- {0}".format(counter))
+			print(u"  - {0}".format(counter))
+		
+		for node, (code, result) in six.iteritems(nodes.command('ifconfig')):
+			print(u"")
+			print(u"{node.name}:".format(node=node))
+			interfaces = re.findall(r'^([\w\d]+):.*$', result.all(), re.MULTILINE)
+			for interface in interfaces:
+				for counter in interface_counters:
+					print(u"  - {prefix}-{interface}-{counter}".format(
+						prefix=interface_prefix, interface=interface, counter=counter))
 	
 	def run_statd(self, nodes, args):
-		if not args.sum:
-			yield (u"Node", u"Count")
-		
 		sum_ = 0
+		is_first = True
 		for node, (code, result) in six.iteritems(nodes.command('statd', '-g', args.key[0])):
 			if code != 200:
 				self.partial = True
 				continue
 			
-			count = int(result.all().strip().split('=')[1])
-			sum_ += count
+			data = OrderedDict()
+			for line in [line.strip() for line in result.all().split('\n')]:
+				if not line:
+					continue
+				
+				key, count = line.split('=', 2)
+				count = int(count) if '.' not in count else float(count)
+				data[key] = count
+				sum_ += count
 			
 			if not args.sum:
-				yield (node, count)
+				if is_first:
+					yield [u"Node"] + list(data.keys())
+					is_first = False
+				yield [node] + list(data.values())
 		
 		if args.sum:
 			print(sum_)

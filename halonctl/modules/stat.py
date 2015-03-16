@@ -104,7 +104,8 @@ class StatModule(Module):
 			yield (u"Node", u"Key 1", u"Key 2", u"Key 3", u"Count", u"Updated", u"Created")
 		
 		sum_ = 0
-		keys = [k if k != '.' else None for k in args.key]
+		subs = { '.': None, '-': '' }
+		keys = [k if k not in subs else subs[k] for k in args.key]
 		for node, (code, result) in six.iteritems(nodes.service.statList(*keys, limit=10000)):
 			if code != 200:
 				self.partial = True

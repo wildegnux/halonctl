@@ -33,6 +33,17 @@ Links
 Changelog
 ---------
 
+1.4.0 [unreleased]
+##################
+
+**Added:**
+
+* ``stat`` module, replacing the old ``queue`` module
+
+**Removed:**
+
+* The ``queue`` module - use ``halonctl queue mail-queue-count`` instead
+
 1.3.2
 #####
 

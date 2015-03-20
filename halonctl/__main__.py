@@ -42,7 +42,7 @@ clusters = {}
 requests.packages.urllib3.disable_warnings()
 
 # Regex that matches quick-connect nodes
-quick_node_re = re.compile(r'^(?:(?P<name>[a-zA-Z0-9_-]+):)?(?P<data>(?P<username>[^@]+)@(?:https?://)?(?P<host>[a-zA-Z0-9\-\.]+)(?::(?P<port>[0-9]+))?)$')
+quick_node_re = re.compile(r'^(?:(?P<name>[a-zA-Z0-9_-]+)=)?(?:(?P<protocol>https?)://)?(?P<data>(?P<username>[^@]+)@(?P<host>[a-zA-Z0-9\-\.]+)(?::(?P<port>[0-9]+))?)$')
 
 
 

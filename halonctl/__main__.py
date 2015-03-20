@@ -41,6 +41,9 @@ clusters = {}
 # Disable unverified HTTPS warnings - we know what we're doing
 requests.packages.urllib3.disable_warnings()
 
+# Regex that matches quick-connect nodes
+quick_node_re = re.compile(r'^(?:(?P<name>[a-zA-Z0-9_-]+):)?(?P<data>(?P<username>[^@]+)@(?:https?://)?(?P<host>[a-zA-Z0-9\-\.]+)(?::(?P<port>[0-9]+))?)$')
+
 
 
 def load_modules(modules_path):
@@ -264,7 +267,6 @@ def main():
 		args.nodes = list(nodes.keys())
 	
 	# Allow non-configured nodes to be specified as '[name:]username@host'
-	quick_node_re = re.compile(r'^(?:(?P<name>[a-zA-Z0-9_-]+):)?(?P<data>(?P<username>[^@]+)@(?P<host>[a-zA-Z0-9\-\.]+))$')
 	quick_node_matches = [ quick_node_re.match(n) for n in args.nodes ]
 	quick_node_args = []
 	for m in [ m for m in quick_node_matches if m ]:

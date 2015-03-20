@@ -12,6 +12,7 @@ import json
 import logging
 import arrow
 import requests
+import getpass
 from collections import OrderedDict
 from natsort import natsorted
 from .models import *
@@ -276,6 +277,29 @@ def main():
 		n.no_verify = True # Don't verify SSL for quick nodes
 		nodes[arg] = n
 		quick_node_args.append(arg)
+	
+	if quick_node_args:
+		l = NodeList([nodes[arg] for arg in quick_node_args])
+		for node, (code, result) in six.iteritems(l.service.login()):
+			if code == 401:
+				while True:
+					password = getpass.getpass(u"Password for {node.username}@{node.host}: ".format(node=node))
+					if not password:
+						break
+					
+					node.password = password
+					code = node.service.login()[0]
+					if code == 200:
+						break
+					elif code == 401:
+						print(u"Invalid login, try again")
+					elif code == 0:
+						print(u"The node has gone away")
+						break
+					else:
+						print(u"An error occurred, code {0}".format(code))
+						break
+			# print("{0} ({1}, {2})".format(node, code, result))
 	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]

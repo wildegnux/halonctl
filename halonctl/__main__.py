@@ -3,6 +3,7 @@
 from __future__ import print_function
 import six
 import os, sys
+import re
 import inspect
 import pkgutil
 import importlib
@@ -262,6 +263,17 @@ def main():
 	if args.nodes == ['-']:
 		args.nodes = list(nodes.keys())
 	
+	# Allow non-configured nodes to be specified as '[name:]username@host'
+	quick_node_re = re.compile(r'^(?:(?P<name>[a-zA-Z0-9_-]+):)?(?P<data>(?P<username>[^@]+)@(?P<host>[a-zA-Z0-9\-\.]+))$')
+	quick_node_matches = [ quick_node_re.match(n) for n in args.nodes ]
+	quick_node_args = []
+	for m in [ m for m in quick_node_matches if m ]:
+		arg = m.group(0)
+		data = m.group('data')
+		n = Node(data, name=m.group('name') or m.group('host'))
+		nodes[arg] = n
+		quick_node_args.append(arg)
+	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]
 	if invalid_clusters:
@@ -269,7 +281,7 @@ def main():
 		print(u"Available: {0}".format(', '.join(six.iterkeys(clusters))), file=sys.stderr)
 		sys.exit(1)
 	
-	invalid_nodes = [nid for nid in args.nodes if not nid in nodes]
+	invalid_nodes = [nid for nid in args.nodes if not nid in nodes and nid not in quick_node_args]
 	if invalid_nodes:
 		print(u"Unknown nodes: {0}".format(', '.join(invalid_nodes)), file=sys.stderr)
 		print(u"Available: {0}".format(', '.join(six.iterkeys(nodes))), file=sys.stderr)

@@ -29,6 +29,7 @@ class Node(object):
 	cluster = None
 	scheme = 'http'
 	host = None
+	no_verify = False
 	
 	local_username = None
 	local_password = None

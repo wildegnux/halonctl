@@ -38,7 +38,7 @@ class NodeSoapProxy(object):
 					auth=(self.node.username, self.node.password),
 					headers=context.client.headers(), data=context.envelope,
 					timeout=10,
-					verify=config.get('verify_ssl', True)
+					verify=False if self.node.no_verify else config.get('verify_ssl', True)
 				)
 				return context.process_reply(r.content, r.status_code, r.reason)
 			except requests.exceptions.SSLError:

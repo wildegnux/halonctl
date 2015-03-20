@@ -180,7 +180,7 @@ def download_wsdl(nodes, verify):
 		has_been_downloaded = False
 		for node in nodes:
 			try:
-				r = requests.get(u"{scheme}://{host}/remote/?wsdl".format(scheme=node.scheme, host=node.host), stream=True, verify=verify)
+				r = requests.get(u"{scheme}://{host}/remote/?wsdl".format(scheme=node.scheme, host=node.host), stream=True, verify=False if node.no_verify else verify)
 				if r.status_code == 200:
 					with open(path, 'wb') as f:
 						for chunk in r.iter_content(256):
@@ -273,6 +273,7 @@ def main():
 		arg = m.group(0)
 		data = m.group('data')
 		n = Node(data, name=m.group('name') or m.group('host'))
+		n.no_verify = True # Don't verify SSL for quick nodes
 		nodes[arg] = n
 		quick_node_args.append(arg)
 	

@@ -51,6 +51,25 @@ They can be combined - you could target all nodes in ``c2`` as well as ``n1``::
 
     halonctl -c c2 -n n1 status
 
+Quick Connect
+-------------
+
+Sometimes, you have a node you want to connect to once, and never again. Maybe you just want to quickly check on someone else's nodes. Maybe you're on someone else's computer. This is what Quick Connect is for::
+
+    halonctl -n admin@10.2.0.30 status
+
+To display a name other than the hostname (10.2.0.30), name the node like this::
+
+    halonctl -n mynode=admin@10.2.0.30 status
+
+.. note::
+   
+   For safety reasons, you may **not** specify a password on the commandline. It would get recorded in your shell's history, and someone could easily find it.
+
+.. warning::
+   
+   The SSL certificates for quick-connect nodes are **not** verified! Only use this on trusted networks.
+
 Slicing
 -------
 

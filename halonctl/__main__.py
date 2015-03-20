@@ -299,7 +299,6 @@ def main():
 					else:
 						print(u"An error occurred, code {0}".format(code))
 						break
-			# print("{0} ({1}, {2})".format(node, code, result))
 	
 	# Validate cluster and node choices
 	invalid_clusters = [cid for cid in args.clusters if not cid in clusters]

@@ -62,6 +62,10 @@ To display a name other than the hostname (10.2.0.30), name the node like this::
 
     halonctl -n mynode=admin@10.2.0.30 status
 
+You can also manually specify a protocol and/or port, or use a domain name::
+
+    halonctl -n mynode=https://admin@n1.myhost.com:8080 status
+
 .. note::
    
    For safety reasons, you may **not** specify a password on the commandline. It would get recorded in your shell's history, and someone could easily find it.

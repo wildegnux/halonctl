@@ -11,6 +11,7 @@ from natsort import natsorted
 from halonctl.modapi import Module
 from halonctl.util import async_dispatch, get_terminal_size
 from halonctl.roles import HTTPStatus
+
 try:
 	import curses
 	import termios
@@ -123,7 +124,7 @@ class CommandModule(Module):
 		# Write worker - pulls events from an event queue, and informs the
 		# remote process of these; this ensures that events are processed in
 		# the order they are emitted, scrambled input is not fun
-		def do_write_worker(cmd, event_queue):
+		def do_write_worker(cmd, event_queue, read_now_queue):
 			while not cmd.done:
 				# Process pending events
 				try:
@@ -136,6 +137,7 @@ class CommandModule(Module):
 					elif type_ == 'resize':
 						cmd.resize(data)
 					
+					read_now_queue.put(None)
 					event_queue.task_done()
 				except Empty:
 					pass
@@ -144,7 +146,7 @@ class CommandModule(Module):
 		# the screen; this lets the main thread block as long as it likes to
 		# wait for input, without delaying output in the process
 		# The main thread must obviously not write to stdout with this running
-		def do_read_worker(cmd):
+		def do_read_worker(cmd, read_now_queue):
 			while not cmd.done:
 				# Poll for output
 				code, output = cmd.read()
@@ -156,17 +158,30 @@ class CommandModule(Module):
 				if output:
 					sys.stdout.write(output)
 					sys.stdout.flush()
+				
+				# Use a blocking read on the "read now" queue to make a
+				# thread-safe, interruptible wait of up to 0.2s
+				# (there might be a better way to do this...)
+				try:
+					read_now_queue.get(True, 0.2)
+					read_now_queue.task_done()
+				except Empty:
+					pass
+					
 		
 		# Event queue; handles all necessary locking and accounting internally
 		event_queue = Queue()
 		
+		# "Read Now" queue; push *anything* to make it read remote output asap
+		read_now_queue = Queue()
+		
 		# Writer; see do_write_worker
-		write_worker = Thread(target=do_write_worker, args=(cmd, event_queue))
+		write_worker = Thread(target=do_write_worker, args=(cmd, event_queue, read_now_queue))
 		write_worker.daemon = True
 		write_worker.start()
 		
 		# Reader; see do_read_worker
-		read_worker = Thread(target=do_read_worker, args=(cmd,))
+		read_worker = Thread(target=do_read_worker, args=(cmd, read_now_queue))
 		read_worker.daemon = True
 		read_worker.start()
 		

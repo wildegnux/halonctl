@@ -30,3 +30,9 @@ halonctl.util module
 
 .. automodule:: halonctl.util
     :members:
+
+halonctl.debug module
+---------------------
+
+.. automodule:: halonctl.debug
+    :members:

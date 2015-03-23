@@ -1,6 +1,7 @@
 from __future__ import print_function
 import six
 import sys
+import os
 import re
 import datetime
 import arrow
@@ -194,3 +195,11 @@ def get_terminal_size(fd=sys.stderr, fallback=(80, 24)):
 		except Exception:
 			pass
 	return size
+
+def open_fuzzy(name, *args, **kwargs):
+	'''Opens a file, expanding tildes and creating intermediary directories.'''
+	path = os.path.abspath(os.path.expanduser(name))
+	parent = os.path.dirname(path)
+	if not os.path.exists(parent):
+		os.makedirs(parent)
+	return open(path, *args, **kwargs)

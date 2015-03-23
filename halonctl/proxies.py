@@ -128,7 +128,7 @@ class CommandProxy(six.Iterator):
 		if code != 200:
 			self.done = True
 		
-		return (code, ''.join([from_base64(item) for item in res.item]) if hasattr(res, 'item') else res)
+		return (code, u''.join([from_base64(item) for item in res.item]) if hasattr(res, 'item') else res)
 	
 	def write(self, data):
 		'''Writes some data to the remote process' stdin.'''

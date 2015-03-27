@@ -185,6 +185,13 @@ def print_ssl_error(node):
 	print(u"You can also connect over plain HTTP by adjusting your node definition.", file=sys.stderr)
 	print(u"", file=sys.stderr)
 
+def print_ssl_hostname_error(node, hostname, cert):
+	print("ERROR: SSL commonName mismatched for '{nid}' ({host})".format(nid=node.name, host=hostname), file=sys.stderr)
+	print(u"", file=sys.stderr)
+	print(cert, file=sys.stderr)
+	print(u"", file=sys.stderr)
+	print_ssl_error(node)
+
 def get_terminal_size(fd=sys.stderr, fallback=(80, 24)):
 	size = fallback
 	if fd.isatty():

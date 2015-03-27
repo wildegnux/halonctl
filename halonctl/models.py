@@ -79,6 +79,8 @@ class Node(object):
 		
 		self.name = name
 		self.cluster = cluster if not cluster is None else NodeList([self])
+		self.http = Http(cache=None, timeout=10)
+		self.http_lock = Lock()
 		
 		if data:
 			self.load_data(data)

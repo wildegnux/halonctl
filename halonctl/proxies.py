@@ -4,7 +4,8 @@ import sys
 import signal
 import inspect
 import requests
-from halonctl.util import async_dispatch, nodesort, from_base64, to_base64, print_ssl_error
+from httplib2 import Http, HttpLib2Error, SSLHandshakeError, CertificateHostnameMismatch
+from halonctl.util import async_dispatch, nodesort, from_base64, to_base64, print_ssl_error, print_ssl_hostname_error
 from halonctl.config import config
 
 
@@ -33,19 +34,27 @@ class NodeSoapProxy(object):
 	def __getattr__(self, name):
 		def _soap_proxy_executor(*args, **kwargs):
 			context = self.node.make_request(name, *args, **kwargs)
+			self.node.http_lock.acquire()
 			try:
-				r = requests.post(context.client.location(),
-					auth=(self.node.username, self.node.password),
-					headers=context.client.headers(), data=context.envelope,
-					timeout=10,
-					verify=False if self.node.no_verify else config.get('verify_ssl', True)
-				)
-				return context.process_reply(r.content, r.status_code, r.reason)
-			except requests.exceptions.SSLError:
+				self.node.http.add_credentials(self.node.username, self.node.password)
+				self.node.http.disable_ssl_certificate_validation = True if self.node.no_verify else not config.get('verify_ssl', True)
+				if config.get('verify_ssl', False):
+					self.node.http.ca_certs = config.get('verify_ssl')
+				resp, content = self.node.http.request(context.client.location(),
+					method='POST',
+					body=context.envelope,
+					headers=context.client.headers())
+				return context.process_reply(content, resp.status, resp.reason)
+			except CertificateHostnameMismatch as e:
+				print_ssl_hostname_error(self.node, e.host, e.cert)
+				sys.exit(1)
+			except SSLHandshakeError:
 				print_ssl_error(self.node)
 				sys.exit(1)
-			except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+			except HttpLib2Error:
 				return (0, None)
+			finally:
+				self.node.http_lock.release()
 		
 		return _soap_proxy_executor
 

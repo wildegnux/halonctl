@@ -39,6 +39,7 @@ setup(name='halonctl',
 		'suds-jurko',	# SOAP client library; improved fork of suds
 		'prettytable',	# Fancy ASCII tables, feat. Py3 compatibility
 		'requests',		# "HTTP for Humans"
+		'httplib2',		# HTTP client with keep-alive support
 		'six',			# Python 2/3 compatibility utilities
 	],
 	package_data={

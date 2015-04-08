@@ -27,7 +27,7 @@ You are strongly recommended to use a `virtualenv <http://virtualenv.readthedocs
 Links
 -----
 
-* `Documentation <http://halonctl.readthedocs.org/en/latest/>`_
+* `Documentation <http://docs.halon.se/halonctl/>`_
 * `Issues <https://github.com/HalonSecurity/halonctl/issues>`_
 
 Changelog

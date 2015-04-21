@@ -15,9 +15,9 @@ Querying ``statd`` counters
 
     halonctl stat [my-counter-name]
 
-The ``statd`` daemon keeps track of counters such as ``system-cpu-usage`` and ``interface-ether1-bandwidth``. The available counters are fixed, but may vary depending on available network interfaces, configured mail servers, etc. Running the ``stat`` module without any argumets lists all available counters per node.
+The ``statd`` daemon keeps track of counters such as ``system-cpu-usage`` and ``interface-ether1-bandwidth``. The available counters are fixed, but may vary depending on available network interfaces, configured mail servers, etc. Running the ``stat`` module without any arguments lists all available counters per node.
 
-These are some of the counters with their descriptions.
+These are some of the counters with their descriptions:
 
 * ``system-cpu-usage`` - System CPU usage
 * ``system-mem-usage`` - System RAM usage

@@ -1,7 +1,7 @@
 ``stat`` - Query stat counters
 ==============================
 
-The ``stat`` module (replacing the old ``queue`` module) queries stat counters on affected nodes.
+The ``stat`` module queries stat counters on affected nodes.
 
 There are two kinds of stat counters, both of which are queried using this module, but using slightly different syntaxes.
 

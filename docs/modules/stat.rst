@@ -15,9 +15,9 @@ Querying ``statd`` counters
 
     halonctl stat [my-counter-name]
 
-The ``statd`` daemon keeps track of counters such as ``system-cpu-usage`` and ``interface-ether1-bandwidth``. The available counters are fixed, but may vary depending on available network interfaces, configured mail servers, etc.
+The ``statd`` daemon keeps track of counters such as ``system-cpu-usage`` and ``interface-ether1-bandwidth``. The available counters are fixed, but may vary depending on available network interfaces, configured mail servers, etc. Running the ``stat`` module without any argumets lists all available counters per node.
 
-For all nodes, the following counters are available:
+These are some of the counters with their descriptions.
 
 * ``system-cpu-usage`` - System CPU usage
 * ``system-mem-usage`` - System RAM usage
@@ -31,12 +31,8 @@ For all nodes, the following counters are available:
 * ``mail-quarantine-count`` - Number of letters stuck in quarantine
 * ``mail-queue-count`` - Number of letters currently in the queue
 
-Each network interface adds the following counters:
-
 * ``interface-*-bandwidth`` - Current bandwidth usage (in bytes)
 * ``interface-*-packets`` - Number of packets currently in transit
-
-More counters may be available; refer to the "Graphs and Reports" page in the web UI.
 
 Querying ``stat()`` counters
 ----------------------------

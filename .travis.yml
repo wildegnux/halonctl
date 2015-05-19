@@ -6,3 +6,6 @@ install:
 - "[[ $TRAVIS_PYTHON_VERSION == '3.3' ]] && 2to3 -wn . || true"
 - pip install -e .
 script: nosetests
+notifications:
+  slack:
+    secure: usFefef17MivrLCBcaMCP4r8FPHDS65Lk6I+gbcSePVtxohLvqhqBUjGhAyAEKU2Feyajz+qNdSEIonSl5W41zXJUIDj58ag+VvHP4Az1fu9vrRY3Pq0u1tkMZIaICshdB2nPgXK96uWXhx8MfD8WbQGEnvVdkbYomwb1/kaLdA=

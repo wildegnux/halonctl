@@ -3,7 +3,6 @@ python:
 - 2.7
 - 3.3
 install:
-- "[[ $TRAVIS_PYTHON_VERSION == '3.3' ]] && 2to3 -wn . || true"
 - pip install -e .
 script: nosetests
 notifications:

@@ -6,7 +6,7 @@ class TestApplySlice(unittest.TestCase):
 		self.items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	
 	def test_empty(self):
-		self.assertEqual(apply_slice(self.items, ''), self.items)
+		self.assertEqual(apply_slice(self.items, '1'), self.items)
 	
 	def test_single_number(self):
 		self.assertEqual(apply_slice(self.items, '1'), [1])

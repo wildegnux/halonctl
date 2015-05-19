@@ -195,4 +195,3 @@ Changelog
 #####
   
 * Initial release
-

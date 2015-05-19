@@ -32,6 +32,10 @@ class NodeSoapProxy(object):
 	
 	def __getattr__(self, name):
 		def _soap_proxy_executor(*args, **kwargs):
+			# Allow params to constructed by lambda expressions
+			args = [ a(self.node) if callable(a) else a for a in args ]
+			kwargs = { k: a(self.node) if callable(a) else a for k, a in six.iteritems(kwargs) }
+			
 			context = self.node.make_request(name, *args, **kwargs)
 			try:
 				r = requests.post(context.client.location(),

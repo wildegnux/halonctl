@@ -39,10 +39,15 @@ Changelog
 **Added:**
 
 * ``stat`` module, replacing the old ``queue`` module
+* Quck Connect syntax for nodes you'll only ever use once
 
 **Removed:**
 
 * The ``queue`` module - use ``halonctl queue mail-queue-count`` instead
+
+**Fixed:**
+
+* A potential issue involving non-ASCII output from remote shell commands
 
 1.3.2
 #####

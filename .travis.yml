@@ -7,4 +7,7 @@ install:
 script: nosetests
 notifications:
   slack:
-    secure: Z2AHONgayOHQGnaKvkEL1LdLBbMh4WEdR3tlZwdor7GxrEFB1aoug7fpy115E4BwKr0mXeD2u9CfCRMinyZOBZu2rDqChCraQynOy5PYzmHjC8VI+saG7PyWfNTEeMr05c9zqSJomDcmlDEuhck5p00xLamuIFh3sQk7CLLrDh4=
+    rooms:
+      secure: V7muTHEc/kQj/nyzQX84CpN8dQ0PGaWwFA8AQo+tnQHCog8FN/qyGdaQUaYwrCxMftW7ksrw+M28vr3IZFVoVAa3FZzyY9bK3zvWMaPKN7OQz2kNGz/HaPT3KJ/qfeRWkGwKho6xfCyiKKVP2cI8HSSCE6GSi/xBQfRmFQSuv3c=
+    on_success: always
+    on_failure: always

@@ -8,6 +8,6 @@ script: nosetests
 notifications:
   slack:
     rooms:
-      secure: V7muTHEc/kQj/nyzQX84CpN8dQ0PGaWwFA8AQo+tnQHCog8FN/qyGdaQUaYwrCxMftW7ksrw+M28vr3IZFVoVAa3FZzyY9bK3zvWMaPKN7OQz2kNGz/HaPT3KJ/qfeRWkGwKho6xfCyiKKVP2cI8HSSCE6GSi/xBQfRmFQSuv3c=
+      secure: HC1DduVinw33Icu1W+/Ugg2ZpL2W7DRI1TTTAUB86dOFYt78EKUrvf95nmvGwhsrQCoIp7z7KJbUlUBEo7+w18KrfY6XdQlZiy7aL/qhIJ+05BJ927tkkAZxx8GZE85Iv4JgIJ1wehPzWD1SJ1IUs3OnHm8yqZiqyDboCqzB2ls=
     on_success: change
     on_failure: always

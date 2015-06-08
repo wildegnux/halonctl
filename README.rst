@@ -36,6 +36,10 @@ Changelog
 1.4.0 [unreleased]
 ##################
 
+**Improved:**
+
+* HTTP Keep-Alive is used for all connections, which greatly improves performance, especially noticeable in the ``cmd`` module's interactive mode.
+
 **Added:**
 
 * ``stat`` module, replacing the old ``queue`` module

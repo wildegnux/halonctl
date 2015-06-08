@@ -2,6 +2,7 @@ from __future__ import print_function
 import six
 import socket
 import keyring
+import requests
 from threading import Lock
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
@@ -33,6 +34,8 @@ class Node(object):
 	
 	local_username = None
 	local_password = None
+	
+	session = requests.Session()
 	
 	
 	

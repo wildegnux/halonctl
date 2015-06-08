@@ -38,7 +38,7 @@ class NodeSoapProxy(object):
 			
 			context = self.node.make_request(name, *args, **kwargs)
 			try:
-				r = requests.post(context.client.location(),
+				r = self.node.session.post(context.client.location(),
 					auth=(self.node.username, self.node.password),
 					headers=context.client.headers(), data=context.envelope,
 					timeout=10,

@@ -198,7 +198,7 @@ class CommandModule(Module):
 			while not cmd.done:
 				# Use select() to poll stdin, without pulling 100% CPU
 				indata = b''
-				while select([bin_stdin], [], [], 0.1) == ([bin_stdin], [], []):
+				if select([bin_stdin], [], [], 0.1) == ([bin_stdin], [], []):
 					indata += bin_stdin.read(1)
 				if indata:
 					event_queue.put(('write', indata))

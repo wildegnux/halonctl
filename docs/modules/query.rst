@@ -23,6 +23,10 @@ General
    
    Skip *n* results. Useful in conjunction with ``--limit``.
 
+.. option:: -c --count
+   
+   Show total number of results (not restricted by ``--limit``).
+
 Timestamps
 ----------
 

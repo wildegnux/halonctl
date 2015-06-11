@@ -15,6 +15,8 @@ class QueryModule(Module):
 			help=u"offset when just showing emails (default: 0)")
 		parser.add_argument('-n', '--limit', type=int, metavar='N',
 			help=u"limit when just showing emails (default: 100)")
+		parser.add_argument('-c', '--count', action='store_true',
+			help=u"print total number of results")
 		parser.add_argument('--debug-hql', action='store_true',
 			help=u"print resulting hql queries, for debugging")
 		parser.add_argument('-f', '--fields', metavar='x,y',
@@ -43,8 +45,8 @@ class QueryModule(Module):
 	
 	def run(self, nodes, args):
 		# Prevent accidents caused by calls such as "--delete --limit ..."
-		if args.action and (args.offset or args.limit):
-			print(u"--offset/--limit cannot be used together with actions!")
+		if args.action and (args.offset or args.limit or args.count):
+			print(u"--offset/--limit/--count cannot be used together with actions!")
 			self.exitcode = 1
 			return
 		
@@ -55,6 +57,11 @@ class QueryModule(Module):
 		
 		if args.action and args.fields:
 			print(u"--fields cannot be used together with actions!")
+			self.exitcode = 1
+			return
+
+		if args.count and (args.offset or args.limit):
+			print(u"--offset/--limit cannot be used together with --count!")
 			self.exitcode = 1
 			return
 		
@@ -106,12 +113,20 @@ class QueryModule(Module):
 			return self.do_delete(nodes, args, hql)
 	
 	def do_show(self, nodes, args, hql, fields):
-		yield fields
+		if args.count:
+			args.offset = 0
+			args.limit = 1
+
+		if not args.count:
+			yield fields
 		
 		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
-		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100)):
+		totalhits = 0
+		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100, options = {'totalhits': True} if args.count else None)):
 			if code != 200:
 				self.partial = True
+			elif args.count:
+				totalhits += result['totalhits']
 			elif 'item' in result['result']:
 				for msg in result['result']['item']:
 					p = []
@@ -136,6 +151,9 @@ class QueryModule(Module):
 						elif f == 'to': p.append(getattr(msg, 'msgto', None))
 						elif f == 'transport': p.append(getattr(msg, 'msgtransport', None))
 					yield p
+
+		if args.count:
+			print(totalhits)
 	
 	def do_deliver(self, nodes, args, hql, duplicate):
 		if not hql and not args.yes and not ask_confirm(u"You have no filter, do you really want to try to deliver everything?", False):

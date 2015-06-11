@@ -44,6 +44,7 @@ Changelog
 
 * ``stat`` module, replacing the old ``queue`` module
 * Quck Connect syntax for nodes you'll only ever use once
+* Added ``--count`` flag to the ``query`` module.
 
 **Removed:**
 

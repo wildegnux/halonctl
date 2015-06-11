@@ -100,7 +100,7 @@ class QueryModule(Module):
 		# Make a proper filter string
 		hql = hql_from_filters(args.filter, args.timezone)
 		if args.debug_hql:
-			print(uhql)
+			print(hql)
 		
 		# Dispatch!
 		if args.action is None:

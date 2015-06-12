@@ -122,7 +122,9 @@ class QueryModule(Module):
 		
 		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
 		totalhits = 0
-		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100, options = {'totalhits': True} if args.count else None)):
+		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100,
+			# options = {'totalhits': True} if args.count else None
+			)):
 			if code != 200:
 				self.partial = True
 			elif args.count:

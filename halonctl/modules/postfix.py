@@ -4,7 +4,7 @@ from time import time
 from halonctl.modapi import Module
 
 class PostfixQshapeModule(Module):
-	'''Queries emails and performs actions'''
+	'''Simulate postfix's qshape command'''
 	
 	def register_arguments(self, parser):
 		parser.add_argument('-s', '--sender', action='store_true',
@@ -13,7 +13,7 @@ class PostfixQshapeModule(Module):
 	def run(self, nodes, args):
 		stats = {}
 		t = time()
-		limit = 50
+		limit = 5000
 		offset = 0
 		field = 'msgfrom' if args.sender else 'msgto'
 		while True:
@@ -62,7 +62,7 @@ class PostfixQshapeModule(Module):
 			yield [domain, total, len(data['10']), len(data['60']), len(data['120']), len(data['1440']), len(data['1440+'])]
 
 class PostfixModule(Module):
-	'''Postfix commands'''
+	'''Simulate postfix commands'''
 	
 	submodules = {
 		'qshape': PostfixQshapeModule()

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import six
 import argparse
 from time import time
@@ -12,7 +11,6 @@ class PostfixQshapeModule(Module):
 			help=u"use sender instead of recipient")
 	
 	def run(self, nodes, args):
-		source = getattr(nodes.service, 'mailQueue')
 		stats = {}
 		t = time()
 		limit = 50
@@ -20,7 +18,7 @@ class PostfixQshapeModule(Module):
 		field = 'msgfrom' if args.sender else 'msgto'
 		while True:
 			askMore = False
-			for node, (code, result) in six.iteritems(source(filter='action=DELIVER', offset=offset, limit=limit, options=None)):
+			for node, (code, result) in six.iteritems(nodes.service.mailQueue(filter='action=DELIVER', offset=offset, limit=limit, options=None)):
 				if code != 200:
 					self.partial = True
 				elif 'item' in result['result']:

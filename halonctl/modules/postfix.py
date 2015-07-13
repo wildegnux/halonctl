@@ -30,15 +30,13 @@ class PostfixQshapeModule(Module):
 						domain = domain.split('@')[1] if domain else '<MAILER-DAEMON>'
 						email = getattr(msg, field, None);
 						if domain not in stats:
-							stats[domain] = {}
-							stats[domain].update(
-								{
+							stats[domain] = {
 									'10': [],
 									'60': [],
 									'120': [],
 									'1440': [],
 									'1440+': []
-								})
+								}
 						if minutes < 10:
 							stats[domain]['10'].append(email)
 						elif minutes < 60:

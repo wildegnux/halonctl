@@ -17,6 +17,7 @@ from collections import OrderedDict
 from natsort import natsorted
 from .models import *
 from .util import *
+from .roles import Role
 from . import __version__
 from . import cache
 from . import config as g_config
@@ -340,6 +341,8 @@ def main():
 	if retval:
 		if hasattr(retval, 'draw'):
 			print(retval.draw())
+		elif isinstance(retval, Role):
+			print(retval.raw() if args.raw else retval.human())
 		else:
 			print(formatters[args.format].run(retval, args))
 	

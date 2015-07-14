@@ -18,6 +18,96 @@ MIMES = {
 SCRIPT_RE = re.compile(r'\w+_flow__\d+')
 CLEAN_RE = re.compile(r'script "([0-9a-zA-Z=]+)"')
 
+
+
+class BaseFile(Module):
+	filename = 'unnamed'
+	extension = 'bin'
+	
+	name = None
+	meta = None
+	body = None
+	
+	def __init__(self, item=None):
+		if item:
+			self.load_data(item)
+	
+	def load_data(self, item):
+		'''Loads data from a SOAP payload.'''
+		pass
+	
+	def to_data(self):
+		'''Returns a SOAP payload.'''
+		pass
+	
+	def deserialize(self, data, extension):
+		'''Deserializes data read from a file.'''
+		pass
+	
+	def serialize(self):
+		'''Serializes data for writing to a file.'''
+		data = u""
+		if self.name:
+			data += u"//= NAME: {0}\n".format(self.name)
+		if self.meta:
+			data += u"//= META: {0}\n".format(self.meta)
+		data += self.body or u""
+		return data
+	
+	def path(self, args):
+		'''Constructs a local path to the file.'''
+		filename = u'{0}.{1}'.format(self.filename, self.extension)
+		return os.path.join(args.path, filename)
+	
+	def save(self, args):
+		if not os.path.exists(args.path):
+			os.makedirs(args.path)
+		
+		with open(self.path(args), 'w') as f:
+			f.write(self.serialize())
+	
+	def load(self, args):
+		with open(self.path(args)) as f:
+			self.deserialize(f.read())
+
+class ScriptFile(BaseFile):
+	extension = 'hsl.bin'
+	
+	def load_data(self, item):
+		self.filename = item.name
+		self.name = item.params.item[0]
+		self.body = item.params.item[-1]
+		
+		match = CLEAN_RE.match(self.body)
+		if match:
+			self.extension = 'hsl'
+			self.body = from_base64(match.group(1))
+		else:
+			print(u"WARNING: Cannot decode script containing visual blocks: {0}".format(item.name), file=sys.stderr)
+		
+		# Some kinds of scripts (ACL Flows) have an extra middle parameter...
+		if len(item.params.item) > 2:
+			self.meta = item.params.item[1]
+
+class FragmentFile(BaseFile):
+	extension = 'hsl'
+	
+	def load_data(self, item):
+		self.filename = item.name
+		self.name = item.params.item[0]
+		self.body = from_base64(item.params.item[1])
+
+class TextFile(BaseFile):
+	extension = 'txt'
+	
+	def load_data(self, item):
+		self.filename = item.name
+		self.extension = MIMES.get(item.params.item[1], 'bin')
+		self.name = item.params.item[0]
+		self.body = from_base64(item.params.item[2])
+
+
+
 class HSLDumpModule(Module):
 	'''Dumps scripts from a node'''
 	
@@ -43,35 +133,16 @@ class HSLDumpModule(Module):
 				self.dump_file(item, args)
 	
 	def dump_script(self, item, args):
-		extension = 'hsl.bin'
-		body = item.params.item[-1]
-		
-		match = CLEAN_RE.match(body)
-		if match:
-			extension = 'hsl'
-			body = from_base64(match.group(1))
-		else:
-			print(u"WARNING: Cannot decode script containing visual blocks: {0}".format(item.name), file=sys.stderr)
-		
-		# Some script types have an extra data field in the middle
-		if len(item.params.item) > 2:
-			body = u"//= META: {meta}\n{body}".format(
-				meta=item.params.item[1],
-				body=body,
-			)
-		
-		self.dump(args, item.name, extension, body)
+		f = ScriptFile(item)
+		f.save(args)
 	
 	def dump_fragment(self, item, args):
-		self.dump(args, item.name, 'hsl', from_base64(item.params.item[1]))
+		f = FragmentFile(item)
+		f.save(args)
 	
 	def dump_file(self, item, args):
-		extension = MIMES.get(item.params.item[1], 'bin')
-		body = u"//= NAME: {name}\n{body}".format(
-			name=item.params.item[0],
-			body=from_base64(item.params.item[2])
-		)
-		self.dump(args, item.name, extension, body)
+		f = TextFile(item)
+		f.save(args)
 	
 	def dump(self, args, name, extension, body):
 		if not os.path.exists(args.path):

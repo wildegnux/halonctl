@@ -1,4 +1,5 @@
 from __future__ import print_function
+import sys
 import os
 import re
 import six
@@ -49,6 +50,8 @@ class HSLDumpModule(Module):
 		if match:
 			extension = 'hsl'
 			body = from_base64(match.group(1))
+		else:
+			print(u"WARNING: Cannot decode script containing visual blocks: {0}".format(item.name), file=sys.stderr)
 		
 		# Some script types have an extra data field in the middle
 		if len(item.params.item) > 2:

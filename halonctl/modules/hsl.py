@@ -55,7 +55,7 @@ class HSLDumpModule(Module):
 		
 		# Some script types have an extra data field in the middle
 		if len(item.params.item) > 2:
-			body = u"# META: {meta}\n{body}".format(
+			body = u"//= META: {meta}\n{body}".format(
 				meta=item.params.item[1],
 				body=body,
 			)
@@ -67,7 +67,7 @@ class HSLDumpModule(Module):
 	
 	def dump_file(self, item, args):
 		extension = MIMES.get(item.params.item[1], 'bin')
-		body = u"# NAME: {name}\n{body}".format(
+		body = u"//= NAME: {name}\n{body}".format(
 			name=item.params.item[0],
 			body=from_base64(item.params.item[2])
 		)

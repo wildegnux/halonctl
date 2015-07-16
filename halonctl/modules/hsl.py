@@ -265,7 +265,7 @@ class HSLPullModule(Module):
 						elif a == 'n':
 							pass
 						elif a == 'q':
-							abort = False
+							abort = True
 						else:
 							continue
 						break

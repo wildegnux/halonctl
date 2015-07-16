@@ -4,6 +4,7 @@ import os
 import re
 import six
 import difflib
+from blessings import Terminal
 from halonctl.modapi import Module
 from halonctl.roles import HTTPStatus
 from halonctl.util import from_base64, to_base64
@@ -18,6 +19,8 @@ MIMES = {
 }
 SCRIPT_RE = re.compile(r'\w+_flow__\d+')
 CLEAN_RE = re.compile(r'script "([0-9a-zA-Z=]+)"')
+
+t = Terminal()
 
 
 
@@ -153,6 +156,18 @@ def files_from_storage(path):
 		elif basename.startswith('file__'):
 			yield TextFile.from_file(filepath)
 
+def print_diff(diff):
+	print(t.bold(diff[0]))
+	print(t.bold(diff[1]))
+	print(t.bold(diff[2]))
+	for line in diff[3:]:
+		if line.startswith('+'):
+			print(t.green(line))
+		elif line.startswith('-'):
+			print(t.red(line))
+		else:
+			print(line)
+
 
 
 class HSLDumpModule(Module):
@@ -194,7 +209,7 @@ class HSLDiffModule(Module):
 				f2 = local.get(f.full_filename, BaseFile())
 				diff = list(f.diff(f2, node.name, f.full_filename))
 				if diff:
-					print(u'\n'.join(diff))
+					print_diff(diff)
 
 class HSLModule(Module):
 	'''Manages HSL scripts'''

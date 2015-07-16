@@ -38,6 +38,7 @@ setup(name='halonctl',
 		'natsort',		# Natural sorting of node names
 		'suds-jurko',	# SOAP client library; improved fork of suds
 		'prettytable',	# Fancy ASCII tables, feat. Py3 compatibility
+		'blessings',	# Portable TTY abstractions
 		'requests',		# "HTTP for Humans"
 		'six',			# Python 2/3 compatibility utilities
 	],

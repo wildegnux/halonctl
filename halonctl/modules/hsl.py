@@ -12,13 +12,14 @@ from halonctl.util import from_base64, to_base64
 FRAGMENTS = [
 	'system_authentication_script',
 	'transport_flow',
+	'queue_flow',
 ]
 MIMES = {
 	'text/plain': 'txt',
 	'text/csv': 'csv',
 }
 SCRIPT_RE = re.compile(r'\w+_flow__\d+')
-CLEAN_RE = re.compile(r'script "([0-9a-zA-Z=]+)"')
+CLEAN_RE = re.compile(r'script "([0-9a-zA-Z+/=]+)"')
 
 t = Terminal()
 
@@ -124,8 +125,8 @@ class FragmentFile(BaseFile):
 	
 	def load_data(self, item):
 		self.filename = item.name
-		self.name = item.params.item[0]
-		self.body = from_base64(item.params.item[1])
+		self.name = item.name
+		self.body = from_base64(item.params.item[0])
 
 class TextFile(BaseFile):
 	extension = 'txt'

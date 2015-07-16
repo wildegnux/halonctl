@@ -21,12 +21,26 @@ CLEAN_RE = re.compile(r'script "([0-9a-zA-Z=]+)"')
 
 
 class BaseFile(Module):
-	filename = 'unnamed'
-	extension = 'bin'
+	filename = u'unnamed'
+	extension = u'bin'
 	
 	name = None
 	meta = None
-	body = None
+	body = u''
+	
+	@property
+	def full_filename(self):
+		return u"{0}.{1}".format(self.filename, self.extension)
+	
+	
+	
+	@classmethod
+	def from_file(class_, path):
+		f = class_()
+		f.load(path)
+		return f
+	
+	
 	
 	def __init__(self, item=None):
 		if item:
@@ -40,9 +54,14 @@ class BaseFile(Module):
 		'''Returns a SOAP payload.'''
 		pass
 	
-	def deserialize(self, data, extension):
+	def deserialize(self, data):
 		'''Deserializes data read from a file.'''
-		pass
+		lines = data.split('\n')
+		if lines[0].startswith('//= NAME: '):
+			self.name = lines.pop(0)[10:]
+		if lines[0].startswith('//= META: '):
+			self.meta = lines.pop(0)[10:]
+		self.body = u'\n'.join(lines)
 	
 	def serialize(self):
 		'''Serializes data for writing to a file.'''
@@ -51,13 +70,12 @@ class BaseFile(Module):
 			data += u"//= NAME: {0}\n".format(self.name)
 		if self.meta:
 			data += u"//= META: {0}\n".format(self.meta)
-		data += self.body or u""
+		data += self.body
 		return data
 	
 	def path(self, args):
 		'''Constructs a local path to the file.'''
-		filename = u'{0}.{1}'.format(self.filename, self.extension)
-		return os.path.join(args.path, filename)
+		return os.path.join(args.path, self.full_filename)
 	
 	def save(self, args):
 		if not os.path.exists(args.path):
@@ -66,8 +84,10 @@ class BaseFile(Module):
 		with open(self.path(args), 'w') as f:
 			f.write(self.serialize())
 	
-	def load(self, args):
-		with open(self.path(args)) as f:
+	def load(self, path):
+		with open(path) as f:
+			pts = os.path.splitext(os.path.basename(path))
+			self.filename, self.extension = pts[0], pts[1][1:]
 			self.deserialize(f.read())
 
 class ScriptFile(BaseFile):
@@ -114,6 +134,17 @@ def files_from_result(result):
 			yield FragmentFile(item)
 		elif item.name.startswith('file__'):
 			yield TextFile(item)
+
+def files_from_storage(path):
+	for filename in os.listdir(path):
+		basename = os.path.basename(filename)
+		filepath = os.path.join(path, filename)
+		if SCRIPT_RE.match(basename):
+			yield ScriptFile.from_file(filepath)
+		elif basename in FRAGMENTS:
+			yield FragmentFile.from_file(filepath)
+		elif basename.startswith('file__'):
+			yield TextFile.from_file(filepath)
 
 
 

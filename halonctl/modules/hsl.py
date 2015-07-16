@@ -211,12 +211,53 @@ class HSLDiffModule(Module):
 				if diff:
 					print_diff(diff)
 
+class HSLPullModule(Module):
+	'''Merges remote changes into local files.'''
+	
+	def register_arguments(self, parser):
+		parser.add_argument('path', nargs='?', default='.',
+			help=u"node configuration directory")
+	
+	def run(self, nodes, args):
+		local = { f.full_filename: f for f in files_from_storage(args.path) }
+		
+		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
+			if code != 200:
+				self.partial = True
+				pass
+			
+			for f in files_from_result(result):
+				f2 = local.get(f.full_filename, BaseFile())
+				diff = list(f2.diff(f, f.full_filename, node.name))
+				if diff:
+					print_diff(diff)
+					
+					abort = False
+					while True:
+						a = six.moves.input(u"Apply patch? (y/n/q)")
+						if a == 'y':
+							f2.name = f.name
+							f2.meta = f.meta
+							f2.body = f.body
+							f2.save(args)
+						elif a == 'n':
+							pass
+						elif a == 'q':
+							abort = False
+						else:
+							continue
+						break
+					
+					if abort:
+						break
+
 class HSLModule(Module):
 	'''Manages HSL scripts'''
 	
 	submodules = {
 		'dump': HSLDumpModule(),
 		'diff': HSLDiffModule(),
+		'pull': HSLPullModule(),
 	}
 
 module = HSLModule()

@@ -4,6 +4,7 @@ import os
 import re
 import six
 import difflib
+from textwrap import dedent
 from blessings import Terminal
 from halonctl.modapi import Module
 from halonctl.roles import HTTPStatus
@@ -258,8 +259,16 @@ class HSLPullModule(Module):
 					
 					abort = False
 					while True:
-						a = six.moves.input(u"Apply patch? (y/n/q)")
-						if a == 'y':
+						a = six.moves.input(t.cyan(u"Apply patch [y/n/q/?]? "))
+						if a == '?':
+							print(t.magenta(dedent(u'''
+							y - apply this patch
+							n - do not apply this patch
+							q - quit; do not apply this or any subsequent patch
+							? - display a help message
+							''').strip()))
+							continue
+						elif a == 'y':
 							f2.use(f)
 							f2.save(args)
 						elif a == 'n':

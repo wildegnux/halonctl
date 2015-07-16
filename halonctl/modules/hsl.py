@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import six
+import difflib
 from halonctl.modapi import Module
 from halonctl.roles import HTTPStatus
 from halonctl.util import from_base64, to_base64
@@ -89,6 +90,12 @@ class BaseFile(Module):
 			pts = os.path.splitext(os.path.basename(path))
 			self.filename, self.extension = pts[0], pts[1][1:]
 			self.deserialize(f.read())
+	
+	def diff(self, other, from_='', to=''):
+		return difflib.unified_diff(
+			self.body.split('\n'), other.body.split('\n'),
+			from_, to, lineterm=''
+		)
 
 class ScriptFile(BaseFile):
 	extension = 'hsl.bin'
@@ -166,17 +173,35 @@ class HSLDumpModule(Module):
 		
 		for f in files_from_result(result):
 			f.save(args)
+
+class HSLDiffModule(Module):
+	'''Views differences between local and remote files.'''
+	
+	def register_arguments(self, parser):
+		parser.add_argument('path', nargs='?', default='.',
+			help=u"node configuration directory")
 	
 	def run(self, nodes, args):
+		local = { f.full_filename: f for f in files_from_storage(args.path) }
+		
 		diffs = {}
-		for node, (code, result) in nodes.service.configKeys():
-			pass
+		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
+			if code != 200:
+				self.partial = True
+				pass
+			
+			for f in files_from_result(result):
+				f2 = local.get(f.full_filename, BaseFile())
+				diff = list(f.diff(f2, node.name, f.full_filename))
+				if diff:
+					print(u'\n'.join(diff))
 
 class HSLModule(Module):
 	'''Manages HSL scripts'''
 	
 	submodules = {
 		'dump': HSLDumpModule(),
+		'diff': HSLDiffModule(),
 	}
 
 module = HSLModule()

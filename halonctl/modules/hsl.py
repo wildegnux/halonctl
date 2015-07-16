@@ -100,25 +100,48 @@ class BaseFile(Module):
 			self.body.split('\n'), other.body.split('\n'),
 			from_, to, lineterm=''
 		)
+	
+	def use(self, other):
+		self.name = other.name
+		self.meta = other.meta
+		self.body = other.body
 
 class ScriptFile(BaseFile):
 	extension = 'hsl.bin'
+	delete_extension = 'hsl'
 	
 	def load_data(self, item):
 		self.filename = item.name
 		self.name = item.params.item[0]
 		self.body = item.params.item[-1]
-		
-		match = CLEAN_RE.match(self.body)
-		if match:
-			self.extension = 'hsl'
-			self.body = from_base64(match.group(1))
-		# else:
-		# 	print(u"WARNING: Cannot decode script containing visual blocks: {0}".format(item.name), file=sys.stderr)
+		self.try_to_decode()
 		
 		# Some kinds of scripts (ACL Flows) have an extra middle parameter...
 		if len(item.params.item) > 2:
 			self.meta = item.params.item[1]
+	
+	def use(self, other):
+		super(ScriptFile, self).use(other)
+		self.try_to_decode()
+	
+	def try_to_decode(self):
+		self.extension = 'hsl.bin'
+		self.delete_extension = 'hsl'
+		
+		match = CLEAN_RE.match(self.body)
+		if match:
+			self.extension, self.delete_extension = self.delete_extension, self.extension
+			self.body = from_base64(match.group(1))
+	
+	def save(self, args):
+		super(ScriptFile, self).save(args)
+		
+		self.extension, self.delete_extension = self.delete_extension, self.extension
+		delete_path = self.path(args)
+		self.extension, self.delete_extension = self.delete_extension, self.extension
+		
+		if os.path.exists(delete_path):
+			os.remove(delete_path)
 
 class FragmentFile(BaseFile):
 	extension = 'hsl'
@@ -237,9 +260,7 @@ class HSLPullModule(Module):
 					while True:
 						a = six.moves.input(u"Apply patch? (y/n/q)")
 						if a == 'y':
-							f2.name = f.name
-							f2.meta = f.meta
-							f2.body = f.body
+							f2.use(f)
 							f2.save(args)
 						elif a == 'n':
 							pass

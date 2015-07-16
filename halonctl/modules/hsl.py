@@ -106,6 +106,15 @@ class TextFile(BaseFile):
 		self.name = item.params.item[0]
 		self.body = from_base64(item.params.item[2])
 
+def files_from_result(result):
+	for item in result.item:
+		if SCRIPT_RE.match(item.name):
+			yield ScriptFile(item)
+		elif item.name in FRAGMENTS:
+			yield FragmentFile(item)
+		elif item.name.startswith('file__'):
+			yield TextFile(item)
+
 
 
 class HSLDumpModule(Module):
@@ -124,34 +133,13 @@ class HSLDumpModule(Module):
 			self.exitcode = 1
 			return HTTPStatus(code)
 		
-		for item in result.item:
-			if SCRIPT_RE.match(item.name):
-				self.dump_script(item, args)
-			elif item.name in FRAGMENTS:
-				self.dump_fragment(item, args)
-			elif item.name.startswith('file__'):
-				self.dump_file(item, args)
+		for f in files_from_result(result):
+			f.save(args)
 	
-	def dump_script(self, item, args):
-		f = ScriptFile(item)
-		f.save(args)
-	
-	def dump_fragment(self, item, args):
-		f = FragmentFile(item)
-		f.save(args)
-	
-	def dump_file(self, item, args):
-		f = TextFile(item)
-		f.save(args)
-	
-	def dump(self, args, name, extension, body):
-		if not os.path.exists(args.path):
-			os.makedirs(args.path)
-		
-		path = os.path.join(args.path, u"{0}.{1}".format(name, extension))
-		with open(path, 'w') as f:
-			f.write(body)
-		return path
+	def run(self, nodes, args):
+		diffs = {}
+		for node, (code, result) in nodes.service.configKeys():
+			pass
 
 class HSLModule(Module):
 	'''Manages HSL scripts'''

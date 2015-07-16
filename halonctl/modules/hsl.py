@@ -153,7 +153,7 @@ class HSLDumpModule(Module):
 	
 	def register_arguments(self, parser):
 		parser.add_argument('path', nargs='?', default='.',
-			help=u"directory to export into")
+			help=u"node configuration directory")
 	
 	def run(self, nodes, args):
 		# It doesn't make sense to dump from multiple nodes into one directory

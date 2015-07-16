@@ -102,8 +102,8 @@ class ScriptFile(BaseFile):
 		if match:
 			self.extension = 'hsl'
 			self.body = from_base64(match.group(1))
-		else:
-			print(u"WARNING: Cannot decode script containing visual blocks: {0}".format(item.name), file=sys.stderr)
+		# else:
+		# 	print(u"WARNING: Cannot decode script containing visual blocks: {0}".format(item.name), file=sys.stderr)
 		
 		# Some kinds of scripts (ACL Flows) have an extra middle parameter...
 		if len(item.params.item) > 2:

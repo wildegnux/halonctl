@@ -33,6 +33,7 @@ setup(name='halonctl',
 	keywords='email halon commandline administration',
 	install_requires=[
 		'arrow',		# Saner datetime handling
+		'jinja2',		# Fast, simple template engine
 		'futures',		# Backport of Python 3's futures, for thread pooling
 		'keyring',		# Secure credential storage
 		'natsort',		# Natural sorting of node names

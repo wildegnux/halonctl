@@ -4,6 +4,7 @@ import os
 import re
 import six
 import difflib
+from jinja2 import Template
 from textwrap import dedent
 from blessings import Terminal
 from halonctl.modapi import Module
@@ -68,14 +69,14 @@ class BaseFile(object):
 			self.meta = lines.pop(0)[10:]
 		self.body = u'\n'.join(lines)
 	
-	def serialize(self):
+	def serialize(self, node=None):
 		'''Serializes data for writing to a file.'''
 		data = u""
 		if self.name:
 			data += u"//= NAME: {0}\n".format(self.name)
 		if self.meta:
 			data += u"//= META: {0}\n".format(self.meta)
-		data += self.body
+		data += self.render(node)
 		return data
 	
 	def path(self, args):
@@ -95,12 +96,21 @@ class BaseFile(object):
 			self.filename, self.extension = pts[0], pts[1][1:]
 			self.deserialize(f.read())
 	
-	def diff(self, other, from_='', to=''):
+	def diff(self, other, from_='', to='', node=None):
+		if self.serialize(node) == other.serialize(node):
+			return []
+		
 		return difflib.unified_diff(
 			self.serialize().split('\n'),
 			other.serialize().split('\n'),
 			from_, to, lineterm=''
 		)
+	
+	def render(self, node=None):
+		if not node:
+			return self.body
+		
+		return Template(self.body).render(node=node)
 
 class ScriptFile(BaseFile):
 	extension = 'hsl'
@@ -247,7 +257,7 @@ class HSLPullModule(Module):
 			
 			for f in files_from_result(result, ignore):
 				f2 = local.get(f.full_filename, BaseFile())
-				diff = list(f2.diff(f, f.full_filename, node.name))
+				diff = list(f2.diff(f, f.full_filename, node.name, node=node))
 				if diff:
 					print_diff(diff)
 					

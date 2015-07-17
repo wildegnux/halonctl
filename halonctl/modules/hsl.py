@@ -20,7 +20,6 @@ MIMES = {
 	'text/csv': 'csv',
 }
 SCRIPT_RE = re.compile(r'\w+_flow__\d+')
-CLEAN_RE = re.compile(r'script "([0-9a-zA-Z+/=]+)"')
 
 t = Terminal()
 
@@ -103,37 +102,25 @@ class BaseFile(object):
 		)
 
 class ScriptFile(BaseFile):
-	extension = 'hsl.bin'
-	delete_extension = 'hsl'
+	extension = 'hsl'
 	
 	def load_data(self, item):
 		self.filename = item.name
 		self.name = item.params.item[0]
-		self.body = item.params.item[-1]
-		self.try_to_decode()
+		self.body = self.decode(item.params.item[-1])
 		
 		# Some kinds of scripts (ACL Flows) have an extra middle parameter...
 		if len(item.params.item) > 2:
 			self.meta = item.params.item[1]
 	
-	def try_to_decode(self):
-		self.extension = 'hsl.bin'
-		self.delete_extension = 'hsl'
-		
-		match = CLEAN_RE.match(self.body)
-		if match:
-			self.extension, self.delete_extension = self.delete_extension, self.extension
-			self.body = from_base64(match.group(1))
-	
-	def save(self, args):
-		super(ScriptFile, self).save(args)
-		
-		self.extension, self.delete_extension = self.delete_extension, self.extension
-		delete_path = self.path(args)
-		self.extension, self.delete_extension = self.delete_extension, self.extension
-		
-		if os.path.exists(delete_path):
-			os.remove(delete_path)
+	def decode(self, data):
+		body = ''
+		for block in data.split(','):
+			if block.startswith('script '):
+				body += u'{0}\n'.format(from_base64(block[8:-1]))
+			else:
+				body += u'//= {0}\n'.format(block)
+		return body
 
 class FragmentFile(BaseFile):
 	extension = 'hsl'

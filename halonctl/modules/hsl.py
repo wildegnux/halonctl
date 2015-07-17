@@ -242,6 +242,8 @@ class HSLPullModule(Module):
 	def register_arguments(self, parser):
 		parser.add_argument('path', nargs='?', default='.',
 			help=u"node configuration directory")
+		parser.add_argument('-f', '--force', action='store_true',
+			help=u"apply changes without confirmation")
 	
 	def run(self, nodes, args):
 		local = { f.full_filename: f for f in files_from_storage(args.path) }
@@ -259,7 +261,7 @@ class HSLPullModule(Module):
 					
 					abort = False
 					while True:
-						a = six.moves.input(t.cyan(u"Apply patch [y/n/q/?]? "))
+						a = 'y' if args.force else six.moves.input(t.cyan(u"Apply patch [y/n/q/?]? "))
 						if a == '?':
 							print(t.magenta(dedent(u'''
 							y - apply this patch

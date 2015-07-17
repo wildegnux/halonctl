@@ -116,10 +116,6 @@ class ScriptFile(BaseFile):
 		if len(item.params.item) > 2:
 			self.meta = item.params.item[1]
 	
-	def use(self, other):
-		super(ScriptFile, self).use(other)
-		self.try_to_decode()
-	
 	def try_to_decode(self):
 		self.extension = 'hsl.bin'
 		self.delete_extension = 'hsl'

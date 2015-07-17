@@ -101,11 +101,6 @@ class BaseFile(Module):
 			self.body.split('\n'), other.body.split('\n'),
 			from_, to, lineterm=''
 		)
-	
-	def use(self, other):
-		self.name = other.name
-		self.meta = other.meta
-		self.body = other.body
 
 class ScriptFile(BaseFile):
 	extension = 'hsl.bin'
@@ -271,8 +266,7 @@ class HSLPullModule(Module):
 							''').strip()))
 							continue
 						elif a == 'y':
-							f2.use(f)
-							f2.save(args)
+							f.save(args)
 						elif a == 'n':
 							pass
 						elif a == 'q':

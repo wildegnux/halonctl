@@ -30,13 +30,13 @@ class NodeSoapProxy(object):
 	def __init__(self, node):
 		self.node = node
 	
-	def __getattr__(self, name):
+	def __getattr__(self, name_):
 		def _soap_proxy_executor(*args, **kwargs):
 			# Allow params to constructed by lambda expressions
 			args = [ a(self.node) if callable(a) else a for a in args ]
 			kwargs = { k: a(self.node) if callable(a) else a for k, a in six.iteritems(kwargs) }
 			
-			context = self.node.make_request(name, *args, **kwargs)
+			context = self.node.make_request(name_, *args, **kwargs)
 			try:
 				r = self.node.session.post(context.client.location(),
 					auth=(self.node.username, self.node.password),
@@ -79,9 +79,9 @@ class NodeListSoapProxy(object):
 	def __init__(self, nodelist):
 		self.nodelist = nodelist
 	
-	def __getattr__(self, name):
+	def __getattr__(self, name_):
 		def _soap_proxy_executor(*args, **kwargs):
-			return nodesort(async_dispatch({node: (getattr(node.service, name), args, kwargs) for node in self.nodelist}))
+			return nodesort(async_dispatch({node: (getattr(node.service, name_), args, kwargs) for node in self.nodelist}))
 		return _soap_proxy_executor
 
 class CommandProxy(six.Iterator):

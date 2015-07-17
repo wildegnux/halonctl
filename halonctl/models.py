@@ -128,7 +128,7 @@ class Node(object):
 			self._client = Client("file:{0}".format(cache.get_path('wsdl.xml')), location=self.url, faults=False, nosend=True)
 			self._client.set_options(cache=None)
 	
-	def make_request(self, name, *args, **kwargs):
+	def make_request(self, name_, *args, **kwargs):
 		'''Convenience function that creates a SOAP request context from a
 		function name and a set of parameters.
 		
@@ -136,7 +136,7 @@ class Node(object):
 		will be downloaded synchronously.'''
 		
 		self.load_wsdl()
-		return getattr(self._client.service, name)(*args, **kwargs)
+		return getattr(self._client.service, name_)(*args, **kwargs)
 	
 	def command(self, command, *args, **kwargs):
 		'''Convenience function that executes a command on the node, and returns

@@ -179,6 +179,7 @@ def load_ignore_list(path):
 	if os.path.exists(ignore_path):
 		with open(ignore_path, 'rU') as f:
 			return f.read().split('\n')
+	return []
 
 def print_diff(diff):
 	print(t.bold(diff[0]))

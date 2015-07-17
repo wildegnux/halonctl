@@ -140,25 +140,35 @@ class TextFile(BaseFile):
 		self.name = item.params.item[0]
 		self.body = from_base64(item.params.item[2])
 
-def files_from_result(result):
+def files_from_result(result, ignore=[]):
 	for item in result.item:
-		if SCRIPT_RE.match(item.name):
+		if item.name in ignore:
+			continue
+		elif SCRIPT_RE.match(item.name):
 			yield ScriptFile(item)
 		elif item.name in FRAGMENTS:
 			yield FragmentFile(item)
 		elif item.name.startswith('file__'):
 			yield TextFile(item)
 
-def files_from_storage(path):
+def files_from_storage(path, ignore=[]):
 	for filename in os.listdir(path):
 		basename = os.path.splitext(filename)[0]
 		filepath = os.path.join(path, filename)
-		if SCRIPT_RE.match(basename):
+		if basename in ignore:
+			continue
+		elif SCRIPT_RE.match(basename):
 			yield ScriptFile.from_file(filepath)
 		elif basename in FRAGMENTS:
 			yield FragmentFile.from_file(filepath)
 		elif basename.startswith('file__'):
 			yield TextFile.from_file(filepath)
+
+def load_ignore_list(path):
+	ignore_path = os.path.join(path, '_ignore')
+	if os.path.exists(ignore_path):
+		with open(ignore_path, 'rU') as f:
+			return f.read().split('\n')
 
 def print_diff(diff):
 	print(t.bold(diff[0]))
@@ -185,12 +195,13 @@ class HSLDumpModule(Module):
 		# It doesn't make sense to dump from multiple nodes into one directory
 		node = nodes[0]
 		code, result = node.service.configKeys()
+		ignore = load_ignore_list(args.path)
 		
 		if code != 200:
 			self.exitcode = 1
 			return HTTPStatus(code)
 		
-		for f in files_from_result(result):
+		for f in files_from_result(result, ignore):
 			f.save(args)
 
 class HSLDiffModule(Module):
@@ -201,7 +212,8 @@ class HSLDiffModule(Module):
 			help=u"node configuration directory")
 	
 	def run(self, nodes, args):
-		local = { f.full_filename: f for f in files_from_storage(args.path) }
+		ignore = load_ignore_list(args.path)
+		local = { f.full_filename: f for f in files_from_storage(args.path, ignore) }
 		
 		diffs = {}
 		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
@@ -209,7 +221,7 @@ class HSLDiffModule(Module):
 				self.partial = True
 				pass
 			
-			for f in files_from_result(result):
+			for f in files_from_result(result, ignore):
 				f2 = local.get(f.full_filename, BaseFile())
 				diff = list(f.diff(f2, node.name, f.full_filename))
 				if diff:
@@ -225,14 +237,15 @@ class HSLPullModule(Module):
 			help=u"apply changes without confirmation")
 	
 	def run(self, nodes, args):
-		local = { f.full_filename: f for f in files_from_storage(args.path) }
+		ignore = load_ignore_list(args.path)
+		local = { f.full_filename: f for f in files_from_storage(args.path, ignore) }
 		
 		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
 			if code != 200:
 				self.partial = True
 				pass
 			
-			for f in files_from_result(result):
+			for f in files_from_result(result, ignore):
 				f2 = local.get(f.full_filename, BaseFile())
 				diff = list(f2.diff(f, f.full_filename, node.name))
 				if diff:

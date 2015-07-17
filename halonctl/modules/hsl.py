@@ -26,7 +26,7 @@ t = Terminal()
 
 
 
-class BaseFile(Module):
+class BaseFile(object):
 	filename = u'unnamed'
 	extension = u'bin'
 	

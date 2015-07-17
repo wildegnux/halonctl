@@ -97,7 +97,8 @@ class BaseFile(object):
 	
 	def diff(self, other, from_='', to=''):
 		return difflib.unified_diff(
-			self.body.split('\n'), other.body.split('\n'),
+			self.serialize().split('\n'),
+			other.serialize().split('\n'),
 			from_, to, lineterm=''
 		)
 

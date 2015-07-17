@@ -167,7 +167,7 @@ def files_from_result(result):
 
 def files_from_storage(path):
 	for filename in os.listdir(path):
-		basename = os.path.basename(filename)
+		basename = os.path.splitext(filename)[0]
 		filepath = os.path.join(path, filename)
 		if SCRIPT_RE.match(basename):
 			yield ScriptFile.from_file(filepath)

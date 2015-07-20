@@ -287,8 +287,9 @@ class HSLDiffModule(Module):
 		diffs = {}
 		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
 			if code != 200:
+				print(u"{0}: {1}".format(node, HTTPStatus(code).human()))
 				self.partial = True
-				pass
+				continue
 			
 			for f in files_from_result(result, ignore):
 				f2 = local.get(f.full_filename, BaseFile())
@@ -311,8 +312,9 @@ class HSLPullModule(Module):
 		
 		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
 			if code != 200:
+				print(u"{0}: {1}".format(node, HTTPStatus(code).human()))
 				self.partial = True
-				pass
+				continue
 			
 			for f in files_from_result(result, ignore):
 				f2 = local.get(f.full_filename, BaseFile())
@@ -342,8 +344,9 @@ class HSLPushModule(Module):
 		
 		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
 			if code != 200:
+				print(u"{0}: {1}".format(node, HTTPStatus(code).human()))
 				self.partial = True
-				pass
+				continue
 			
 			for f in files_from_result(result, ignore):
 				if not f.full_filename in local:

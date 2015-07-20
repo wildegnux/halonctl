@@ -327,7 +327,7 @@ class HSLPullModule(Module):
 					elif a == 'n':
 						continue
 					elif a == 'q':
-						break
+						return
 
 class HSLPushModule(Module):
 	'''Pushes local scripts to nodes.'''
@@ -388,7 +388,7 @@ class HSLPushModule(Module):
 					elif a == 'n':
 						continue
 					elif a == 'q':
-						break
+						return
 
 class HSLModule(Module):
 	'''Manages HSL scripts'''

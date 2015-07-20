@@ -7,9 +7,10 @@ import difflib
 from jinja2 import Template
 from textwrap import dedent
 from blessings import Terminal
+from halonctl.config import config
 from halonctl.modapi import Module
 from halonctl.roles import HTTPStatus
-from halonctl.util import from_base64, to_base64
+from halonctl.util import from_base64, to_base64, ask_confirm
 
 FRAGMENTS = [
 	'system_authentication_script',
@@ -335,9 +336,28 @@ class HSLPushModule(Module):
 		parser.add_argument('path', nargs='?', default='.',
 			help=u"node configuration directory")
 		parser.add_argument('-f', '--force', action='store_true',
-			help=u"apply changes without confirmation")
+			help=u"allow application of changes to all nodes")
 	
 	def run(self, nodes, args):
+		if len(nodes) == len(config['nodes']) and not args.force:
+			if not ask_confirm(dedent(u'''
+				{b}Warning:{n}
+				
+				Looks like you're about to push a configuration change to {b}all{n} of your
+				nodes! If any of them are clustered, this is probably not what you want.
+				
+				If the configuration change is written to multiple nodes in a cluster, each node
+				will push it out to its entire cluster, one after another, and each push will
+				cause every node in the cluster to recompile its configuration. If you're
+				pushing to an entire large cluster, this can cause excessive amounts of system
+				load across it!
+				
+				To silence this warning in the future, use the {b}-f{n} ({b}--force{n}) flag.
+				
+				Do you want to proceed?
+				'''.format(b=t.bold, n=t.normal)).strip(), default=False):
+				return
+		
 		ignore = load_ignore_list(args.path)
 		local = { f.full_filename: f for f in files_from_storage(args.path, ignore) }
 		

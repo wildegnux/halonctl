@@ -27,3 +27,5 @@
 # User configuration
 *.sublime-workspace
 /halonctl.json
+/config
+

@@ -164,7 +164,6 @@ class FragmentFile(BaseFile):
 	
 	def load_data(self, item):
 		self.filename = item.name
-		self.name = item.name
 		self.body = from_base64(item.params.item[0])
 	
 	def to_data(self, node=None):

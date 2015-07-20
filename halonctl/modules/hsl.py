@@ -53,11 +53,11 @@ class BaseFile(object):
 			self.load_data(item)
 	
 	def load_data(self, item):
-		'''Loads data from a SOAP payload.'''
+		'''Loads data from a configKeys() SOAP payload.'''
 		pass
 	
 	def to_data(self):
-		'''Returns a SOAP payload.'''
+		'''Returns a dictionary of key:value pairs for configKeySet().'''
 		pass
 	
 	def deserialize(self, data):
@@ -124,6 +124,32 @@ class ScriptFile(BaseFile):
 		if len(item.params.item) > 2:
 			self.meta = item.params.item[1]
 	
+	def to_data(self, node=None):
+		def encode_script(lines):
+			txt = u'\n'.join(lines)
+			return u'script "{0}"'.format(to_base64(txt))
+		
+		items = { 'name': self.name }
+		if self.meta:
+			items['rate'] = self.meta
+		
+		body = self.render(node)
+		blocks = []
+		current_script = []
+		for line in body.split('\n'):
+			if line.startswith('//= '):
+				if current_script:
+					blocks.append(encode_script(current_script))
+					current_script = []
+				blocks.append(line[4:])
+			else:
+				current_script.append(line)
+		if current_script:
+			blocks.append(encode_script(current_script))
+		items['flow'] = u','.join(blocks)
+		
+		return items
+	
 	def decode(self, data):
 		body = ''
 		for block in data.split(','):
@@ -140,6 +166,11 @@ class FragmentFile(BaseFile):
 		self.filename = item.name
 		self.name = item.name
 		self.body = from_base64(item.params.item[0])
+	
+	def to_data(self, node=None):
+		return {
+			'value': to_base64(self.render(node))
+		}
 
 class TextFile(BaseFile):
 	extension = 'txt'
@@ -149,6 +180,18 @@ class TextFile(BaseFile):
 		self.extension = MIMES.get(item.params.item[1], 'bin')
 		self.name = item.params.item[0]
 		self.body = from_base64(item.params.item[2])
+	
+	def to_data(self, node=None):
+		mime = 'text/plain'
+		for t, ext in six.iteritems(MIMES):
+			if ext == self.extension:
+				mime = t
+		
+		return {
+			'name': self.name,
+			'type': mime,
+			'data': to_base64(self.render(node)),
+		}
 
 def files_from_result(result, ignore=[]):
 	for item in result.item:
@@ -192,6 +235,21 @@ def print_diff(diff):
 			print(t.red(line))
 		else:
 			print(line)
+
+def confirm_diff(diff, args):
+	'''Asks the user to confirm a diff application.'''
+	while True:
+		a = 'y' if args.force else six.moves.input(t.cyan(u"Apply patch [y/n/q/?]? "))
+		if a == '?':
+			print(t.magenta(dedent(u'''
+			y - apply this patch
+			n - do not apply this patch
+			q - quit; do not apply this or any subsequent patch
+			? - display a help message
+			''').strip()))
+			continue
+		elif a in ['y', 'n', 'q']:
+			return a
 
 
 
@@ -261,29 +319,53 @@ class HSLPullModule(Module):
 				diff = list(f2.diff(f, f.full_filename, node.name, node=node))
 				if diff:
 					print_diff(diff)
-					
-					abort = False
-					while True:
-						a = 'y' if args.force else six.moves.input(t.cyan(u"Apply patch [y/n/q/?]? "))
-						if a == '?':
-							print(t.magenta(dedent(u'''
-							y - apply this patch
-							n - do not apply this patch
-							q - quit; do not apply this or any subsequent patch
-							? - display a help message
-							''').strip()))
-							continue
-						elif a == 'y':
-							f.save(args)
-						elif a == 'n':
-							pass
-						elif a == 'q':
-							abort = True
-						else:
-							continue
+					a = confirm_diff(diff, args)
+					if a == 'y':
+						f.save(args)
+					elif a == 'n':
+						continue
+					elif a == 'q':
 						break
-					
-					if abort:
+
+class HSLPushModule(Module):
+	'''Pushes local scripts to nodes.'''
+	
+	def register_arguments(self, parser):
+		parser.add_argument('path', nargs='?', default='.',
+			help=u"node configuration directory")
+		parser.add_argument('-f', '--force', action='store_true',
+			help=u"apply changes without confirmation")
+	
+	def run(self, nodes, args):
+		ignore = load_ignore_list(args.path)
+		local = { f.full_filename: f for f in files_from_storage(args.path, ignore) }
+		
+		for node, (code, result) in six.iteritems(nodes.service.configKeys()):
+			if code != 200:
+				self.partial = True
+				pass
+			
+			for f in files_from_result(result, ignore):
+				if not f.full_filename in local:
+					continue
+				
+				f2 = local[f.full_filename]
+				diff = list(f.diff(f2, node.name, f2.full_filename, node=node))
+				if diff:
+					print_diff(diff)
+					a = confirm_diff(diff, args)
+					if a == 'y':
+						d = f2.to_data(node)
+						code, result = node.service.configKeySet(key=f2.filename, params={
+							'item': [{'first': k, 'second': v} for k, v in six.iteritems(d)]
+						})
+						if code != 200:
+							print(u"Failed to apply patch: {0}".format(result.faultstring), file=sys.stderr)
+							self.exitcode = 2
+							return
+					elif a == 'n':
+						continue
+					elif a == 'q':
 						break
 
 class HSLModule(Module):
@@ -293,6 +375,7 @@ class HSLModule(Module):
 		'dump': HSLDumpModule(),
 		'diff': HSLDiffModule(),
 		'pull': HSLPullModule(),
+		'push': HSLPushModule(),
 	}
 
 module = HSLModule()

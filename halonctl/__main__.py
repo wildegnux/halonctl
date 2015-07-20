@@ -268,6 +268,10 @@ def main():
 	if args.nodes == ['-']:
 		args.nodes = list(nodes.keys())
 	
+	# Allow slices without targeting, defaulting to each cluster
+	if args.slice and not args.clusters and not args.nodes:
+		args.clusters = list(clusters.keys())
+	
 	# Allow non-configured nodes to be specified as '[name:]username@host'
 	quick_node_matches = [ quick_node_re.match(n) for n in args.nodes ]
 	quick_node_args = []

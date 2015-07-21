@@ -11,5 +11,6 @@ Halonctl is little more than a framework, handling all the heavy lifting around 
    modules/update
    modules/query
    modules/stat
+   modules/hsl
    modules/cmd
    modules/shell

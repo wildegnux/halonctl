@@ -122,9 +122,7 @@ class QueryModule(Module):
 		
 		source = getattr(nodes.service, 'mailHistory' if args.history else 'mailQueue')
 		totalhits = 0
-		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100,
-			# options = {'totalhits': True} if args.count else None
-			)):
+		for node, (code, result) in six.iteritems(source(filter=hql, offset=args.offset or None, limit=args.limit or 100, options={'totalhits': True} if args.count else None)):
 			if code != 200:
 				self.partial = True
 			elif args.count:
@@ -161,16 +159,28 @@ class QueryModule(Module):
 		if not hql and not args.yes and not ask_confirm(u"You have no filter, do you really want to try to deliver everything?", False):
 			return
 		
+		affected = 0
 		for node, (code, result) in six.iteritems(nodes.service.mailQueueRetryBulk(filter=hql, duplicate=duplicate)):
 			if code != 200:
 				print(u"Failure on {0}: {1}".format(node, result))
+			else:
+				affected += result
+
+		if affected:
+			print(affected)
 	
 	def do_delete(self, nodes, args, hql):
 		if not hql and not args.yes and not ask_confirm(u"You have no filter, do you really want to delete everything!?", False):
 			return
 		
+		affected = 0
 		for node, (code, result) in six.iteritems(nodes.service.mailQueueDeleteBulk(filter=hql)):
 			if code != 200:
 				print(u"Failure on {0}: {1}".format(node, result))
+			else:
+				affected += result
+
+		if affected:
+			print(affected)
 
 module = QueryModule()

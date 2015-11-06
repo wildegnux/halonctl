@@ -33,8 +33,8 @@ Links
 Changelog
 ---------
 
-1.4.0 [unreleased]
-##################
+1.4.0
+#####
 
 **Improved:**
 
@@ -42,9 +42,10 @@ Changelog
 
 **Added:**
 
+* ``query`` module now show affected messages on bulk actions
 * ``stat`` module, replacing the old ``queue`` module
 * Quck Connect syntax for nodes you'll only ever use once
-* Added ``--count`` flag to the ``query`` module.
+* Added ``--count`` flag to the ``query`` module
 * Added ``postfix`` module to simulate commands like ``qshape``
 
 **Removed:**

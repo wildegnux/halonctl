@@ -160,7 +160,7 @@ class ScriptFile(BaseFile):
 				else:
 					body += u'//= {0}\n'.format(block)
 		except AttributeError as e:
-			print('Error: empty config found, {}'.format(e))
+			print('Warning: empty config found, {}'.format(e))
 			pass
 		return body
 

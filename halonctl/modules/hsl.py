@@ -85,6 +85,10 @@ class BaseFile(object):
 		return os.path.join(args.path, self.full_filename)
 	
 	def save(self, args):
+		#Avoid saving empty files
+		if not self.body:
+			return None
+		
 		if not os.path.exists(args.path):
 			os.makedirs(args.path)
 		
@@ -119,7 +123,12 @@ class ScriptFile(BaseFile):
 	def load_data(self, item):
 		self.filename = item.name
 		self.name = item.params.item[0]
-		self.body = self.decode(item.params.item[-1])
+		try:
+			self.body = self.decode(item.params.item[-1])
+		except AttributeError as e:
+			#Any empty scriptfile will cause an Attributerror
+			print(u"Notice: empty config \"{0}\" found".format(item.name), file=sys.stderr)
+			self.body = None
 		
 		# Some kinds of scripts (ACL Flows) have an extra middle parameter...
 		if len(item.params.item) > 2:

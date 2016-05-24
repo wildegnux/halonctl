@@ -78,7 +78,7 @@ class BaseFile(object):
 		if self.meta:
 			data += u"//= META: {0}\n".format(self.meta)
 		data += self.render(node)
-		return data
+		return data.encode('utf-8')
 	
 	def path(self, args):
 		'''Constructs a local path to the file.'''

@@ -39,7 +39,7 @@ class KeyringLoginModule(Module):
 			elif code == 200:
 				# Follow the good ol' rule of silence
 				pass
-			elif code == 401:
+			elif code == 401 or code == 500:
 				print(u"{prefix} - Enter password (blank to skip):".format(prefix=prefix))
 				while True:
 					password = getpass.getpass(u"{user}@{host}> ".format(user=node.username, host=node.host))
